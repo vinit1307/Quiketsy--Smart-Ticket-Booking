@@ -1,0 +1,10 @@
+# Maven
+target/
+*.log
+
+# Node
+node_modules/
+dist/
+
+# Env files
+.env
