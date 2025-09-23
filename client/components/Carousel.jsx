@@ -38,7 +38,7 @@ export default function Carousel({
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
 
-  const itemWidth = containerWidth-30*2;// Each card is 80% of container width
+  const itemWidth = containerWidth-34;// Each card is 80% of container width
   const trackItemOffset = itemWidth + GAP;
 
   const carouselItems = loop ? [...items, items[0]] : items;
@@ -100,7 +100,7 @@ export default function Carousel({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden w-full mt-6 p-4 ${round ? 'rounded-full border border-white' : 'rounded-2xl border border-[#222]'}`}
+      className={`relative overflow-hidden w-full mt-6 p-4 ${round ? 'rounded-full' : 'rounded-2xl'}`}
     >
       <motion.div
         className="flex"
@@ -129,7 +129,7 @@ export default function Carousel({
               }`}
               style={{
                 width: itemWidth,
-                height: round ? itemWidth : 'auto',
+                height: round ? itemWidth : 350,
                 rotateY: rotateY,
                 ...(round && { borderRadius: '50%' })
               }}
