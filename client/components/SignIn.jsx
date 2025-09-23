@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-
 const SignIn = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -41,15 +40,22 @@ const SignIn = () => {
           {/* <div className="flex justify-center items-center font-bold">
             Don't have an account? Sign Up
           </div> */}
-
-          
         </form>
         <p className="text-center mt-4">
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-blue-600 font-semibold hover:underline">
-              Sign Up
-            </Link>
-          </p>
+          Don't have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-blue-600 font-semibold hover:underline"
+          >
+            Sign Up
+          </Link>
+        </p>
+        {/* Back to Home */}
+        <p className="text-center mt-2">
+          <Link to="/" className="text-gray-600 hover:underline">
+            ⬅ Back to Home
+          </Link>
+        </p>
       </div>
     </div>
   );

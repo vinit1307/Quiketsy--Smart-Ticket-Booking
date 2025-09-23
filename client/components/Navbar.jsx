@@ -27,11 +27,19 @@ const Navbar = () => {
         </button>
 
         {/* Sign In Button - always visible */}
-        <Link to="/signin">
+        {/* <Link to="/signin">
 
         <button className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition">
           Sign In
         </button>
+        </Link> */}
+
+        {/* Sign In Button with Link */}
+        <Link
+          to="/signin"
+          className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition"
+        >
+          Sign In
         </Link>
 
         {/* Hamburger Button - always visible */}

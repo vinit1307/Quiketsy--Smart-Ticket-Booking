@@ -1,8 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center items-start min-h-screen pt-24 pb-10 bg-gray-100">
       <div className="w-full bg-white rounded-2xl shadow-lg p-10 max-w-sm md:max-w-[525px]">
         {/* Heading */}
         <h2 className="text-2xl font-bold text-blue-700 text-center mb-10">
@@ -26,6 +27,16 @@ const SignUp = () => {
             <input
               type="email"
               placeholder="Enter your email"
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          {/* Phone Number */}
+          <div>
+            <label className="block text-gray-700 font-bold mb-2">Phone Number:</label>
+            <input
+              type="tel"
+              placeholder="Enter your Phone Number"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -71,9 +82,15 @@ const SignUp = () => {
         {/* Link to Sign In */}
         <p className="text-center mt-4">
           Already have an account?{" "}
-          <a href="/signin" className="text-blue-600 font-semibold hover:underline">
+          <Link to="/signin" className="text-blue-600 font-semibold hover:underline">
             Sign In
-          </a>
+          </Link>
+        </p>
+        {/* Back to Home */}
+         <p className="text-center mt-2">
+          <Link to="/" className="text-gray-600 hover:underline">
+            ⬅ Back to Home
+          </Link>
         </p>
       </div>
     </div>
