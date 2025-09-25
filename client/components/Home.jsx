@@ -1,5 +1,6 @@
 import React from 'react';
 import Carousel from "./Carousel";
+import TrendingEvents from "./TrendingEvents";
 
 const Home = () => {
   return (
@@ -11,6 +12,7 @@ const Home = () => {
         loop={true}
         round={false}
       />
+      <TrendingEvents />
     </div>
   );
 };
