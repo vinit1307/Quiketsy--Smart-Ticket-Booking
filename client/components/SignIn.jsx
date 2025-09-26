@@ -1,20 +1,51 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const SignIn = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("http://localhost:9192/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("email", data.email);
+        alert("Login successful!");
+        navigate("/dashboard"); // Redirect after login
+      } else {
+        alert(data || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-9">
         <h2 className="text-2xl font-bold text-blue-700 text-center mb-10">
           Sign In
         </h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Email */}
           <div className="mb-7">
             <label className="block text-black mb-2 font-bold">Email:</label>
             <input
               type="email"
               placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -25,6 +56,8 @@ const SignIn = () => {
             <input
               type="password"
               placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -36,11 +69,8 @@ const SignIn = () => {
           >
             Sign In
           </button>
-
-          {/* <div className="flex justify-center items-center font-bold">
-            Don't have an account? Sign Up
-          </div> */}
         </form>
+
         <p className="text-center mt-4">
           Don't have an account?{" "}
           <Link
@@ -50,7 +80,7 @@ const SignIn = () => {
             Sign Up
           </Link>
         </p>
-        {/* Back to Home */}
+
         <p className="text-center mt-2">
           <Link to="/" className="text-gray-600 hover:underline">
             ⬅ Back to Home
