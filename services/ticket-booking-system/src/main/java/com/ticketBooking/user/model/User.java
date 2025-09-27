@@ -13,12 +13,15 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "full_name", nullable = false)
     private String name;
 
     @Column(nullable = false,unique=true)
     private String email;
 
-    private String phoneNumber;
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
 
     private LocalDate dob;
 
@@ -28,7 +31,7 @@ public class User {
     public User(String name, String email, String phoneNumber, LocalDate dob, String password) {
         this.name = name;
         this.email = email;
-        this.phoneNumber = phoneNumber;
+        this.phone = phoneNumber;
         this.dob = dob;
         this.password = password;
     }
@@ -43,12 +46,14 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public String getPhoneNumber() { return phone; }
+    public void setPhoneNumber(String phoneNumber) { this.phone = phoneNumber; }
 
     public LocalDate getDob() { return dob; }
     public void setDob(LocalDate dob) { this.dob = dob; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    User(){}
 }

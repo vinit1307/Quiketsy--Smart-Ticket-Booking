@@ -1,15 +1,13 @@
 package com.ticketBooking.user.controller;
 
 import com.ticketBooking.user.model.User;
+import com.ticketBooking.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.ticketBooking.user.repository.UserRepository;
-import com.ticketBooking.security.JwtUtil;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -19,40 +17,38 @@ public class AuthController {
     private UserRepository userRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder; // Make sure you have a bean for this
 
-    @Autowired
-    private JwtUtil jwtUtil;
-
+    // ---------- REGISTER ----------
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody Map<String,String> body){
-        if(UserRepository.findByEmail(body.get("email")).isPresent()){
-        return ResponseEntity.badRequest().body("Email already exists!");
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
-    
-    User user=new User(body.get("name"),
-                body.get("email"),
-                body.get("phoneNumber"),
-                LocalDate.parse(body.get("dob")),
-                passwordEncoder.encode(body.get("password"))
-                );
+
+        // Encrypt password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+
         return ResponseEntity.ok("User registered successfully!");
-}
+    }
 
+    // ---------- LOGIN ----------
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
- @PostMapping("/login")
-    public ResponseEntity<?> loginUser(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String password = body.get("password");
-
-        User user = UserRepository.findByEmail(email).orElse(null);
-
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
-            return ResponseEntity.status(401).body("Invalid credentials");
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(401).body("Error: User not found");
         }
 
-        String token = jwtUtil.generateToken(email);
-        return ResponseEntity.ok(Map.of("token", token, "email", email));
+        User user = userOptional.get();
+
+        // Match raw password with encrypted one
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).body("Error: Invalid credentials");
+        }
+
+        return ResponseEntity.ok("Login successful!");
     }
 }
