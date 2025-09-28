@@ -60,10 +60,8 @@ const TrendingEvents = () => {
       {/* Horizontal Scroll Cards */}
       <div className="flex space-x-6 overflow-x-auto pb-3 scrollbar-hide">
         {events.map((event) => (
-          <div
-            key={event.id}
-            className="min-w-[250px] bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
-          >
+          <Link key={event.id} to={`/event/${event.id}`}>
+            <div className="min-w-[250px] bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition">
             <div className="relative">
               <img
                 src={event.image}
@@ -82,6 +80,7 @@ const TrendingEvents = () => {
               <p className="text-sm text-gray-600">{event.venue}</p>
             </div>
           </div>
+          </Link>
         ))}
       </div>
     </div>

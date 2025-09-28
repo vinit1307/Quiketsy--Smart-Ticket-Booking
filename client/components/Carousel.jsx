@@ -190,7 +190,7 @@ export default function Carousel({
                 <h3 className="text-white font-bold text-lg">{item.title}</h3>
                 <p className="text-gray-200 text-sm">{item.description}</p>
               </div> */}
-              <div className="absolute bottom-4 left-4 text-white">
+              <div className="absolute bottom-4 left-4 text-white [text-shadow:0_0_10px_#fff]">
                 <h3 className="text-xl font-bold drop-shadow-md">
                   {item.title}
                 </h3>

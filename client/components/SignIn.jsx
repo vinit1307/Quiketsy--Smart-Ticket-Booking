@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,6 +20,7 @@ const SignIn = () => {
 
       const data = await res.json();
 
+      {/*//Previous login functionalities
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("email", data.email);
@@ -29,6 +32,45 @@ const SignIn = () => {
     } catch (error) {
       console.error(error);
     }
+  */}
+
+    // Better and alternative Approach to use AuthContext saara authentication authcontext se hi hoga, global management
+    // Agar dikkat aayegi to we can move back to above previous code
+   if (res.ok) {
+        // Get full name from response or fetch it
+        let fullName = data.name || data.fullName;
+        
+        // If backend doesn't return name, try to fetch user details
+        if (!fullName && data.token) {
+          try {
+            const userRes = await fetch("http://localhost:9192/api/user/profile", {
+              headers: { 
+                "Authorization": `Bearer ${data.token}`,
+                "Content-Type": "application/json"
+              }
+            });
+            if (userRes.ok) {
+              const userData = await userRes.json();
+              fullName = userData.name || userData.fullName;
+            }
+          } catch (error) {
+            console.error("Error fetching user details:", error);
+          }
+        }
+        
+        // Use the login function from context (handles all localStorage)
+        login(data.token, data.email, fullName);
+        alert("Login successful!");
+        navigate("/");
+      } else {
+        alert(data.message || "Invalid credentials");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred during login");
+    }
+
+    
   };
 
   return (
@@ -47,6 +89,7 @@ const SignIn = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
             />
           </div>
 
@@ -59,6 +102,7 @@ const SignIn = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              required
             />
           </div>
 

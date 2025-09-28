@@ -6,10 +6,13 @@ import SignIn from "../components/SignIn";
 import SignUp from "../components/SignUp";
 import Home from "../components/Home"; // Import the new Home component
 import TrendingEventsPage from "../components/TrendingEventsPage";
+import EventDetailsPage from "../components/EventDetailsPage";
+import { AuthProvider } from "../contexts/AuthContext";
 
 function App() {
   return (
     <>
+    <AuthProvider>
       <Router>
         <Navbar />
         <Routes>
@@ -17,8 +20,10 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/events" element={<TrendingEventsPage />} />
+          <Route path="/event/:id" element={<EventDetailsPage />} /> {/* new route */}
         </Routes>
       </Router>
+    </AuthProvider>
     </>
   );
 }

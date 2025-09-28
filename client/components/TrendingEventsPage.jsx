@@ -1,6 +1,7 @@
 // src/components/TrendingEventsPage.jsx
 import React from "react";
 import { TrendingUp } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const allEvents = [
   {
@@ -61,10 +62,8 @@ const TrendingEventsPage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {allEvents.map((event) => (
-          <div
-            key={event.id}
-            className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition"
-          >
+          <Link key={event.id} to={`/event/${event.id}`}>
+            <div className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer">
             <div className="relative">
               <img
                 src={event.image}
@@ -80,6 +79,7 @@ const TrendingEventsPage = () => {
               <p className="text-sm text-gray-600">{event.venue}</p>
             </div>
           </div>
+          </Link>
         ))}
       </div>
     </div>
