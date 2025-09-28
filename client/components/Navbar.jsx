@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Menu, ChevronDown, MapPin, Search, X, CircleUser, History } from "lucide-react";
 import { TbCategory } from "react-icons/tb";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 const Navbar = () => {
   const [selectedCity, setSelectedCity] = useState("Select City");
@@ -10,7 +12,12 @@ const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Simulating logged in user (replace with real auth later)
-  const [user, setUser] = useState(null); // null = guest | {name: "Vivek"}
+  //const [user, setUser] = useState(null); // null = guest | {name: "Vivek"}
+
+  //Better approach use kar rahe he local state ki jagah auth pe jaake
+  //alternative to above, agar dikkat aaye to vaapas vo use kar lenge
+  const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth(); // Use auth context instead of local state
 
   const cities = [
     "Mumbai",
@@ -110,12 +117,30 @@ const Navbar = () => {
           </div>
 
           {/* Sign In Button */}
-          <Link
+          {/* <Link
             to="/signin"
             className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition"
           >
             Sign In
-          </Link>
+          </Link> */}
+          {/*Alternative to upper which change sign in and logout when logged in and logged out*/}
+          {/* Sign In Link / Logout Button - Conditional Rendering */}
+          {isAuthenticated ? (
+            <button
+              onClick={handleLogout}
+              className="px-4 py-1.5 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition"
+            >
+              Logout
+            </button>
+          ) : (
+            <Link
+              to="/signin"
+              className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition"
+            >
+              Sign In
+            </Link>
+          )}
+
 
           {/* Hamburger Button */}
           <button
@@ -150,7 +175,7 @@ const Navbar = () => {
         </button>
 
         {/* User Greeting */}
-        <div className="ml-1">
+        {/* <div className="ml-1">
           <h4 className="text-3xl font-semibold mb-1.5">Hey 👋</h4>
           {user ? (
             <h2 className="text-2xl font-semibold">{user.name}</h2>
@@ -162,7 +187,23 @@ const Navbar = () => {
               </h1>
             </div>
           )}
+        </div> */}
+
+        {/*{/*Alternative to upper which change Guest and Full Name when logged in and logged out*/}
+        <div className="ml-1">
+          <h4 className="text-3xl font-semibold mb-1.5">Hey 👋</h4>
+          {isAuthenticated && user ? (
+            <h2 className="text-2xl font-semibold">{user.name}</h2>
+          ) : (
+            <div className="space-x-2">
+              <h2 className="text-2xl font-semibold">Guest</h2>
+              <h1 className="text-sm font-semibold text-gray-400">
+                (Sign In or Sign Up)
+              </h1>
+            </div>
+          )}
         </div>
+
         <hr className="my-5 border-black" />
 
         {/* Sidebar Options */}
@@ -176,6 +217,20 @@ const Navbar = () => {
           <Link to="/history" className="flex items-center space-x-2 hover:text-blue-600">
             <History className="mr-2 h-5 w-5" />History
           </Link>
+          {/* Add Logout option in sidebar if authenticated */}
+          {isAuthenticated && (
+            <button 
+              onClick={() => {
+                logout();
+                setIsSidebarOpen(false);
+                navigate('/');
+              }}
+              className="flex items-center space-x-2 hover:text-red-600 text-left"
+            >
+              <X className="mr-2 h-5 w-5" />
+              Logout
+            </button>
+          )}
         </nav>
       </div>
     </>
