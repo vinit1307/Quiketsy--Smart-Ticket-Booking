@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -59,15 +62,15 @@ const SignIn = () => {
         }
         
         // Use the login function from context (handles all localStorage)
-        login(data.token, data.email, fullName);
-        alert("Login successful!");
+        login(data.token, data.email, data.fullName);
+        toast.success("🎉 Login Successful!", { position: "top-right" });
         navigate("/");
       } else {
-        alert(data.message || "Invalid credentials");
+        toast.error(data.message || "❌ Invalid credentials", { position: "top-right" });
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred during login");
+      toast.error("⚠️ An error occurred during login", { position: "top-right" });
     }
 
     

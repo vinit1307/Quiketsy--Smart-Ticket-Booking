@@ -1,5 +1,6 @@
 package com.ticketBooking.user.controller;
 
+import com.ticketBooking.security.JwtUtil;
 import com.ticketBooking.user.model.User;
 import com.ticketBooking.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @Autowired
     private UserRepository userRepository;
@@ -49,6 +54,12 @@ public class AuthController {
             return ResponseEntity.status(401).body("Error: Invalid credentials");
         }
 
-        return ResponseEntity.ok("Login successful!");
+        String jwtToken = jwtUtil.generateToken(user.getEmail());
+
+        return ResponseEntity.ok(Map.of(
+            "token", jwtToken,
+            "email", user.getEmail(),
+            "fullName", user.getName()
+    ));
     }
 }

@@ -8,6 +8,9 @@ import Home from "../components/Home"; // Import the new Home component
 import TrendingEventsPage from "../components/TrendingEventsPage";
 import EventDetailsPage from "../components/EventDetailsPage";
 import { AuthProvider } from "../contexts/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 function App() {
   return (
@@ -24,6 +27,7 @@ function App() {
         </Routes>
       </Router>
     </AuthProvider>
+    <ToastContainer />
     </>
   );
 }

@@ -10,11 +10,16 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String secret = "mysecretkeymysecretkeymysecretkey"; // must be at least 32 chars for HS512
+    // Either generate a random secure key (changes every restart)
+    // private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
+    // Or use a fixed long secret string (recommended for production)
+    private static final String SECRET = "mysuperlongsecuresecretmysuperlongsecuresecretmysuperlongsecuresecret123";
+    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+
     private final long expirationMs = 86400000; // 1 day
 
-    private final Key key = Keys.hmacShaKeyFor(secret.getBytes());
-
+    // Generate JWT token
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
@@ -24,22 +29,23 @@ public class JwtUtil {
                 .compact();
     }
 
+    // Extract email from token
     public String extractEmail(String token) {
-        JwtParser parser = Jwts.parserBuilder()
+        return Jwts.parserBuilder()
                 .setSigningKey(key)
-                .build();
-
-        return parser.parseClaimsJws(token)
+                .build()
+                .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
     }
 
+    // Validate token
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token);
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
             return true;
         } catch (JwtException e) {
             return false;

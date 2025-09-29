@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -35,13 +38,14 @@ const SignUp = () => {
       const data = await res.text();
 
       if (res.ok) {
-        alert("Registration successful!");
+        toast.success("🎉 Registration Successful! ", { position: "top-right" });
         navigate("/signin");
       } else {
-        alert(data || "Registration failed");
+        toast.error(data.message || "❌ Registration failed", { position: "top-right" });
       }
     } catch (error) {
       console.error(error);
+      toast.error("⚠️ Something went wrong", { position: "top-right" });
     }
   };
 

@@ -4,6 +4,8 @@ import { TbCategory } from "react-icons/tb";
 // import { Link } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Navbar = () => {
   const [selectedCity, setSelectedCity] = useState("Select City");
@@ -73,9 +75,8 @@ const Navbar = () => {
             </span>
             <ChevronDown
               size={18}
-              className={`ml-1 text-gray-600 transition-transform duration-200 ${
-                isOpen ? "rotate-180" : ""
-              }`}
+              className={`ml-1 text-gray-600 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                }`}
               onClick={() => setIsOpen(!isOpen)}
             />
 
@@ -127,7 +128,11 @@ const Navbar = () => {
           {/* Sign In Link / Logout Button - Conditional Rendering */}
           {isAuthenticated ? (
             <button
-              onClick={handleLogout}
+              onClick={() => {
+                logout();
+                toast.error("🚪 Logged out successfully!", { position: "top-right" });
+                navigate("/"); // redirect to home after logout
+              }}
               className="px-4 py-1.5 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition"
             >
               Logout
@@ -141,7 +146,6 @@ const Navbar = () => {
             </Link>
           )}
 
-
           {/* Hamburger Button */}
           <button
             className="p-0.5 rounded-md hover:bg-gray-200"
@@ -154,17 +158,15 @@ const Navbar = () => {
 
       {/* Overlay - smooth fade-in/out */}
       <div
-        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
-          isSidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${isSidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
         onClick={() => setIsSidebarOpen(false)}
       ></div>
 
       {/* Sidebar Content - smooth slide-in/out */}
       <div
-        className={`fixed top-0 right-0 w-72 h-full bg-white shadow-lg z-50 p-6 flex flex-col rounded-s-[3vw] transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        } ${isSidebarOpen ? "visible" : "invisible"}`}
+        className={`fixed top-0 right-0 w-72 h-full bg-white shadow-lg z-50 p-6 flex flex-col rounded-s-[3vw] transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
+          } ${isSidebarOpen ? "visible" : "invisible"}`}
       >
         {/* Close Button */}
         <button
@@ -209,20 +211,21 @@ const Navbar = () => {
         {/* Sidebar Options */}
         <nav className="flex flex-col space-y-4 ml-4">
           <Link to="/categories" className="flex items-center space-x-2 hover:text-blue-600">
-            <TbCategory className="mr-2 h-5 w-5"/> Categories
+            <TbCategory className="mr-2 h-5 w-5" /> Categories
           </Link>
           <Link to="/account" className="flex items-center space-x-2 hover:text-blue-600">
-            <CircleUser className="mr-2 h-5 w-5"/> Account
+            <CircleUser className="mr-2 h-5 w-5" /> Account
           </Link>
           <Link to="/history" className="flex items-center space-x-2 hover:text-blue-600">
             <History className="mr-2 h-5 w-5" />History
           </Link>
           {/* Add Logout option in sidebar if authenticated */}
           {isAuthenticated && (
-            <button 
+            <button
               onClick={() => {
                 logout();
                 setIsSidebarOpen(false);
+                toast.error("🚪 Logged out successfully!", { position: "top-right" });
                 navigate('/');
               }}
               className="flex items-center space-x-2 hover:text-red-600 text-left"
