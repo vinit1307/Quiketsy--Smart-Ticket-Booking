@@ -10,6 +10,7 @@ import EventDetailsPage from "../components/EventDetailsPage";
 import { AuthProvider } from "../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import History from "../components/History";
 
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/events" element={<TrendingEventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} /> {/* new route */}
+          <Route path="/history" element={<History />} />
         </Routes>
       </Router>
     </AuthProvider>
