@@ -12,6 +12,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+  const [accountType, setAccountType] = useState("User"); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +33,7 @@ const SignUp = () => {
           phoneNumber,
           dob,
           password,
+          accountType,
         }),
       });
 
@@ -127,6 +129,36 @@ const SignUp = () => {
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
+
+          <div >
+            <label className="block text-gray-700 font-bold mb-2">Account Type:</label>
+            <div className="flex space-x-8">
+              <label className="flex items-center space-x-2 text-gray-600">
+                <input 
+                  type="radio"
+                  name="accountType"
+                  value="User"
+                  checked={accountType === "User"}
+                  onChange={() => setAccountType("User")}
+                  className="form-radio text-blue-700 h-5 w-5"
+                />
+                <span>User</span>
+              </label>
+
+              <label className="flex items-center space-x-2 text-gray-600">
+                <input
+                  type="radio"
+                  name="accountType"
+                  value="Event Organizer"
+                  checked={accountType === "Event Organizer"}
+                  onChange={() => setAccountType("Event Organizer")}
+                  className="form-radio text-blue-700 h-5 w-5"
+                />
+                <span>Event Organizer</span>
+              </label>
+            </div>
+          </div>
+
 
           {/* Submit Button */}
           <button

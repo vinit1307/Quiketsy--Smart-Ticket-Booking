@@ -11,6 +11,7 @@ import { AuthProvider } from "../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import History from "../components/History";
+import Account from "../components/Account";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
           <Route path="/events" element={<TrendingEventsPage />} />
           <Route path="/event/:id" element={<EventDetailsPage />} /> {/* new route */}
           <Route path="/history" element={<History />} />
+          <Route path="/account" element={<Account />} />
         </Routes>
       </Router>
     </AuthProvider>
