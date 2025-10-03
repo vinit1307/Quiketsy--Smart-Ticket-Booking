@@ -1,73 +1,69 @@
-// src/components/EventDetailsPage.jsx
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { CalendarDays } from 'lucide-react';
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { RiParentLine } from "react-icons/ri";
 import { GiDuration } from "react-icons/gi";
 import { MdTimelapse } from "react-icons/md";
 import { IoTicket } from "react-icons/io5";
-
-// Dummy event data (reuse your existing array)
-const allEvents = [
-  {
-    id: 1,
-    name: "Coldplay Concert",
-    venue: "Mumbai Stadium",
-    date: "25 Sept 2025",
-    price: "5500",
-    duration:"2 Hours",
-    time: "3:15 PM Onwards",
-    image: "https://c.ndtvimg.com/2025-01/6eb4u4ko_coldplay_625x300_18_January_25.jpeg?downsize=773:435",
-    about: "Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music.Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music.",
-  },
-  {
-    id: 2,
-    name: "Stand-up Comedy Night",
-    venue: "Delhi Club",
-    date: "30 Sept 2025",
-    price: "1500",
-    duration:"2 Hours",
-    time: "3:15 PM Onwards",
-    agelimit: "12+",
-    image: "https://igimage.indiaglitz.com/hindi/news/Adobe_Express_20230101_1213350_1-594.png",
-    about: "Laugh out loud with India's top comedians in a fun-packed night.",
-  },
-  {
-      id: 3,
-      name: "Art Exhibition",
-      venue: "Bangalore Art Gallery",
-      date: "5 Oct 2025",
-      price: "2500",
-      duration:"2 Hours",
-      time: "3:15 PM Onwards",
-      agelimit: "12+",
-      image:
-        "https://images.stockcake.com/public/2/3/9/2397d77f-af92-4b51-8bb9-d60d138cf4d0_large/vibrant-art-exhibition-stockcake.jpg",
-      about: "Laugh out loud with India's top comedians in a fun-packed night.",
-    },
-    {
-      id: 4,
-      name: "Food Festival",
-      venue: "Hyderabad Grounds",
-      date: "12 Oct 2025",
-      price: "2500",
-      duration:"2 Hours",
-      agelimit: "12+",
-     time: "3:15 PM Onwards",
-      image:
-        "https://www.shutterstock.com/image-photo/chiang-mai-thailand-july-222023-600nw-2385705239.jpg",
-      about: "Laugh out loud with India's top comedians in a fun-packed night.",
-    },
-  // add others...
-];
+import EventsService from "../services/eventsService";
+import LoadingSpinner from "./LoadingSpinner";
 
 const EventDetailsPage = () => {
   const { id } = useParams();
-  const event = allEvents.find((e) => e.id === parseInt(id));
+  const navigate = useNavigate();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        setLoading(true);
+        const eventData = await EventsService.getEventById(id);
+        
+        if (eventData) {
+          // Add additional details that might not be in the service
+          const enrichedEvent = {
+            ...eventData,
+            price: eventData.price || "2500",
+            duration: eventData.duration || "2 Hours",
+            time: eventData.time || "7:00 PM Onwards",
+            agelimit: eventData.agelimit || "All Ages",
+            about: eventData.about || `Join us for ${eventData.name}! This will be an amazing experience at ${eventData.venue}. Don't miss out on this incredible event happening on ${eventData.date}.`
+          };
+          setEvent(enrichedEvent);
+        } else {
+          // Event not found
+          setEvent(null);
+        }
+      } catch (error) {
+        console.error("Error fetching event:", error);
+        setEvent(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvent();
+  }, [id]);
+
+  if (loading) {
+    return <LoadingSpinner fullPage />;
+  }
 
   if (!event) {
-    return <div className="p-6">Event not found</div>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">Event Not Found</h2>
+        <p className="text-gray-600 mb-6">The event you're looking for doesn't exist or has been removed.</p>
+        <button 
+          onClick={() => navigate('/')}
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+        >
+          Back to Home
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -83,11 +79,14 @@ const EventDetailsPage = () => {
             src={event.image}
             alt={event.name}
             className="rounded-xl shadow-md w-full h-96 object-cover mb-9"
+            onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/800x400?text=Event+Image';
+            }}
           />
 
           {/* About Section */}
           <h2 className="text-xl font-semibold mb-2">About The Event</h2>
-          <p className="text-gray-700">{event.about}</p>
+          <p className="text-gray-700 whitespace-pre-line">{event.about}</p>
         </div>
 
         {/* Info Card (Sticky) */}
@@ -95,7 +94,7 @@ const EventDetailsPage = () => {
           <div className="sticky top-10 bg-white shadow-lg rounded-xl p-5 border space-y-3">
             <div className="flex items-center space-x-3">
               <CalendarDays className="text-blue-600 w-5 h-5" />
-              <p className="font-medium text-black"> Date: {event.date}</p>
+              <p className="font-medium text-black">Date: {event.date}</p>
             </div>
 
             <div className="flex items-center space-x-3">
@@ -123,11 +122,6 @@ const EventDetailsPage = () => {
               <p className="font-medium text-black">Age Limit: {event.agelimit}</p>
             </div>
 
-            
-            
-            {/* <p className="flex items-center font-medium text-black mb-2"><HiOutlineLocationMarker /> {event.venue}</p>
-            <p className="font-medium text-black mb-2">⏱ 2 Hours</p>
-            <p className="font-medium text-black mb-4">Age Limit: 5+</p> */}
             <button className="w-full mt-3 bg-blue-700 text-white font-semibold py-2 rounded-lg hover:bg-blue-900">
               Book Now
             </button>

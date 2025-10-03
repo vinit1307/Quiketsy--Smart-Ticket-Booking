@@ -9,7 +9,7 @@ const EventsSection = ({ categoryKey, title, icon: IconComponent, events }) => {
       {/* Header row */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
-          <IconComponent className="text-blue-600 w-5 h-5 md:w-6 md:h-6" />
+          <IconComponent className="text-blue-600 mt-0.5 w-5 h-5 md:w-6 md:h-6" />
           <h2 className="text-xl md:text-2xl font-bold text-gray-800">
             {title}
           </h2>
