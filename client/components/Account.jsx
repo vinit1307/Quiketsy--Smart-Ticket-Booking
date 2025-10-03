@@ -64,7 +64,7 @@ const Account = () => {
         setUserDetails({
           fullName: data.name || user?.name || "User",
           email: data.email || user?.email || "",
-          phoneNumber: data.phone || "",
+          phoneNumber: data.phoneNumber || "",
           dateOfBirth: data.dob || "",
           accountType: data.role || "Standard",
         });
