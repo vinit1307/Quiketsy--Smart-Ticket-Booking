@@ -44,7 +44,7 @@ public class AuthController {
         User user = new User();
     user.setName(request.getName());
     user.setEmail(request.getEmail());
-    user.setPhoneNumber(request.getPhone());
+    user.setPhone(request.getPhone());
     user.setDob(request.getDob()); // if dob is sent as string
     user.setPassword(passwordEncoder.encode(request.getPassword())); // ✅ encrypt once
 

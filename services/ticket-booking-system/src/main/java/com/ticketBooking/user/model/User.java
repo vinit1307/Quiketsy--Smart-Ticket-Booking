@@ -4,10 +4,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 
 @Entity
 @Table(name="users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -36,41 +42,41 @@ public class User {
     private LocalDateTime dateJoined = LocalDateTime.now();
 
     
-    public User(String name, String email, String phoneNumber, LocalDate dob, String password, String role) {
-        this.name = name;
-        this.email = email;
-        this.phone = phoneNumber;
-        this.dob = dob;
-        this.password = password;
-        this.role = role != null ? role.toUpperCase() : "USER";
-        this.dateJoined = LocalDateTime.now();
-    }
+    // public User(String name, String email, String phoneNumber, LocalDate dob, String password, String role) {
+    //     this.name = name;
+    //     this.email = email;
+    //     this.phone = phoneNumber;
+    //     this.dob = dob;
+    //     this.password = password;
+    //     this.role = role != null ? role.toUpperCase() : "USER";
+    //     this.dateJoined = LocalDateTime.now();
+    // }
 
-    // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    // // Getters and setters
+    // public Long getId() { return id; }
+    // public void setId(Long id) { this.id = id; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    // public String getName() { return name; }
+    // public void setName(String name) { this.name = name; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    // public String getEmail() { return email; }
+    // public void setEmail(String email) { this.email = email; }
 
-    public String getPhoneNumber() { return phone; }
-    public void setPhoneNumber(String phoneNumber) { this.phone = phoneNumber; }
+    // public String getPhoneNumber() { return phone; }
+    // public void setPhoneNumber(String phoneNumber) { this.phone = phoneNumber; }
 
-    public LocalDate getDob() { return dob; }
-    public void setDob(LocalDate dob) { this.dob = dob; }
+    // public LocalDate getDob() { return dob; }
+    // public void setDob(LocalDate dob) { this.dob = dob; }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    // public String getPassword() { return password; }
+    // public void setPassword(String password) { this.password = password; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
+    // public String getRole() { return role; }
+    // public void setRole(String role) { this.role = role; }
 
-    public LocalDateTime getDateJoined() { return dateJoined; }
-    public void setDateJoined(LocalDateTime dateJoined) { this.dateJoined = dateJoined; }
+    // public LocalDateTime getDateJoined() { return dateJoined; }
+    // public void setDateJoined(LocalDateTime dateJoined) { this.dateJoined = dateJoined; }
 
 
-    public User(){}
+    // public User(){}
 }
