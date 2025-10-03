@@ -20,7 +20,7 @@ import { LuDrama } from "react-icons/lu";
 import { FaFaceLaughSquint } from "react-icons/fa6";
 
 const Navbar = () => {
-  const [selectedCity, setSelectedCity] = useState("Select City");
+  const [selectedCity, setSelectedCity] = useState("All Cities");
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -43,7 +43,9 @@ const Navbar = () => {
   ];
 
   const cities = [
+    "All Cities",
     "Mumbai",
+    "Indore",
     "Delhi",
     "Bengaluru",
     "Hyderabad",
@@ -63,6 +65,7 @@ const Navbar = () => {
     <>
       <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md md:px-11">
         {/* Left side - Logo + Text */}
+        <Link to="/">
         <div className="flex items-center space-x-3">
           <img
             src="../Images/QuiketsyLogo.png"
@@ -73,6 +76,7 @@ const Navbar = () => {
           />
           <div className="text-2xl font-bold text-blue-700">Quiketsy</div>
         </div>
+        </Link>
 
         {/* Right side - Search + City Selector + Links + Buttons */}
         <div className="flex items-center space-x-4">
