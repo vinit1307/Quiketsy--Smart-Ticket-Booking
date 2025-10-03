@@ -1,6 +1,7 @@
 package com.ticketBooking.user.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
 
@@ -19,7 +20,7 @@ public class User {
     @Column(nullable = false,unique=true)
     private String email;
 
-    @Column(name = "phone", nullable = false)
+    @Column(name = "phone",nullable = false)
     private String phone;
 
 
@@ -28,12 +29,21 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    public User(String name, String email, String phoneNumber, LocalDate dob, String password) {
+    @Column(nullable = false)
+    private String role;   // USER or ORGANIZER
+
+    @Column(name = "date_joined", nullable = false)
+    private LocalDateTime dateJoined = LocalDateTime.now();
+
+    
+    public User(String name, String email, String phoneNumber, LocalDate dob, String password, String role) {
         this.name = name;
         this.email = email;
         this.phone = phoneNumber;
         this.dob = dob;
         this.password = password;
+        this.role = role != null ? role.toUpperCase() : "USER";
+        this.dateJoined = LocalDateTime.now();
     }
 
     // Getters and setters
@@ -55,5 +65,12 @@ public class User {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
-    User(){}
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+
+    public LocalDateTime getDateJoined() { return dateJoined; }
+    public void setDateJoined(LocalDateTime dateJoined) { this.dateJoined = dateJoined; }
+
+
+    public User(){}
 }

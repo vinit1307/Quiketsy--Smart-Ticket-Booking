@@ -96,9 +96,8 @@ const Navbar = () => {
             </span>
             <ChevronDown
               size={18}
-              className={`ml-1 text-gray-600 transition-transform duration-200 ${
-                isOpen ? "rotate-180" : ""
-              }`}
+              className={`ml-1 text-gray-600 transition-transform duration-200 ${isOpen ? "rotate-180" : ""
+                }`}
               onClick={() => setIsOpen(!isOpen)}
             />
 
@@ -182,17 +181,15 @@ const Navbar = () => {
 
       {/* Overlay - smooth fade-in/out */}
       <div
-        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
-          isSidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${isSidebarOpen ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
         onClick={() => setIsSidebarOpen(false)}
       ></div>
 
       {/* Sidebar Content - smooth slide-in/out */}
       <div
-        className={`fixed top-0 right-0 w-72 h-full bg-white shadow-lg z-50 p-6 flex flex-col rounded-s-[3vw] transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "translate-x-full"
-        } ${isSidebarOpen ? "visible" : "invisible"}`}
+        className={`fixed top-0 right-0 w-72 h-full bg-white shadow-lg z-50 p-6 flex flex-col rounded-s-[3vw] transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "translate-x-full"
+          } ${isSidebarOpen ? "visible" : "invisible"}`}
       >
         {/* Close Button */}
         <button
@@ -244,21 +241,21 @@ const Navbar = () => {
           </Link> */}
 
           <div>
-  <button
-    onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-    className="flex items-center justify-between w-full pr-2 hover:text-blue-600"
-  >
-    <span className="flex items-center">
-      <TbCategory className="mr-2 h-5 w-5" /> Categories
-    </span>
-    <ChevronDown
-      size={18}
-      className={`ml-2 text-gray-600 transition-transform ${isCategoriesOpen ? "rotate-180" : ""}`}
-    />
-  </button>
+            <button
+              onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
+              className="flex items-center justify-between w-full pr-2 hover:text-blue-600"
+            >
+              <span className="flex items-center">
+                <TbCategory className="mr-2 h-5 w-5" /> Categories
+              </span>
+              <ChevronDown
+                size={18}
+                className={`ml-2 text-gray-600 transition-transform ${isCategoriesOpen ? "rotate-180" : ""}`}
+              />
+            </button>
 
-  {/* Dropdown items */}
-  {isCategoriesOpen && (
+            {/* Dropdown items */}
+            {isCategoriesOpen && (
               <ul className="ml-7 mt-2 space-y-2 text-gray-700">
                 {categories.map((category) => (
                   <li key={category.name}>
@@ -274,24 +271,30 @@ const Navbar = () => {
                 ))}
               </ul>
             )}
-</div>
+          </div>
 
           {isAuthenticated && (
             <>
-          <Link
-            to="/account"
-            className="flex items-center space-x-2 hover:text-blue-600"
-          >
-            <CircleUser className="mr-2 h-5 w-5" /> Account
-          </Link>
-          <Link
-            to="/history"
-            className="flex items-center space-x-2 hover:text-blue-600"
-          >
-            <History className="mr-2 h-5 w-5" />
-            Booking History
-          </Link>
-          </>
+              <Link
+                to="/account"
+                className="flex items-center space-x-2 hover:text-blue-600"
+              >
+                <CircleUser className="mr-2 h-5 w-5" /> Account
+              </Link>
+              {user?.role === "USER" && (
+                <Link to="/history" className="flex items-center space-x-2 hover:text-blue-600">
+                  <History className="mr-2 h-5 w-5" />
+                  Booking History
+                </Link>
+              )}
+
+              {user?.role === "ORGANIZER" && (
+                <Link to="/make-event" className="flex items-center space-x-2 hover:text-blue-600">
+                  <History className="mr-2 h-5 w-5" />
+                  Make an Event
+                </Link>
+              )}
+            </>
           )}
           {/* Add Logout option in sidebar if authenticated */}
           {/* {isAuthenticated && (
@@ -311,7 +314,7 @@ const Navbar = () => {
         </nav>
         {isAuthenticated && (
           <div className="mt-auto border-t pt-4">
-            
+
             <button
               onClick={() => {
                 logout();

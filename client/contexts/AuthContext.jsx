@@ -19,24 +19,36 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('email');
     const fullName = localStorage.getItem('fullName');
-    
+    const role = localStorage.getItem('role'); // ✅ added role
+
     if (token && email) {
-      setUser({ email, name: fullName || email.split('@')[0] });
+      setUser({
+        email,
+        name: fullName || email.split('@')[0],
+        role: role || "USER" // default to USER if not set
+      });
     }
     setLoading(false);
   }, []);
 
-  const login = (token, email, fullName) => {
+  const login = (token, email, fullName, role) => {
     localStorage.setItem('token', token);
     localStorage.setItem('email', email);
     localStorage.setItem('fullName', fullName || email.split('@')[0]);
-    setUser({ email, name: fullName || email.split('@')[0] });
+    localStorage.setItem('role', role); // ✅ store role
+
+    setUser({
+      email,
+      name: fullName || email.split('@')[0],
+      role
+    });
   };
 
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('email');
     localStorage.removeItem('fullName');
+    localStorage.removeItem('role'); // ✅ remove role
     setUser(null);
   };
 

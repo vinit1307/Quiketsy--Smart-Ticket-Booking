@@ -12,7 +12,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
-  const [accountType, setAccountType] = useState("User"); 
+  const [accountType, setAccountType] = useState("User");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,12 +28,12 @@ const SignUp = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name,
-          email,
-          phoneNumber,
-          dob,
-          password,
-          accountType,
+          name: name,
+          email: email,
+          phone: phoneNumber,
+          dob: dob,
+          password: password,
+          role: accountType,
         }),
       });
 
@@ -90,7 +90,15 @@ const SignUp = () => {
               type="tel"
               placeholder="Enter your Phone Number"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                // Only digits
+                if (/^\d*$/.test(value) && value.length <= 10) {
+                  setPhoneNumber(value);
+                }
+              }}
+              pattern="[6-9][0-9]{9}"
+              title="Phone number must be 10 digits and start with 6, 7, 8, or 9"
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -102,6 +110,9 @@ const SignUp = () => {
               type="date"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
+              max={new Date(new Date().setFullYear(new Date().getFullYear() - 10))
+                .toISOString()
+                .split("T")[0]}  // today's date and User should be 10+
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
@@ -134,7 +145,7 @@ const SignUp = () => {
             <label className="block text-gray-700 font-bold mb-2">Account Type:</label>
             <div className="flex space-x-8">
               <label className="flex items-center space-x-2 text-gray-600">
-                <input 
+                <input
                   type="radio"
                   name="accountType"
                   value="User"
@@ -149,9 +160,9 @@ const SignUp = () => {
                 <input
                   type="radio"
                   name="accountType"
-                  value="Event Organizer"
-                  checked={accountType === "Event Organizer"}
-                  onChange={() => setAccountType("Event Organizer")}
+                  value="ORGANIZER"
+                  checked={accountType === "ORGANIZER"}
+                  onChange={() => setAccountType("ORGANIZER")}
                   className="form-radio text-blue-700 h-5 w-5"
                 />
                 <span>Event Organizer</span>

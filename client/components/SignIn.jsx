@@ -62,7 +62,7 @@ const SignIn = () => {
         }
         
         // Use the login function from context (handles all localStorage)
-        login(data.token, data.email, data.fullName);
+        login(data.token, data.email, data.fullName, data.role);
         toast.success("🎉 Login Successful!", { position: "top-right" });
         navigate("/");
       } else {
