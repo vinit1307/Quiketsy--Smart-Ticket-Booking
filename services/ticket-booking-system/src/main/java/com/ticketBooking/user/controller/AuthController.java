@@ -1,11 +1,15 @@
 package com.ticketBooking.user.controller;
 
 import com.ticketBooking.security.JwtUtil;
+import com.ticketBooking.user.dto.ChangePasswordRequest;
 import com.ticketBooking.user.dto.LoginRequest;
 import com.ticketBooking.user.dto.LoginResponse;
 import com.ticketBooking.user.dto.RegisterRequest;
+import com.ticketBooking.user.dto.UserDTO;
 import com.ticketBooking.user.model.User;
 import com.ticketBooking.user.repository.UserRepository;
+import com.ticketBooking.user.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +31,9 @@ public class AuthController {
 
     @Autowired
     private PasswordEncoder passwordEncoder; // Make sure you have a bean for this
+
+     @Autowired
+    private UserService userService;
 
     // ---------- REGISTER ----------
     @PostMapping("/register")
@@ -76,5 +83,31 @@ public class AuthController {
         String jwtToken = jwtUtil.generateToken(user.getEmail());
 
         return ResponseEntity.ok(new LoginResponse(jwtToken, user.getName(), user.getRole()));
+    }
+
+    @GetMapping("/user/profile")
+    public ResponseEntity<?> getUserProfile(@RequestHeader("Authorization") String authHeader) {
+        try {
+            String token = authHeader.substring(7); // Remove "Bearer "
+            String email = jwtUtil.extractEmail(token);
+
+            UserDTO userDTO = userService.getUserDetails(email);
+
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Error: Unauthorized");
+        }
+    }
+    @PostMapping("/user/change-password")
+    public ResponseEntity<?> changePassword(@RequestHeader("Authorization") String authHeader,
+                                            @RequestBody ChangePasswordRequest request) {
+        try {
+            String token = authHeader.substring(7);
+            String email = jwtUtil.extractEmail(token);
+
+            return userService.changePassword(email, request);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Error: Unauthorized");
+        }
     }
 }

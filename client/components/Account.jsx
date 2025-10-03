@@ -52,7 +52,7 @@ const Account = () => {
   const fetchUserDetails = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:9192/api/user/profile", {
+      const response = await fetch("http://localhost:9192/api/user/account", {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -64,9 +64,9 @@ const Account = () => {
         setUserDetails({
           fullName: data.name || user?.name || "User",
           email: data.email || user?.email || "",
-          phoneNumber: data.phoneNumber || "",
+          phoneNumber: data.phone || "",
           dateOfBirth: data.dob || "",
-          accountType: data.accountType || "Standard",
+          accountType: data.role || "Standard",
         });
       }
     } catch (error) {
@@ -116,6 +116,7 @@ const Account = () => {
           body: JSON.stringify({
             currentPassword,
             newPassword,
+            confirmPassword,
           }),
         }
       );
