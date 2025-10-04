@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import History from "../components/History";
 import Account from "../components/Account";
+import CreateEvent from "../components/CreateEvent";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/event/:id" element={<EventDetailsPage />} />
             <Route path="/history" element={<History />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/create-event" element={<CreateEvent />} />
           </Routes>
         </Router>
       </AuthProvider>
