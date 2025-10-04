@@ -7,6 +7,10 @@ import {
   X,
   CircleUser,
   History,
+  Calendar,
+  Plus,
+  Eye,
+  Clock,
 } from "lucide-react";
 import { TbCategory } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,6 +22,7 @@ import { GiGuitar } from "react-icons/gi";
 import { MdSportsGymnastics } from "react-icons/md";
 import { LuDrama } from "react-icons/lu";
 import { FaFaceLaughSquint } from "react-icons/fa6";
+import { MdEventNote } from "react-icons/md";
 
 const Navbar = () => {
   const [selectedCity, setSelectedCity] = useState("All Cities");
@@ -34,6 +39,7 @@ const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth(); // Use auth context instead of local state
 
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [isManageEventsOpen, setIsManageEventsOpen] = useState(false);
 
   const categories = [
     { name: "Music", icon: <GiGuitar className="h-4 w-4" /> },
@@ -56,6 +62,7 @@ const Navbar = () => {
     "Jaipur",
     "Lucknow",
   ];
+
 
   const filteredCities = cities.filter((city) =>
     city.toLowerCase().includes(search.toLowerCase())
@@ -285,6 +292,63 @@ const Navbar = () => {
               >
                 <CircleUser className="mr-2 h-5 w-5" /> Account
               </Link>
+
+              {/* Manage Events Dropdown - Check both accountType and role */}
+              {(user?.accountType === "ORGANIZER" || user?.role === "ORGANIZER") && (
+                <div>
+                  <button
+                    onClick={() => setIsManageEventsOpen(!isManageEventsOpen)}
+                    className="flex items-center justify-between w-full pr-2 hover:text-blue-600"
+                  >
+                    <span className="flex items-center">
+                      <MdEventNote className="mr-2 h-5 w-5" /> Manage Events
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      className={`ml-2 text-gray-600 transition-transform ${
+                        isManageEventsOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* Manage Events Dropdown items */}
+                  {isManageEventsOpen && (
+                    <ul className="ml-7 mt-2 space-y-2 text-gray-700">
+                      <li>
+                        <Link
+                          to="/create-event"
+                          className="flex items-center space-x-2 hover:text-blue-600"
+                          onClick={() => setIsSidebarOpen(false)}
+                        >
+                          <Plus className="h-4 w-4" />
+                          <span>Create an Event</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/your-events"
+                          className="flex items-center space-x-2 hover:text-blue-600"
+                          onClick={() => setIsSidebarOpen(false)}
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span>View Your Events</span>
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          to="/event-history"
+                          className="flex items-center space-x-2 hover:text-blue-600"
+                          onClick={() => setIsSidebarOpen(false)}
+                        >
+                          <Clock className="h-4 w-4" />
+                          <span>Event History</span>
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </div>
+              )}
+
               {user?.role === "USER" && (
                 <Link to="/history" className="flex items-center space-x-2 hover:text-blue-600">
                   <History className="mr-2 h-5 w-5" />
@@ -293,9 +357,9 @@ const Navbar = () => {
               )}
 
               {user?.role === "ORGANIZER" && (
-                <Link to="/make-event" className="flex items-center space-x-2 hover:text-blue-600">
-                  <History className="mr-2 h-5 w-5" />
-                  Make an Event
+                <Link to="/history" className="flex items-center space-x-2 hover:text-blue-600">
+                  <History className="mr-2 h-5 w-5 mt-0" />
+                  Your Booking History
                 </Link>
               )}
             </>
