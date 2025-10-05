@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import History from "../components/History";
 import Account from "../components/Account";
 import CreateEvent from "../components/CreateEvent";
+import EventHistory from "../components/EventHistory";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/history" element={<History />} />
             <Route path="/account" element={<Account />} />
             <Route path="/create-event" element={<CreateEvent />} />
+            <Route path="/event-history" element={<EventHistory />} />
           </Routes>
         </Router>
       </AuthProvider>
