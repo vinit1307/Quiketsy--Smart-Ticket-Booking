@@ -41,6 +41,9 @@ public class AuthController {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
+        
+        
+        
         if (!request.getPhone().matches("^[6-9]\\d{9}$")) {
             return ResponseEntity.badRequest().body("Error: Invalid phone number!");
         }
