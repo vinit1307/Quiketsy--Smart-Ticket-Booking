@@ -32,7 +32,7 @@ const eventsDatabase = {
         about:
           "Coldplay is performing live in Mumbai! Join us for a magical night filled with lights and music. Experience the band's greatest hits including 'Yellow', 'Paradise', 'Viva La Vida' and many more. This concert will feature stunning visual effects, confetti cannons, and the famous Xylobands that light up in sync with the music.",
         image:
-          "https://igimage.indiaglitz.com/hindi/news/Adobe_Express_20230101_1213350_1-594.png",
+          "https://assets-in.bmscdn.com/nmcms/events/banner/desktop/media-desktop-abhishek-upmanyu-live-0-2022-7-25-t-13-30-44.jpg",
       },
       {
         id: 3,
