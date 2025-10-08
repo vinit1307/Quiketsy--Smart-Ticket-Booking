@@ -196,7 +196,7 @@ const eventsDatabase = {
     ],
   },
 };
-
+const API_BASE_URL = "http://localhost:9192/api/events";
 class EventsService {
   // Get events by category
   static async getEventsByCategory(category) {
@@ -215,6 +215,7 @@ class EventsService {
     const response = await fetch(`${API_BASE_URL}/trending`);
     if (!response.ok) {
       throw new Error("Failed to fetch trending events");
+      
     }
     return response.json();
   }

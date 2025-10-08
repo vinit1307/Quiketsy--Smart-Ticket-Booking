@@ -69,52 +69,52 @@ export default function Carousel({
   }
 
   // Fetch trending events on mount
-  useEffect(() => {
-    const fetchCarouselEvents = async () => {
-      try {
-        const trendingEvents = await EventsService.getEventsByCategory('trending');
+  // useEffect(() => {
+  //   const fetchCarouselEvents = async () => {
+  //     try {
+  //       const trendingEvents = await EventsService.getEventsByCategory('trending');
         
-        // Take first 5 events and format for carousel
-        if (trendingEvents && trendingEvents.length > 0) {
-          const carouselItems = trendingEvents.slice(0, 5).map(event => ({
-            id: event.id,
-            image: event.image,
-            title: event.name,
-            description: `${event.date} • ${event.venue}`,
-          }));
-          setItems(carouselItems);
-        }
-      } catch (error) {
-        console.error("Error fetching carousel events:", error);
-        // Keep default items on error
-      }
-    };
+  //       // Take first 5 events and format for carousel
+  //       if (trendingEvents && trendingEvents.length > 0) {
+  //         const carouselItems = trendingEvents.slice(0, 5).map(event => ({
+  //           id: event.id,
+  //           image: event.image,
+  //           title: event.name,
+  //           description: `${event.date} • ${event.venue}`,
+  //         }));
+  //         setItems(carouselItems);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching carousel events:", error);
+  //       // Keep default items on error
+  //     }
+  //   };
 
-    fetchCarouselEvents();
-  }, []);
+  //   fetchCarouselEvents();
+  // }, []);
 
   //Backend Fetching - uncomment it when backend is ready
-//   useEffect(() => {
-//   const fetchCarouselEvents = async () => {
-//     try {
-//       const trendingEvents = await EventsService.getTrendingEvents();
+  useEffect(() => {
+  const fetchCarouselEvents = async () => {
+    try {
+      const trendingEvents = await EventsService.getTrendingEvents();
 
-//       if (trendingEvents && trendingEvents.length > 0) {
-//         const carouselItems = trendingEvents.slice(0, 5).map(event => ({
-//           id: event.id,
-//           image: event.image,
-//           title: event.name,
-//           description: `${event.date} • ${event.venue}`,
-//         }));
-//         setItems(carouselItems);
-//       }
-//     } catch (error) {
-//       console.error("Error fetching carousel events:", error);
-//     }
-//   };
+      if (trendingEvents && trendingEvents.length > 0) {
+        const carouselItems = trendingEvents.slice(0, 5).map(event => ({
+          id: event.id,
+          image: event.imageUrl,
+          title: event.name,
+          description: `${event.eventDate} • ${event.venue}`,
+        }));
+        setItems(carouselItems);
+      }
+    } catch (error) {
+      console.error("Error fetching carousel events:", error);
+    }
+  };
 
-//   fetchCarouselEvents();
-// }, []);
+  fetchCarouselEvents();
+}, []);
 
   // Update container width on resize
   useEffect(() => {
