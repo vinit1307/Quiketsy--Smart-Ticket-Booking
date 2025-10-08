@@ -93,6 +93,29 @@ export default function Carousel({
     fetchCarouselEvents();
   }, []);
 
+  //Backend Fetching - uncomment it when backend is ready
+//   useEffect(() => {
+//   const fetchCarouselEvents = async () => {
+//     try {
+//       const trendingEvents = await EventsService.getTrendingEvents();
+
+//       if (trendingEvents && trendingEvents.length > 0) {
+//         const carouselItems = trendingEvents.slice(0, 5).map(event => ({
+//           id: event.id,
+//           image: event.image,
+//           title: event.name,
+//           description: `${event.date} • ${event.venue}`,
+//         }));
+//         setItems(carouselItems);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching carousel events:", error);
+//     }
+//   };
+
+//   fetchCarouselEvents();
+// }, []);
+
   // Update container width on resize
   useEffect(() => {
     const updateWidth = () =>

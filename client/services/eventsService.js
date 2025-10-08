@@ -210,6 +210,15 @@ class EventsService {
     return eventsDatabase[category]?.events || [];
   }
 
+  // Carousel Fetching
+    static async getTrendingEvents() {
+    const response = await fetch(`${API_BASE_URL}/trending`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch trending events");
+    }
+    return response.json();
+  }
+
   // Get all categories with their events
   static async getAllCategories() {
     // In production, replace with:
@@ -224,6 +233,15 @@ class EventsService {
     }));
   }
 
+   // ✅ Fetch all events
+  //   static async getAllEvents() {
+  //   const response = await fetch(`${API_BASE_URL}`);
+  //   if (!response.ok) {
+  //     throw new Error("Failed to fetch events");
+  //   }
+  //   return response.json();
+  // }
+
   // Get category metadata (title, icon)
   static getCategoryMeta(category) {
     const data = eventsDatabase[category];
@@ -236,6 +254,11 @@ class EventsService {
   // Get single event by ID
   static async getEventById(id) {
     // In production: API call
+    // const response = await fetch(`${API_BASE_URL}/${id}`);
+    // if (!response.ok) {
+    //   throw new Error("Failed to fetch event details");
+    // }
+    // return response.json();
     const allEvents = Object.values(eventsDatabase).flatMap(
       (category) => category.events
     );
