@@ -48,7 +48,7 @@ const Home = () => {
         round={false}
       />
       
-      {categories.map((category) => (
+      {/* {categories.map((category) => (
         <EventsSection
           key={category.key}
           categoryKey={category.key}
@@ -56,9 +56,9 @@ const Home = () => {
           icon={category.icon}
           events={category.events}
         />
-      ))}
+      ))} */}
 
-        {/* {categories.map((category) => (
+        {categories.map((category) => (
         <EventsSection
           key={category.key}
           categoryKey={category.key}
@@ -67,7 +67,7 @@ const Home = () => {
           events={category.events}
           displayCount={category.displayCount || 4} // Pass displayCount from config
         />
-      ))} */}
+      ))}
 
     </div>
   );
