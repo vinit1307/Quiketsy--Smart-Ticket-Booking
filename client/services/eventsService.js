@@ -211,30 +211,30 @@ class EventsService {
   }
 
   // Get events by category - comment it when we are fetching from backend
-  static async getEventsByCategory(category) {
-    // Simulate API delay
-    await new Promise((resolve) => setTimeout(resolve, 100));
+  // static async getEventsByCategory(category) {
+  //   // Simulate API delay
+  //   await new Promise((resolve) => setTimeout(resolve, 100));
 
-    // In production, replace with:
-    // const response = await fetch(`${API_BASE_URL}/events/${category}`);
-    // return response.json();
+  //   // In production, replace with:
+  //   // const response = await fetch(`${API_BASE_URL}/events/${category}`);
+  //   // return response.json();
 
-    return eventsDatabase[category]?.events || [];
-  }
+  //   return eventsDatabase[category]?.events || [];
+  // }
   
   // Get events by category - Uncomment it when backend is ready
-  // static async getEventsByCategory(category) {
-  //   // Special handling for trending
-  //   if (category === 'trending') {
-  //     return this.getTrendingEvents();
-  //   }
+  static async getEventsByCategory(category) {
+    // Special handling for trending
+    if (category === 'trending') {
+      return this.getTrendingEvents();
+    }
     
-  //   const response = await fetch(`${API_BASE_URL}/category/${category}`);
-  //   if (!response.ok) {
-  //     throw new Error(`Failed to fetch ${category} events`);
-  //   }
-  //   return response.json();
-  // }
+    const response = await fetch(`${API_BASE_URL}/category/${category}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${category} events`);
+    }
+    return response.json();
+  }
 
   // Get all categories with their events
   static async getAllCategories() {
