@@ -26,4 +26,18 @@ public class EventController {
         List<Event> trendingEvents = eventRepository.findByIsTrendingTrue();
         return ResponseEntity.ok(trendingEvents);
     }
+
+    // GET events by category (based on category column)
+    @GetMapping("/category/{category}")
+    public ResponseEntity<List<Event>> getEventsByCategory(@PathVariable String category) {
+        List<Event> events = eventRepository.findByCategory(category);
+        return ResponseEntity.ok(events);
+    }
+
+    // GET single event by ID
+    // @GetMapping("/{id}")
+    // public ResponseEntity<Event> getEventById(@PathVariable UUID id) {
+    //     Optional<Event> event = eventRepository.findById(id);
+    //     return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    // }
 }

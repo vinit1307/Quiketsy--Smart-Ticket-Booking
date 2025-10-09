@@ -57,6 +57,18 @@ const Home = () => {
           events={category.events}
         />
       ))}
+
+        {/* {categories.map((category) => (
+        <EventsSection
+          key={category.key}
+          categoryKey={category.key}
+          title={category.title}
+          icon={category.icon}
+          events={category.events}
+          displayCount={category.displayCount || 4} // Pass displayCount from config
+        />
+      ))} */}
+
     </div>
   );
 };
