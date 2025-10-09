@@ -198,7 +198,19 @@ const eventsDatabase = {
 };
 const API_BASE_URL = "http://localhost:9192/api/events";
 class EventsService {
-  // Get events by category
+
+
+  // Trending events for Carousel Fetching and events section
+    static async getTrendingEvents() {
+    const response = await fetch(`${API_BASE_URL}/trending`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch trending events");
+      
+    }
+    return response.json();
+  }
+
+  // Get events by category - comment it when we are fetching from backend
   static async getEventsByCategory(category) {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -209,16 +221,20 @@ class EventsService {
 
     return eventsDatabase[category]?.events || [];
   }
-
-  // Carousel Fetching
-    static async getTrendingEvents() {
-    const response = await fetch(`${API_BASE_URL}/trending`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch trending events");
-      
-    }
-    return response.json();
-  }
+  
+  // Get events by category - Uncomment it when backend is ready
+  // static async getEventsByCategory(category) {
+  //   // Special handling for trending
+  //   if (category === 'trending') {
+  //     return this.getTrendingEvents();
+  //   }
+    
+  //   const response = await fetch(`${API_BASE_URL}/category/${category}`);
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to fetch ${category} events`);
+  //   }
+  //   return response.json();
+  // }
 
   // Get all categories with their events
   static async getAllCategories() {
@@ -252,7 +268,7 @@ class EventsService {
     };
   }
 
-  // Get single event by ID
+  // Get single event by ID-  comment it when we are fetching from backend
   static async getEventById(id) {
     // In production: API call
     // const response = await fetch(`${API_BASE_URL}/${id}`);
@@ -264,6 +280,24 @@ class EventsService {
       (category) => category.events
     );
     return allEvents.find((event) => event.id === parseInt(id));
+  }
+
+  // Get event by id - uncomment it when backend is ready
+  //   static async getEventById(id) {
+  //   const response = await fetch(`${API_BASE_URL}/${id}`);
+  //   if (!response.ok) {
+  //     throw new Error("Failed to fetch event details");
+  //   }
+  //   return response.json();
+  // }
+
+  // Get all events
+  static async getAllEvents() {
+    const response = await fetch(`${API_BASE_URL}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch events");
+    }
+    return response.json();
   }
 
   // Search events
