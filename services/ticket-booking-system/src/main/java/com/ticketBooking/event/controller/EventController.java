@@ -2,11 +2,13 @@ package com.ticketBooking.event.controller;
 
 import com.ticketBooking.event.model.Event;
 import com.ticketBooking.event.repository.EventRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -18,7 +20,10 @@ public class EventController {
 
     // GET all events
     @GetMapping
-    public List<Event> getAllEvents() {
+    public List<Event> getAllEvents(@RequestParam(required = false) String category) {
+        if (category != null && !category.isEmpty()) {
+            return eventRepository.findByCategory(category);
+        }
         return eventRepository.findAll();
     }
     @GetMapping("/trending")
@@ -35,9 +40,9 @@ public class EventController {
     }
 
     // GET single event by ID
-    // @GetMapping("/{id}")
-    // public ResponseEntity<Event> getEventById(@PathVariable UUID id) {
-    //     Optional<Event> event = eventRepository.findById(id);
-    //     return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    // }
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getEventById(@PathVariable UUID id) {
+        Optional<Event> event = eventRepository.findById(id);
+        return event.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

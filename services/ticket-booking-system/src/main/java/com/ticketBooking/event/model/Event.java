@@ -53,7 +53,10 @@ public class Event {
     private String imageUrl;
 
     private String language;
+
+    @Column(name = "category")
     private String category;
+    
     private String tags;
 
     @Column(name = "total_slots")

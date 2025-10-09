@@ -30,10 +30,11 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
                 .requestMatchers("/api/auth/**").permitAll()           // allow register + login
-                .requestMatchers("/api/events").permitAll()
-                .requestMatchers("/api/events/trending").permitAll()
+                .requestMatchers("/api/events/**").permitAll()
+                // .requestMatchers("/api/events/trending").permitAll()
+                // .requestMatchers("/api/events/category/**").permitAll() 
                 .anyRequest().authenticated()
-            )
+            )   
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

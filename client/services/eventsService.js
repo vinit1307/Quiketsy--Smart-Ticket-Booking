@@ -268,28 +268,28 @@ class EventsService {
     };
   }
 
-  // Get single event by ID-  comment it when we are fetching from backend
-  static async getEventById(id) {
-    // In production: API call
-    // const response = await fetch(`${API_BASE_URL}/${id}`);
-    // if (!response.ok) {
-    //   throw new Error("Failed to fetch event details");
-    // }
-    // return response.json();
-    const allEvents = Object.values(eventsDatabase).flatMap(
-      (category) => category.events
-    );
-    return allEvents.find((event) => event.id === parseInt(id));
-  }
+  // // Get single event by ID-  comment it when we are fetching from backend
+  // static async getEventById(id) {
+  //   // In production: API call
+  //   // const response = await fetch(`${API_BASE_URL}/${id}`);
+  //   // if (!response.ok) {
+  //   //   throw new Error("Failed to fetch event details");
+  //   // }
+  //   // return response.json();
+  //   const allEvents = Object.values(eventsDatabase).flatMap(
+  //     (category) => category.events
+  //   );
+  //   return allEvents.find((event) => event.id === parseInt(id));
+  // }
 
   // Get event by id - uncomment it when backend is ready
-  //   static async getEventById(id) {
-  //   const response = await fetch(`${API_BASE_URL}/${id}`);
-  //   if (!response.ok) {
-  //     throw new Error("Failed to fetch event details");
-  //   }
-  //   return response.json();
-  // }
+    static async getEventById(id) {
+    const response = await fetch(`${API_BASE_URL}/${id}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch event details");
+    }
+    return response.json();
+  }
 
   // Get all events
   static async getAllEvents() {
