@@ -2,6 +2,11 @@ package com.ticketBooking.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.Setter;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -14,11 +19,23 @@ public class JwtUtil {
     // private static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     // Or use a fixed long secret string (recommended for production)
-    private static final String SECRET = "mysuperlongsecuresecretmysuperlongsecuresecretmysuperlongsecuresecret123";
-    private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    //private static final String SECRET = "mysuperlongsecuresecretmysuperlongsecuresecretmysuperlongsecuresecret123";
+   // private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    private final long expirationMs = 86400000; // 1 day
+    //private final long expirationMs = 86400000; // 1 day
 
+    @Value("${jwt.secret}")
+    private String SECRET;
+
+    private Key key;
+
+    @Value("${jwt.expirationMs}")
+    private long expirationMs;
+
+    @PostConstruct
+    public void init() {
+        key  = Keys.hmacShaKeyFor(SECRET.getBytes());
+    }
     // Generate JWT token
     public String generateToken(String email) {
         return Jwts.builder()
