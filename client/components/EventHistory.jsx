@@ -78,7 +78,7 @@ const EventHistory = () => {
     {
       id: 2,
       name: "Tech Conference",
-      status: "active",
+      status: "upcoming",
       date: "2024-12-25",
       price: 2500,
       venue: "Delhi Convention Center",
@@ -98,7 +98,7 @@ const EventHistory = () => {
     {
       id: 4,
       name: "Food Festival",
-      status: "active",
+      status: "upcoming",
       date: "2024-12-30",
       price: 500,
       venue: "Hyderabad Grounds",
@@ -108,7 +108,7 @@ const EventHistory = () => {
     {
       id: 5,
       name: "Art Exhibition",
-      status: "completed",
+      status: "COMPLETED",
       date: "2024-01-10",
       price: 300,
       venue: "Chennai Art Gallery",
@@ -120,7 +120,7 @@ const EventHistory = () => {
   // Get status badge color
   const getStatusColor = (status) => {
     switch(status?.toLowerCase()) {
-      case 'active':
+      case 'upcoming':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'completed':
         return 'bg-blue-100 text-blue-800 border-blue-200';

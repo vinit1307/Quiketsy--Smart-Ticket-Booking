@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<Event, UUID> {
      List<Event> findByIsTrendingTrue();
      List<Event> findByCategory(String category);
+     List<Event> findByOrganizerId(Integer organizerId);
 }

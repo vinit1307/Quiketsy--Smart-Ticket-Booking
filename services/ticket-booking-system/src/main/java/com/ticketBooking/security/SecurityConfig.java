@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/events/**").permitAll()
                 // .requestMatchers("/api/events/trending").permitAll()
                 // .requestMatchers("/api/events/category/**").permitAll() 
+                //.requestMatchers("/api/events/organizer/**").permitAll()
                 .anyRequest().authenticated()
             )   
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -12,6 +12,7 @@ public class LoginResponse {
     private String token;
     private String fullName;
     private String role;
+    private Integer id;
 
     // public LoginResponse(String token, String fullName, String role) {
     //     this.token = token;

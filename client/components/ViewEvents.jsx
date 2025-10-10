@@ -34,7 +34,9 @@ const ViewEvents = () => {
 
   // Fetch active events
   useEffect(() => {
-    fetchActiveEvents();
+    if (user?.id) {
+      fetchActiveEvents();
+    }
   }, []);
 
   const fetchActiveEvents = async () => {
@@ -43,7 +45,7 @@ const ViewEvents = () => {
       const token = localStorage.getItem("token");
       
       // Replace with your actual API endpoint
-      const response = await fetch("http://localhost:9192/api/events/organizer/active", {
+      const response = await fetch(`http://localhost:9192/api/events/organizer/${user?.id}`, {
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
@@ -53,19 +55,19 @@ const ViewEvents = () => {
       if (response.ok) {
         const data = await response.json();
         // Filter only active events
-        const activeEvents = data.filter(event => event.status?.toLowerCase() === 'active');
+        const activeEvents = data.filter(event => event.status=== 'UPCOMING');
         setEvents(activeEvents);
       } else {
         // Fallback to dummy data for testing
         const dummyEvents = getDummyEvents();
-        const activeEvents = dummyEvents.filter(event => event.status === 'active');
+        const activeEvents = dummyEvents.filter(event => event.status === 'UPCOMING');
         setEvents(activeEvents);
       }
     } catch (error) {
       console.error("Error fetching active events:", error);
       // Use dummy data if API fails
       const dummyEvents = getDummyEvents();
-      const activeEvents = dummyEvents.filter(event => event.status === 'active');
+      const activeEvents = dummyEvents.filter(event => event.status === 'UPCOMING');
       setEvents(activeEvents);
     } finally {
       setLoading(false);
@@ -192,7 +194,7 @@ const ViewEvents = () => {
                   </h2>
                   {/* <PiDotDuotone className="text-red-500 h-15 w-15" /> */}
                   <div className="bg-green-100 text-green-800 border border-green-200 px-3 py-1 rounded-lg text-sm font-medium">
-                    <span className="font-semibold">Active:</span> {formatDate(event.date)} | {formatTime(event.time)}
+                    <span className="font-semibold">Active:</span> {formatDate(event.eventDate)} | {formatTime(event.startTime)}
                   </div>
                 </div>
 
@@ -203,7 +205,7 @@ const ViewEvents = () => {
                     <DollarSign className="w-4 h-4 mr-2 text-gray-400" />
                     <div>
                       <p className="text-xs text-gray-500">Price</p>
-                      <p className="font-medium">₹{event.price}</p>
+                      <p className="font-medium">₹{event.ticketPrice}</p>
                     </div>
                   </div>
 
@@ -221,7 +223,7 @@ const ViewEvents = () => {
                     <Clock className="w-4 h-4 mr-2 text-gray-400" />
                     <div>
                       <p className="text-xs text-gray-500">Duration</p>
-                      <p className="font-medium">{event.duration} hours</p>
+                      <p className="font-medium">{event.duration}</p>
                     </div>
                   </div>
 

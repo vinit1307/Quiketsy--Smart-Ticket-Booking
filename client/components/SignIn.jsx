@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { ToastContainer, toast } from "react-toastify";
@@ -62,7 +63,7 @@ const SignIn = () => {
         }
         
         // Use the login function from context (handles all localStorage)
-        login(data.token, data.email, data.fullName, data.role);
+        login(data.token, data.email, data.fullName, data.role, data.id);
         toast.success("🎉 Login Successful!", { position: "top-right" });
         navigate("/");
       } else {

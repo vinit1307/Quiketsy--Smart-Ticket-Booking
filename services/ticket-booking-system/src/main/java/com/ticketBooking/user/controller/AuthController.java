@@ -85,7 +85,7 @@ public class AuthController {
 
         String jwtToken = jwtUtil.generateToken(user.getEmail());
 
-        return ResponseEntity.ok(new LoginResponse(jwtToken, user.getName(), user.getRole()));
+        return ResponseEntity.ok(new LoginResponse(jwtToken, user.getName(), user.getRole(),user.getId()));
     }
 
     @GetMapping("/user/profile")

@@ -57,16 +57,15 @@ const CreateEvent = () => {
 
   // Categories options
   const categories = [
-    "Music",
-    "Sports",
-    "Plays",
-    "Stand Ups",
-    "Conference",
-    "Workshop",
-    "Art",
-    "Food",
-    "Technology",
-    "Other"
+    "music",
+    "sports",
+    "plays",
+    "standup",
+    "conference",
+    "workshop",
+    "art",
+    "food",
+    "technology",
   ];
 
   // Language options
@@ -86,13 +85,14 @@ const CreateEvent = () => {
 
   // Age limit options
   const ageLimits = [
-    "All Ages",
-    "5+",
-    "12+",
-    "16+",
-    "18+",
-    "21+"
+    { label: "All Ages", value: 0 },
+    { label: "5+", value: 5 },
+    { label: "12+", value: 12 },
+    { label: "16+", value: 16 },
+    { label: "18+", value: 18 },
+    { label: "21+", value: 21 }
   ];
+  
 
   // Handle input changes
   const handleChange = (e) => {
@@ -165,36 +165,36 @@ const CreateEvent = () => {
   // Handle form submission - Added city to submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) {
       toast.error("Please fill all required fields correctly");
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     try {
       const token = localStorage.getItem("token");
-      
-      // Format data for backend - Added city
+  
+      // Format data for backend
       const eventData = {
         name: formData.eventName,
         description: formData.eventDescription,
         venue: formData.eventVenue,
-        city: formData.eventCity, // Added city
-        date: formData.eventDate,
-        time: formData.time,
+        city: formData.eventCity,
+        eventDate: formData.eventDate,
+        startTime: formData.time,
         duration: parseInt(formData.duration),
-        price: parseFloat(formData.ticketPrice),
+        ticketPrice: parseFloat(formData.ticketPrice),
         ageLimit: formData.ageLimit,
         imageUrl: formData.imageUrl,
         language: formData.language,
         category: formData.category,
         tags: formData.tags.join(","),
         totalSlots: parseInt(formData.totalSlots),
-        organizerId: user?.id || user?.email
+        availableSlots: parseInt(formData.totalSlots) // important: initially same as total_slots
       };
-
+  
       const response = await fetch("http://localhost:9192/api/events/create", {
         method: "POST",
         headers: {
@@ -203,7 +203,7 @@ const CreateEvent = () => {
         },
         body: JSON.stringify(eventData)
       });
-
+  
       if (response.ok) {
         toast.success("Event created successfully!");
         navigate("/your-events");
@@ -218,7 +218,7 @@ const CreateEvent = () => {
       setIsSubmitting(false);
     }
   };
-
+  
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -426,15 +426,18 @@ const CreateEvent = () => {
                   Age Limit
                 </label>
                 <select
-                  name="ageLimit"
-                  value={formData.ageLimit}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {ageLimits.map(limit => (
-                    <option key={limit} value={limit}>{limit}</option>
-                  ))}
-                </select>
+  name="ageLimit"
+  value={formData.ageLimit}
+  onChange={handleChange}
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+>
+  {ageLimits.map(limit => (
+    <option key={limit.value} value={limit.value}>
+      {limit.label}
+    </option>
+  ))}
+</select>
+
               </div>
 
               {/* Language */}
