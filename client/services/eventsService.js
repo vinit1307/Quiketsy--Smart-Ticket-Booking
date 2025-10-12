@@ -1,4 +1,4 @@
-import { TrendingUp, Music, Heart } from "lucide-react";
+import { TrendingUp, Music, Heart, Theater, Mic, Palette} from "lucide-react";
 
 // Temporary data - will be replaced with API calls
 const eventsDatabase = {
@@ -201,14 +201,32 @@ class EventsService {
 
 
   // Trending events for Carousel Fetching and events section
-    static async getTrendingEvents() {
+  //   static async getTrendingEvents() {
+  //   const response = await fetch(`${API_BASE_URL}/trending`);
+  //   if (!response.ok) {
+  //     throw new Error("Failed to fetch trending events");
+      
+  //   }
+  //   return response.json();
+  // }
+  static async getTrendingEvents() {
+  try {
     const response = await fetch(`${API_BASE_URL}/trending`);
     if (!response.ok) {
       throw new Error("Failed to fetch trending events");
-      
     }
-    return response.json();
+    const data = await response.json();
+    
+    // Map eventId to id for each event
+    return data.map(event => ({
+      ...event,
+      id: event.eventId || event.id
+    }));
+  } catch (error) {
+    console.error("Error fetching trending events:", error);
+    throw error;
   }
+}
 
   // Get events by category - comment it when we are fetching from backend
   // static async getEventsByCategory(category) {
@@ -223,18 +241,40 @@ class EventsService {
   // }
   
   // Get events by category - Uncomment it when backend is ready
-  static async getEventsByCategory(category) {
-    // Special handling for trending
-    if (category === 'trending') {
-      return this.getTrendingEvents();
-    }
+  // static async getEventsByCategory(category) {
+  //   // Special handling for trending
+  //   if (category === 'trending') {
+  //     return this.getTrendingEvents();
+  //   }
     
+  //   const response = await fetch(`${API_BASE_URL}/category/${category}`);
+  //   if (!response.ok) {
+  //     throw new Error(`Failed to fetch ${category} events`);
+  //   }
+  //   return response.json();
+  // }
+  static async getEventsByCategory(category) {
+  if (category === 'trending') {
+    return this.getTrendingEvents();
+  }
+  
+  try {
     const response = await fetch(`${API_BASE_URL}/category/${category}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch ${category} events`);
     }
-    return response.json();
+    const data = await response.json();
+    
+    // Map eventId to id for each event
+    return data.map(event => ({
+      ...event,
+      id: event.eventId || event.id
+    }));
+  } catch (error) {
+    console.error(`Error fetching ${category} events:`, error);
+    throw error;
   }
+}
 
   // Get all categories with their events
   static async getAllCategories() {
@@ -260,13 +300,30 @@ class EventsService {
   // }
 
   // Get category metadata (title, icon)
+  // static getCategoryMeta(category) {
+  //   const data = eventsDatabase[category];
+  //   return {
+  //     title: data?.title || "Events",
+  //     icon: data?.icon || TrendingUp,
+  //   };
+  // }
   static getCategoryMeta(category) {
-    const data = eventsDatabase[category];
-    return {
-      title: data?.title || "Events",
-      icon: data?.icon || TrendingUp,
-    };
-  }
+  const categoryMetadata = {
+    trending: { title: "Trending Events", icon: TrendingUp },
+    music: { title: "Music Events", icon: Music },
+    recommended: { title: "You May Also Like", icon: Heart },
+    plays: { title: "Theater & Plays", icon: Theater },
+    standup: { title: "Stand-up Comedy", icon: Mic },
+    art: { title: "Arts & Culture", icon: Palette },
+    technology: { title: "Technology", icon: Palette },
+    workshop: { title: "Workshops", icon: Palette },
+  };
+
+  return categoryMetadata[category] || {
+    title: "Events",
+    icon: TrendingUp,
+  };
+}
 
   // // Get single event by ID-  comment it when we are fetching from backend
   // static async getEventById(id) {
@@ -283,13 +340,32 @@ class EventsService {
   // }
 
   // Get event by id - uncomment it when backend is ready
-    static async getEventById(id) {
+  //   static async getEventById(id) {
+  //   const response = await fetch(`${API_BASE_URL}/${id}`);
+  //   if (!response.ok) {
+  //     throw new Error("Failed to fetch event details");
+  //   }
+  //   return response.json();
+  // }
+  static async getEventById(id) {
+  try {
     const response = await fetch(`${API_BASE_URL}/${id}`);
     if (!response.ok) {
       throw new Error("Failed to fetch event details");
     }
-    return response.json();
+    const data = await response.json();
+    
+    // Map eventId to id for consistency in frontend
+    if (data.eventId && !data.id) {
+      data.id = data.eventId;
+    }
+    
+    return data;
+  } catch (error) {
+    console.error("Error fetching event by ID:", error);
+    throw error;
   }
+}
 
   // Get all events
   static async getAllEvents() {

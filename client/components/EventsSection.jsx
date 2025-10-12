@@ -31,17 +31,17 @@ const EventsSection = ({
 
   // Format events data (handle both backend formats)
   const formattedEvents = events.map(event => ({
-    id: event.id,
-    name: event.name,
-    venue: event.venue,
-    date: event.eventDate || event.date,
-    image: event.imageUrl || event.image,
-    price: event.price,
-    duration: event.duration,
-    time: event.time,
-    ageLimit: event.ageLimit || event.agelimit,
-    about: event.about,
-  }));
+  id: event.eventId || event.id, // Handle both field names
+  name: event.name,
+  venue: event.venue,
+  date: event.eventDate || event.date,
+  image: event.imageUrl || event.image,
+  price: event.ticketPrice || event.price,
+  duration: event.duration,
+  time: event.startTime || event.time,
+  ageLimit: event.ageLimit || event.agelimit,
+  about: event.description || event.about,
+}));
 
   // Slice events based on displayCount
   const displayEvents = formattedEvents.slice(0, displayCount);
@@ -72,7 +72,7 @@ const EventsSection = ({
       <div className="flex space-x-6 overflow-x-auto pb-3 scrollbar-hide">
         {displayEvents.map((event) => (
           <Link key={event.id} to={`/event/${event.id}`}>
-            <div className="min-w-[250px] bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition transform hover:-translate-y-1">
+            <div className="min-w-[250px] bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition transform hover:shadow-cyan-500/50 hover:shadow-xl">
               <div className="relative">
                 <img
                   src={event.image}
@@ -86,11 +86,11 @@ const EventsSection = ({
                 <div className="absolute bottom-2 left-2 bg-blue-700 text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
                   {event.date}
                 </div>
-                {categoryKey === 'trending' && (
-                  <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md shadow">
-                    🔥 TRENDING
+                {/* {categoryKey === 'trending' && (
+                  <div className="absolute top-2 right-2  text-white text-xm font-bold px-2 py-1 rounded-md shadow">
+                    🔥
                   </div>
-                )}
+                )} */}
               </div>
               <div className="p-3">
                 <h3 className="text-base font-bold text-gray-900 line-clamp-1">
