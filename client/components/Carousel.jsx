@@ -94,14 +94,36 @@ export default function Carousel({
   // }, []);
 
   //Backend Fetching - uncomment it when backend is ready
+//   useEffect(() => {
+//   const fetchCarouselEvents = async () => {
+//     try {
+//       const trendingEvents = await EventsService.getTrendingEvents();
+
+//       if (trendingEvents && trendingEvents.length > 0) {
+//         const carouselItems = trendingEvents.slice(0, 5).map(event => ({
+//           id: event.id,
+//           image: event.imageUrl,
+//           title: event.name,
+//           description: `${event.eventDate} • ${event.venue}`,
+//         }));
+//         setItems(carouselItems);
+//       }
+//     } catch (error) {
+//       console.error("Error fetching carousel events:", error);
+//     }
+//   };
+
+//   fetchCarouselEvents();
+// }, []);
+
   useEffect(() => {
   const fetchCarouselEvents = async () => {
     try {
       const trendingEvents = await EventsService.getTrendingEvents();
-
+      
       if (trendingEvents && trendingEvents.length > 0) {
         const carouselItems = trendingEvents.slice(0, 5).map(event => ({
-          id: event.id,
+          id: event.eventId || event.id, // Handle both field names
           image: event.imageUrl,
           title: event.name,
           description: `${event.eventDate} • ${event.venue}`,
