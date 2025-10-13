@@ -8,3 +8,6 @@ dist/
 
 # Env files
 .env
+
+#Application properties
+/src/main/resources/application.properties
