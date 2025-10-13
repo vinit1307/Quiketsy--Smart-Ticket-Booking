@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "java",
+        "name": "Spring Boot App",
+        "request": "launch",
+        "mainClass": "com.ticketBooking.TicketBookingSystemApplication", 
+        "projectName": "ticket-booking-system",
+        "args": "",
+        "vmArgs": "-Dspring.profiles.active=dev"
+      }
+    ]
+  }
+  

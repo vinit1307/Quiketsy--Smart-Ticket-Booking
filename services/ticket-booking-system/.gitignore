@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+**/.vscode
+E:\Major Project\Quiketsy--Smart-Ticket-Booking\.vscode\launch.json
 ### STS ###
 .apt_generated
 .classpath

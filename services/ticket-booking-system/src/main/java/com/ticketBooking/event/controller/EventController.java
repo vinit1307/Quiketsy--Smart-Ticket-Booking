@@ -39,6 +39,7 @@ public class EventController {
         return ResponseEntity.ok(trendingEvents);
     }
 
+
     // GET events by category (based on category column)
     @GetMapping("/category/{category}")
     public ResponseEntity<List<Event>> getEventsByCategory(@PathVariable String category) {
@@ -94,6 +95,109 @@ public ResponseEntity<?> createEvent(@RequestBody Event event,
     Event savedEvent = eventRepository.save(event);
     return ResponseEntity.ok(savedEvent);
 }
+
+   // ✅ Edit existing event (only organizer who created it)
+   @PutMapping("/edit/{id}")
+public ResponseEntity<?> editEvent(
+        @PathVariable UUID id,
+        @RequestBody Event updatedEvent,
+        @AuthenticationPrincipal String email) {
+
+    // Verify organizer
+    User organizer = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (!"ORGANIZER".equalsIgnoreCase(organizer.getRole())) {
+        return ResponseEntity.status(403).body("Access denied: Only organizers can edit events");
+    }
+
+    // Find event
+    Optional<Event> optionalEvent = eventRepository.findById(id);
+    if (optionalEvent.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    Event existingEvent = optionalEvent.get();
+
+    // Verify event ownership
+    if (!existingEvent.getOrganizerId().equals(organizer.getId())) {
+        return ResponseEntity.status(403).body("You can only edit your own events");
+    }
+
+    // ✅ Only update these editable fields if not null
+    if (updatedEvent.getDescription() != null)
+        existingEvent.setDescription(updatedEvent.getDescription());
+
+    if (updatedEvent.getVenue() != null)
+        existingEvent.setVenue(updatedEvent.getVenue());
+
+    if (updatedEvent.getCity() != null)
+        existingEvent.setCity(updatedEvent.getCity());
+
+    if (updatedEvent.getEventDate() != null)
+        existingEvent.setEventDate(updatedEvent.getEventDate());
+
+    if (updatedEvent.getStartTime() != null)
+        existingEvent.setStartTime(updatedEvent.getStartTime());
+
+    if (updatedEvent.getDuration() != null)
+        existingEvent.setDuration(updatedEvent.getDuration());
+
+    if (updatedEvent.getTicketPrice() != null)
+        existingEvent.setTicketPrice(updatedEvent.getTicketPrice());
+
+   // System.out.println("updatedEvent" +updatedEvent.getAgeLimit());
+    
+   if (updatedEvent.getAgeLimit() != null){
+        existingEvent.setAgeLimit(updatedEvent.getAgeLimit());
+        if (existingEvent.getAgeLimit() != null) {
+            String ageString = String.valueOf(existingEvent.getAgeLimit());
+            if (ageString.endsWith("+")) {
+                ageString = ageString.replace("+", "");
+            }
+            existingEvent.setAgeLimit(Integer.parseInt(ageString));
+            System.out.println("existingEvent" +existingEvent.getAgeLimit());
+        }
+    }
+    if (updatedEvent.getTotalSlots() != null)
+        existingEvent.setTotalSlots(updatedEvent.getTotalSlots());
+
+    if (updatedEvent.getImageUrl() != null)
+        existingEvent.setImageUrl(updatedEvent.getImageUrl());
+
+    Event savedEvent = eventRepository.save(existingEvent);
+    return ResponseEntity.ok(savedEvent);
+}
+
+@PatchMapping("/cancel/{id}")
+public ResponseEntity<?> cancelEvent(
+        @PathVariable UUID id,
+        @AuthenticationPrincipal String email) {
+
+    User organizer = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    if (!"ORGANIZER".equalsIgnoreCase(organizer.getRole())) {
+        return ResponseEntity.status(403).body("Access denied: Only organizers can cancel events");
+    }
+
+    Optional<Event> optionalEvent = eventRepository.findById(id);
+    if (optionalEvent.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
+
+    Event event = optionalEvent.get();
+
+    if (!event.getOrganizerId().equals(organizer.getId())) {
+        return ResponseEntity.status(403).body("You can only cancel your own events");
+    }
+
+    event.setStatus("CANCELLED");
+    Event saved = eventRepository.save(event);
+
+    return ResponseEntity.ok(saved);
+}
+
 
 @GetMapping("/organizer/{organizerId}")
 public ResponseEntity<List<Event>> getEventsByOrganizer(@PathVariable Integer organizerId) {

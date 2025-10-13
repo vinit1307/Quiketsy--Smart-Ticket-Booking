@@ -65,13 +65,22 @@ const EditEvent = () => {
   const [errors, setErrors] = useState({});
 
   // Age limit options
+  // const ageLimits = [
+  //   "All Ages",
+  //   "5+",
+  //   "12+",
+  //   "16+",
+  //   "18+",
+  //   "21+"
+  // ];
+  
   const ageLimits = [
-    "All Ages",
-    "5+",
-    "12+",
-    "16+",
-    "18+",
-    "21+"
+    { label: "All Ages", value: 0 },
+    { label: "5+", value: 5 },
+    { label: "12+", value: 12 },
+    { label: "16+", value: 16 },
+    { label: "18+", value: 18 },
+    { label: "21+", value: 21 }
   ];
 
   // Fetch event details
@@ -222,7 +231,7 @@ const EditEvent = () => {
         totalSlots: parseInt(formData.totalSlots)
       };
 
-      const response = await fetch(`http://localhost:9192/api/events/${id}`, {
+      const response = await fetch(`http://localhost:9192/api/events/edit/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -263,7 +272,7 @@ const EditEvent = () => {
       const token = localStorage.getItem("token");
 
       // If your backend uses a different route, adjust here (e.g., POST /api/events/:id/cancel)
-      const res = await fetch(`http://localhost:9192/api/events/${id}`, {
+      const res = await fetch(`http://localhost:9192/api/events/cancel/${id}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -525,6 +534,24 @@ const EditEvent = () => {
                 </label>
                 <select
                   name="ageLimit"
+                  value={formData.ageLimit || 0} // fallback if null
+                  onChange={(e) =>
+                  setFormData({
+                  ...formData,
+                  ageLimit: parseInt(e.target.value) // always number
+    })
+  }
+  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+  disabled={eventStatus === "CANCELLED"}
+>
+  {ageLimits.map((limit) => (
+    <option key={limit.value} value={limit.value}>
+      {limit.label}
+    </option>
+  ))}
+</select>
+                {/* <select
+                  name="ageLimit"
                   value={formData.ageLimit}
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -533,7 +560,7 @@ const EditEvent = () => {
                   {ageLimits.map(limit => (
                     <option key={limit} value={limit}>{limit}</option>
                   ))}
-                </select>
+                </select> */}
               </div>
 
               {/* Non-editable Category */}
