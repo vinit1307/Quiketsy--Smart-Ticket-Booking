@@ -10,4 +10,4 @@ dist/
 .env
 
 #Application properties
-/src/main/resources/application.properties
+services/ticket-booking-system/src/main/resources/application.properties
