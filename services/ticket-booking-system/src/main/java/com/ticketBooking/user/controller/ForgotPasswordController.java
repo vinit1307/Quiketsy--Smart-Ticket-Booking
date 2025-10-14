@@ -35,7 +35,7 @@ public class ForgotPasswordController {
             return ResponseEntity.badRequest().body("User not found");
 
         String otp = otpService.generateOTP(email);
-        emailService.sendEmail(email, "Password Reset OTP", "Your OTP is: " + otp + "OTP is Valid for Only 5 Minutes");
+        emailService.sendEmail(email, "Password Reset OTP", "Your OTP is: " + otp + " OTP is Valid for Only 5 Minutes");
 
         return ResponseEntity.ok("OTP sent to your email");
     }

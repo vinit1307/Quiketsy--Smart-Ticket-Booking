@@ -110,6 +110,16 @@ const SignIn = () => {
             />
           </div>
 
+          <p className="text-left text-sm -mt-5.5">
+          {" "}
+          <Link
+            to="/ForgotPassword"
+            className="text-blue-600 font-semibold hover:text-red-500"
+          >
+            Forgot Password?
+          </Link>
+        </p>
+
           {/* Submit Button */}
           <button
             type="submit"
