@@ -17,13 +17,26 @@ import {
   X,
   Building2
 } from "lucide-react";
+import LoadingSpinner from "./LoadingSpinner";
 
 const CreateEvent = () => {
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading: authLoading, isInitialized } = useAuth();
 
   // Redirect if not an organizer
-  React.useEffect(() => {
+  // React.useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     navigate("/");
+  //     toast.error("Please login to create events");
+  //   } else if (user?.accountType !== "ORGANIZER" && user?.role !== "ORGANIZER") {
+  //     navigate("/");
+  //     toast.error("Only organizers can create events");
+  //   }
+  // }, [isAuthenticated, user, navigate]);
+  // Redirect if not an organizer
+React.useEffect(() => {
+  // Wait for auth to initialize before checking
+  if (!authLoading && isInitialized) {
     if (!isAuthenticated) {
       navigate("/");
       toast.error("Please login to create events");
@@ -31,7 +44,8 @@ const CreateEvent = () => {
       navigate("/");
       toast.error("Only organizers can create events");
     }
-  }, [isAuthenticated, user, navigate]);
+  }
+}, [isAuthenticated, user, navigate, authLoading, isInitialized]);
 
   // Form state - Added eventCity
   const [formData, setFormData] = useState({
@@ -218,6 +232,15 @@ const CreateEvent = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (authLoading || !isInitialized) {
+  return <LoadingSpinner fullPage />;
+}
+
+  if (!isAuthenticated) {
+  return null;
+  }
+
   
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
