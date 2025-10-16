@@ -61,6 +61,8 @@
 import { useState, useEffect } from 'react';
 import EventsService from '../services/eventsService';
 import { TrendingUp, Music, Theater, Mic, Palette, Heart } from 'lucide-react';
+import { FaLaptopCode } from "react-icons/fa";
+import { GrWorkshop } from "react-icons/gr";
 
 // Define your category configuration
 // const CATEGORY_CONFIG = [
@@ -112,13 +114,13 @@ import { TrendingUp, Music, Theater, Mic, Palette, Heart } from 'lucide-react';
 // ];
 
 const CATEGORY_CONFIG = [
-  { key: 'trending', title: 'Trending Events', icon: TrendingUp, displayCount: 5 },
-  { key: 'music', title: 'Music Events', icon: Music, displayCount: 4 },
-  { key: 'plays', title: 'Theater & Plays', icon: Theater, displayCount: 4 },
-  { key: 'standup', title: 'Stand-up Comedy', icon: Mic, displayCount: 4 },
-  { key: 'art', title: 'Arts & Culture', icon: Palette, displayCount: 4 },
-  { key: 'technology', title: 'Technology', icon: Palette, displayCount: 4 },
-  { key: 'workshop', title: 'Workshops', icon: Palette, displayCount: 4 },
+  { key: 'trending', title: 'Trending Events', icon: TrendingUp, displayCount: 9 },
+  { key: 'music', title: 'Music Events', icon: Music, displayCount: 9 },
+  { key: 'plays', title: 'Theater & Plays', icon: Theater, displayCount: 9 },
+  { key: 'standup', title: 'Stand-up Comedy', icon: Mic, displayCount: 9 },
+  { key: 'art', title: 'Arts & Culture', icon: Palette, displayCount: 9 },
+  { key: 'technology', title: 'Technology', icon: FaLaptopCode, displayCount: 9 },
+  { key: 'workshop', title: 'Workshops', icon: GrWorkshop, displayCount: 9 },
 ];
 
 export const useAllCategories = () => {

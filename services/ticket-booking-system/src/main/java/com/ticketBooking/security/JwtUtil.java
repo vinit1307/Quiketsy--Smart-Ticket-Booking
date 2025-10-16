@@ -17,7 +17,7 @@ public class JwtUtil {
     private static final String SECRET = "mysuperlongsecuresecretmysuperlongsecuresecretmysuperlongsecuresecret123";
     private static final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
 
-    private final long expirationMs = 3600000; // 1 day
+    private final long expirationMs = 7*60*60*1000; // 7 hours
 
     //  @Value("${jwt.secret}")
     //  private String SECRET;
