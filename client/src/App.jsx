@@ -16,6 +16,7 @@ import EventHistory from "../components/EventHistory";
 import ViewEvents from "../components/ViewEvents";
 import EditEvent from "../components/EditEvent";
 import ForgotPassword from "../components/ForgotPassword";
+import BookEvent from "../components/BookEvent";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
             <Route path="/your-events" element={<ViewEvents />} />
             <Route path="/edit-event/:id" element={<EditEvent />} />
             <Route path="/ForgotPassword" element={<ForgotPassword />} />
+            <Route path="/book-event/:id" element={<BookEvent />} />
           </Routes>
         </Router>
       </AuthProvider>

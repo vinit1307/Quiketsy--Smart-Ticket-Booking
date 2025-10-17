@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { CalendarDays } from 'lucide-react';
+import { CalendarDays } from "lucide-react";
 import { HiOutlineLocationMarker } from "react-icons/hi";
 import { RiParentLine } from "react-icons/ri";
 import { GiDuration } from "react-icons/gi";
@@ -24,9 +24,9 @@ const EventDetailsPage = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const eventData = await EventsService.getEventById(id);
-        
+
         if (eventData) {
           // Format the event data based on your backend response
           const formattedEvent = {
@@ -48,9 +48,9 @@ const EventDetailsPage = () => {
             tags: eventData.tags,
             totalSlots: eventData.totalSlots,
             availableSlots: eventData.availableSlots,
-            status: eventData.status
+            status: eventData.status,
           };
-          
+
           setEvent(formattedEvent);
         } else {
           setError("Event not found");
@@ -79,12 +79,12 @@ const EventDetailsPage = () => {
           {error || "Event Not Found"}
         </h2>
         <p className="text-gray-600 mb-6">
-          {error 
+          {error
             ? "There was an error loading the event. Please try again."
             : "The event you're looking for doesn't exist or has been removed."}
         </p>
-        <button 
-          onClick={() => navigate('/')}
+        <button
+          onClick={() => navigate("/")}
           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
           Back to Home
@@ -96,27 +96,28 @@ const EventDetailsPage = () => {
   // Format date for display
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-IN', { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric' 
+    return date.toLocaleDateString("en-IN", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   // Format time for display
   const formatTime = (timeStr) => {
     if (!timeStr) return "Time TBA";
-    const [hours, minutes] = timeStr.split(':');
+    const [hours, minutes] = timeStr.split(":");
     const hour = parseInt(hours);
-    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const ampm = hour >= 12 ? "PM" : "AM";
     const displayHour = hour > 12 ? hour - 12 : hour;
     return `${displayHour}:${minutes} ${ampm}`;
   };
 
   const isEventFull = event.availableSlots === 0;
-  const slotsPercentage = event.totalSlots ? 
-    ((event.totalSlots - event.availableSlots) / event.totalSlots) * 100 : 0;
+  const slotsPercentage = event.totalSlots
+    ? ((event.totalSlots - event.availableSlots) / event.totalSlots) * 100
+    : 0;
 
   return (
     <div className="px-6 md:px-12 py-8">
@@ -128,11 +129,15 @@ const EventDetailsPage = () => {
             🔥 TRENDING
           </span>
         )}
-        <span className={`text-xs font-bold px-2 py-1 rounded-md ${
-          event.status === 'UPCOMING' ? 'bg-green-100 text-green-800' :
-          event.status === 'ONGOING' ? 'bg-blue-100 text-blue-800' :
-          'bg-gray-100 text-gray-800'
-        }`}>
+        <span
+          className={`text-xs font-bold px-2 py-1 rounded-md ${
+            event.status === "UPCOMING"
+              ? "bg-green-100 text-green-800"
+              : event.status === "ONGOING"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-gray-100 text-gray-800"
+          }`}
+        >
           {event.status}
         </span>
       </div>
@@ -147,7 +152,8 @@ const EventDetailsPage = () => {
             className="rounded-xl shadow-md w-full h-96 object-cover mb-6"
             onError={(e) => {
               e.target.onerror = null;
-              e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2RkZCIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjQwMCIgeT0iMjAwIiBzdHlsZT0iZmlsbDojOTk5O2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMwcHg7Zm9udC1mYW1pbHk6QXJpYWwsc2Fucy1zZXJpZiI+RXZlbnQgSW1hZ2U8L3RleHQ+PC9zdmc+';
+              e.target.src =
+                "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iODAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2RkZCIvPjx0ZXh0IHRleHQtYW5jaG9yPSJtaWRkbGUiIHg9IjQwMCIgeT0iMjAwIiBzdHlsZT0iZmlsbDojOTk5O2ZvbnQtd2VpZ2h0OmJvbGQ7Zm9udC1zaXplOjMwcHg7Zm9udC1mYW1pbHk6QXJpYWwsc2Fucy1zZXJpZiI+RXZlbnQgSW1hZ2U8L3RleHQ+PC9zdmc+";
             }}
           />
 
@@ -157,11 +163,17 @@ const EventDetailsPage = () => {
               <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full capitalize">
                 {event.category}
               </span>
-              {event.tags.split(',').filter(tag => tag.trim()).map((tag, index) => (
-                <span key={index} className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full">
-                  {tag.trim()}
-                </span>
-              ))}
+              {event.tags
+                .split(",")
+                .filter((tag) => tag.trim())
+                .map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-gray-100 text-gray-700 text-sm px-3 py-1 rounded-full"
+                  >
+                    {tag.trim()}
+                  </span>
+                ))}
             </div>
           )}
 
@@ -177,17 +189,23 @@ const EventDetailsPage = () => {
           <div className="sticky top-10 bg-white shadow-lg rounded-xl p-5 border space-y-3">
             <div className="flex items-center space-x-3">
               <CalendarDays className="text-blue-600 w-5 h-5" />
-              <p className="font-medium text-black">Date: {formatDate(event.date)}</p>
+              <p className="font-medium text-black">
+                Date: {formatDate(event.date)}
+              </p>
             </div>
 
             <div className="flex items-center space-x-3">
               <MdTimelapse className="text-blue-600 w-5 h-5" />
-              <p className="font-medium text-black">Time: {formatTime(event.startTime)}</p>
+              <p className="font-medium text-black">
+                Time: {formatTime(event.startTime)}
+              </p>
             </div>
 
             <div className="flex items-center space-x-3">
               <GiDuration className="text-blue-600 w-5 h-5" />
-              <p className="font-medium text-black">Duration: {event.duration}</p>
+              <p className="font-medium text-black">
+                Duration: {event.duration}
+              </p>
             </div>
 
             <div className="flex items-center space-x-3">
@@ -210,29 +228,37 @@ const EventDetailsPage = () => {
             {event.language && (
               <div className="flex items-center space-x-3">
                 <FaLanguage className="text-blue-600 w-5 h-5" />
-                <p className="font-medium text-black">Language: {event.language}</p>
+                <p className="font-medium text-black">
+                  Language: {event.language}
+                </p>
               </div>
             )}
 
             <div className="flex items-center space-x-3">
               <RiParentLine className="text-blue-600 w-5 h-5" />
-              <p className="font-medium text-black">Age Limit: {event.ageLimit}+</p>
+              <p className="font-medium text-black">
+                Age Limit: {event.ageLimit}+
+              </p>
             </div>
 
             {/* Availability Status */}
             <div className="mt-4 p-3 bg-gray-50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-700">Availability</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Availability
+                </span>
                 <span className="text-sm font-bold text-blue-600">
                   {event.availableSlots}/{event.totalSlots} slots
                 </span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full ${
-                    slotsPercentage > 80 ? 'bg-red-500' :
-                    slotsPercentage > 60 ? 'bg-yellow-500' :
-                    'bg-green-500'
+                    slotsPercentage > 80
+                      ? "bg-red-500"
+                      : slotsPercentage > 60
+                      ? "bg-yellow-500"
+                      : "bg-green-500"
                   }`}
                   style={{ width: `${slotsPercentage}%` }}
                 />
@@ -244,10 +270,10 @@ const EventDetailsPage = () => {
               )}
             </div>
 
-            <button 
+            {/* <button 
               className={`w-full mt-3 font-semibold py-2 rounded-lg transition ${
                 isEventFull 
-                  ? 'bg-gray-400 text-white cursor-not-allowed'
+                  ? 'bg-gray-700 text-white cursor-not-allowed'
                   : 'bg-blue-700 text-white hover:bg-blue-900'
               }`}
               disabled={isEventFull}
@@ -259,6 +285,23 @@ const EventDetailsPage = () => {
               }}
             >
               {isEventFull ? "Event Full" : "Book Now"}
+            </button> */}
+            <button
+              className={`w-full mt-3 font-semibold py-2 rounded-lg transition ${
+                isEventFull
+                  ? "bg-yellow-600 text-white hover:bg-yellow-800"
+                  : "bg-blue-700 text-white hover:bg-blue-900"
+              }`}
+              onClick={() => {
+                navigate(`/book-event/${event.id}`, {
+                  state: {
+                    eventDetails: event,
+                    isWaitingList: isEventFull,
+                  }
+                });
+              }}
+            >
+              {isEventFull ? "Join Waiting Queue" : "Book Now"}
             </button>
           </div>
         </div>
@@ -292,7 +335,7 @@ export default EventDetailsPage;
 //   //     try {
 //   //       setLoading(true);
 //   //       const eventData = await EventsService.getEventById(id);
-        
+
 //   //       if (eventData) {
 //   //         // Add additional details that might not be in the service
 //   //         const enrichedEvent = {
@@ -324,11 +367,11 @@ export default EventDetailsPage;
 //       try {
 //         setLoading(true);
 //         setError(null);
-        
+
 //         console.log("Fetching event with ID:", id);
 //         const eventData = await EventsService.getEventById(id);
 //         console.log("Fetched event data:", eventData);
-        
+
 //         if (eventData) {
 //           // Format the event data to handle both backend and local formats
 //           const formattedEvent = {
@@ -346,13 +389,13 @@ export default EventDetailsPage;
 //             // Handle time
 //             time: eventData.time || eventData.eventTime || "7:00 PM Onwards",
 //             // Handle age limit - backend might send as number
-//             agelimit: eventData.ageLimit 
-//               ? (typeof eventData.ageLimit === 'number' 
-//                   ? `${eventData.ageLimit}+` 
+//             agelimit: eventData.ageLimit
+//               ? (typeof eventData.ageLimit === 'number'
+//                   ? `${eventData.ageLimit}+`
 //                   : eventData.ageLimit)
 //               : eventData.agelimit || "All Ages",
 //             // Handle about/description
-//             about: eventData.about || eventData.description || 
+//             about: eventData.about || eventData.description ||
 //               `Join us for ${eventData.name}! This will be an amazing experience at ${eventData.venue}. Don't miss out on this incredible event.`,
 //             // Keep other backend fields if needed
 //             category: eventData.category,
@@ -361,7 +404,7 @@ export default EventDetailsPage;
 //             maxAttendees: eventData.maxAttendees,
 //             currentAttendees: eventData.currentAttendees
 //           };
-          
+
 //           setEvent(formattedEvent);
 //         } else {
 //           setError("Event not found");
@@ -379,8 +422,6 @@ export default EventDetailsPage;
 //     }
 //   }, [id]);
 
-  
-
 //   if (loading) {
 //     return <LoadingSpinner fullPage />;
 //   }
@@ -390,7 +431,7 @@ export default EventDetailsPage;
 //   //     <div className="flex flex-col items-center justify-center min-h-[400px] p-6">
 //   //       <h2 className="text-2xl font-bold text-gray-800 mb-4">Event Not Found</h2>
 //   //       <p className="text-gray-600 mb-6">The event you're looking for doesn't exist or has been removed.</p>
-//   //       <button 
+//   //       <button
 //   //         onClick={() => navigate('/')}
 //   //         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
 //   //       >
@@ -407,11 +448,11 @@ export default EventDetailsPage;
 //           {error || "Event Not Found"}
 //         </h2>
 //         <p className="text-gray-600 mb-6">
-//           {error 
+//           {error
 //             ? "There was an error loading the event. Please try again."
 //             : "The event you're looking for doesn't exist or has been removed."}
 //         </p>
-//         <button 
+//         <button
 //           onClick={() => navigate('/')}
 //           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
 //         >
