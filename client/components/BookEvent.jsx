@@ -264,7 +264,8 @@ const BookEvent = () => {
             {/* Dotted Line Separator */}
             <div className="relative">
               <div className="absolute inset-0 flex items-center px-0">
-                <div className="w-full border-t-5 border-dashed border-black"></div>
+                {/* <div className="w-full border-t-5 border-dashed border-black"></div>*/}
+                <div className="w-full border-t-7 border-dotted border-white"></div> 
               </div>
               <div className="relative flex justify-between px-2">
                 {/* <div className="w-8 h-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full"></div>
@@ -386,8 +387,8 @@ const BookEvent = () => {
               </div>
 
               {/* QR Code Placeholder or Ticket Number */}
-              <div className="flex justify-center pt-4">
-                <div className="bg-gray-100 p-3 rounded-lg">
+              <div className="flex justify-center pt-4 mb-5">
+                <div className="bg-gray-100 p-3 rounded-lg border-5 border-dotted border-white">
                   <div className="flex flex-col items-center">
                     <div className="w-20 h-20 bg-gray-300 rounded-lg flex items-center justify-center mb-2">
                       <Ticket className="w-10 h-10 text-gray-500" />
@@ -402,7 +403,7 @@ const BookEvent = () => {
           </div>
 
           {/* Ticket Decoration - Bottom circles */}
-          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-full"></div>
+          <div className="absolute -bottom-5 left-1/2 border-gray-700/5 transform -translate-x-1/2 w-10 h-10 bg-gray-800/24 rounded-full"></div>
         </div>
 
         {/* Waiting List Alert */}
