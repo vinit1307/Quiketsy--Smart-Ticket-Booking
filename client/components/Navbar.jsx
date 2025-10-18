@@ -11,6 +11,7 @@ import {
   Plus,
   Eye,
   Clock,
+  Palette,
 } from "lucide-react";
 import { TbCategory } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
@@ -23,6 +24,9 @@ import { MdSportsGymnastics } from "react-icons/md";
 import { LuDrama } from "react-icons/lu";
 import { FaFaceLaughSquint } from "react-icons/fa6";
 import { MdEventNote } from "react-icons/md";
+import { FaLaptopCode } from "react-icons/fa";
+import { GrWorkshop } from "react-icons/gr";
+import { MdOutlineSportsMartialArts } from "react-icons/md";
 
 const Navbar = () => {
   const [selectedCity, setSelectedCity] = useState("All Cities");
@@ -42,10 +46,13 @@ const Navbar = () => {
   const [isManageEventsOpen, setIsManageEventsOpen] = useState(false);
 
   const categories = [
-    { name: "Music", icon: <GiGuitar className="h-4 w-4" /> },
-    { name: "Sports", icon: <MdSportsGymnastics className="h-4 w-4" /> },
-    { name: "Plays", icon: <LuDrama className="h-4 w-4" /> },
-    { name: "Stand Ups", icon: <FaFaceLaughSquint className="h-4 w-4" /> },
+    { key: 'music', name: "Music", icon: <GiGuitar className="h-4 w-4" /> },
+    { key: 'sports', name: "Sports", icon: <MdSportsGymnastics className="h-4 w-4" /> },
+    { key: 'plays',name: "Plays", icon: <LuDrama className="h-4 w-4" /> },
+    { key: 'standup', name: "Stand Up Comedy", icon: <FaFaceLaughSquint className="h-4 w-4" /> },
+    {key: 'art', name: 'Arts & Culture', icon: <Palette className="h-4 w-4" />},
+  { key: 'technology', name: 'Technology', icon: <FaLaptopCode className="h-4 w-4" />},
+  { key: 'workshop', name: 'Workshops', icon: <GrWorkshop className="h-4 w-4" />},
   ];
 
   const cities = [
@@ -271,7 +278,7 @@ const Navbar = () => {
                 {categories.map((category) => (
                   <li key={category.name}>
                     <Link
-                      to={`/categories/${category.name.toLowerCase().replace(" ", "-")}`}
+                      to={`/events/${category.key}`}
                       className="flex items-center space-x-2 hover:text-blue-600"
                       onClick={() => setIsSidebarOpen(false)}
                     >

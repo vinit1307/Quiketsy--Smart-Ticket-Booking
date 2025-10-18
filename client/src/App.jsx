@@ -17,6 +17,7 @@ import ViewEvents from "../components/ViewEvents";
 import EditEvent from "../components/EditEvent";
 import ForgotPassword from "../components/ForgotPassword";
 import BookEvent from "../components/BookEvent";
+import Footer from "../components/Footer";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
             <Route path="/ForgotPassword" element={<ForgotPassword />} />
             <Route path="/book-event/:id" element={<BookEvent />} />
           </Routes>
+          <Footer/>
         </Router>
       </AuthProvider>
       <ToastContainer />

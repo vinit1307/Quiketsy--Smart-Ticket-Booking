@@ -16,7 +16,7 @@ const AllEventsPage = () => {
   // Handle invalid category
   React.useEffect(() => {
     // Check if category exists in the database
-    const validCategories = ['trending', 'music', 'recommended', 'plays', 'standup', 'art', 'technology', 'workshop'];
+    const validCategories = ['trending', 'music', 'recommended', 'plays', 'standup', 'art', 'technology', 'workshop', 'sports'];
     if (!validCategories.includes(category)) {
       navigate('/');
     }

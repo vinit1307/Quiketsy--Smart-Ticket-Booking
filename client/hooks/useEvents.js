@@ -63,6 +63,7 @@ import EventsService from '../services/eventsService';
 import { TrendingUp, Music, Theater, Mic, Palette, Heart } from 'lucide-react';
 import { FaLaptopCode } from "react-icons/fa";
 import { GrWorkshop } from "react-icons/gr";
+import { MdOutlineSportsMartialArts } from "react-icons/md";
 
 // Define your category configuration
 // const CATEGORY_CONFIG = [
@@ -121,6 +122,7 @@ const CATEGORY_CONFIG = [
   { key: 'art', title: 'Arts & Culture', icon: Palette, displayCount: 9 },
   { key: 'technology', title: 'Technology', icon: FaLaptopCode, displayCount: 9 },
   { key: 'workshop', title: 'Workshops', icon: GrWorkshop, displayCount: 9 },
+  { key: 'sports', title: 'Sports', icon: MdOutlineSportsMartialArts, displayCount: 9 }
 ];
 
 export const useAllCategories = () => {
