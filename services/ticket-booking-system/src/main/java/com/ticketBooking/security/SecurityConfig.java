@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
                 .requestMatchers("/api/auth/**").permitAll()           // allow register + login
                 .requestMatchers("/api/events/**").permitAll()
+                .requestMatchers("/api/booking/**").authenticated()
                 // .requestMatchers("/api/events/trending").permitAll()
                 // .requestMatchers("/api/events/category/**").permitAll() 
                 //.requestMatchers("/api/events/organizer/**").permitAll()
