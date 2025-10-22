@@ -562,7 +562,7 @@ React.useEffect(() => {
                 <button
                   type="button"
                   onClick={handleAddTag}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-[#008CFF] text-white rounded-lg opacity-90 hover:opacity-100"
                 >
                   Add
                 </button>
@@ -571,13 +571,13 @@ React.useEffect(() => {
                 {formData.tags.map(tag => (
                   <span
                     key={tag}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 [#008CFF]"
                   >
                     {tag}
                     <button
                       type="button"
                       onClick={() => handleRemoveTag(tag)}
-                      className="ml-2 hover:text-blue-600"
+                      className="ml-2 hover:text-[#008CFF]"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -594,7 +594,7 @@ React.useEffect(() => {
                 className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors ${
                   isSubmitting 
                     ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
-                    : "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-[#008CFF] text-white opacity-90 hover:opacity-100"
                 }`}
               >
                 {isSubmitting ? "Creating Event..." : "Create Event"}

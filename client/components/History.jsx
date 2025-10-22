@@ -95,7 +95,7 @@ const History = () => {
                 <div className="text-left">
                 <Link
                   to={`/event/${event.id}`}
-                  className="text-white bg-blue-600 rounded-full text-sm font-medium flex justify-between items-center py-1 px-3 hover:bg-blue-700 transition"
+                  className="text-white bg-[#008CFF] rounded-full text-sm font-medium flex justify-between items-center py-1 px-3 opacity-90 hover:opacity-100 transition"
                 >
                 Booking Details
                 </Link>
@@ -103,7 +103,7 @@ const History = () => {
                 <div className="text-right">
                 <Link
                   to={`/event/${event.id}`}
-                  className="text-blue-600 hover:underline text-sm font-medium"
+                  className="text-[#008CFF] hover:underline text-sm font-medium"
                 >
                 Event Details →
                 </Link>

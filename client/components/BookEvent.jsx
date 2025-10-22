@@ -220,7 +220,7 @@ const BookEvent = () => {
           <p className="text-gray-600">Event not found</p>
           <button
             onClick={() => navigate(-1)}
-            className="mt-4 text-blue-600 hover:underline"
+            className="mt-4 text-[#008CFF] hover:underline"
           >
             Go Back
           </button>
@@ -253,7 +253,7 @@ const BookEvent = () => {
           {/* Ticket Main Content */}
           <div className="relative">
             {/* Event Image Section */}
-            <div className="relative h-48 overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600">
+            <div className="relative h-48 overflow-hidden bg-gradient-to-r from-[#008CFF] to-purple-600">
               <img
                 src={event.image}
                 alt={event.name}
@@ -292,7 +292,7 @@ const BookEvent = () => {
               <div className="grid grid-cols-2 gap-4">
                 {/* Date */}
                 <div className="flex items-start space-x-3">
-                  <Calendar className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Calendar className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">Date</p>
                     <p className="text-sm font-semibold text-gray-900">
@@ -303,7 +303,7 @@ const BookEvent = () => {
 
                 {/* Time */}
                 <div className="flex items-start space-x-3">
-                  <Clock className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Clock className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">Time</p>
                     <p className="text-sm font-semibold text-gray-900">
@@ -314,7 +314,7 @@ const BookEvent = () => {
 
                 {/* Venue */}
                 <div className="flex items-start space-x-3">
-                  <MapPin className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <MapPin className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">Venue</p>
                     <p className="text-sm font-semibold text-gray-900">
@@ -325,7 +325,7 @@ const BookEvent = () => {
 
                 {/* City */}
                 <div className="flex items-start space-x-3">
-                  <Building2 className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Building2 className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">City</p>
                     <p className="text-sm font-semibold text-gray-900">
@@ -336,7 +336,7 @@ const BookEvent = () => {
 
                 {/* Duration */}
                 <div className="flex items-start space-x-3">
-                  <Clock className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Clock className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">Duration</p>
                     <p className="text-sm font-semibold text-gray-900">
@@ -347,7 +347,7 @@ const BookEvent = () => {
 
                 {/* Language */}
                 <div className="flex items-start space-x-3">
-                  <Globe className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Globe className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">Language</p>
                     <p className="text-sm font-semibold text-gray-900">
@@ -358,7 +358,7 @@ const BookEvent = () => {
 
                 {/* Age Limit */}
                 <div className="flex items-start space-x-3">
-                  <User className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <User className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">Age Limit</p>
                     <p className="text-sm font-semibold text-gray-900">
@@ -369,7 +369,7 @@ const BookEvent = () => {
 
                 {/* Availability */}
                 <div className="flex items-start space-x-3">
-                  <Users className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <Users className="w-5 h-5 text-[#008CFF] mt-0.5" />
                   <div>
                     <p className="text-xs text-gray-500">Availability</p>
                     <p className="text-sm font-semibold text-gray-900">

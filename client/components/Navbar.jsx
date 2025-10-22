@@ -80,15 +80,13 @@ const Navbar = () => {
       <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md md:px-11">
         {/* Left side - Logo + Text */}
         <Link to="/">
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center">
           <img
-            src="../Images/QuiketsyLogo.png"
+            src="../Images/logohead.png"
             alt="Quiketsy Logo"
-            height={100}
-            width={100}
-            className="hidden md:block"
+            className="h-10"
           />
-          <div className="text-2xl font-bold text-blue-700">Quiketsy</div>
+          <div className="text-2xl font-black text-[#008cff]">Quiketsy</div>
         </div>
         </Link>
 
@@ -108,7 +106,7 @@ const Navbar = () => {
 
           {/* City Selector */}
           <div className="relative flex items-center cursor-pointer ml-1">
-            <MapPin size={18} className="text-blue-600 mr-1" />
+            <MapPin size={18} className="text-[#008cff] mr-1" />
             <span className="text-gray-800" onClick={() => setIsOpen(!isOpen)}>
               {selectedCity}
             </span>
@@ -159,7 +157,7 @@ const Navbar = () => {
           {/* Sign In Button */}
           {/* <Link
             to="/signin"
-            className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition"
+            className="px-4 py-1.5 bg-[#008CFF] text-white rounded-2xl hover:bg-blue-800 transition"
           >
             Sign In
           </Link> */}
@@ -174,14 +172,14 @@ const Navbar = () => {
                 });
                 navigate("/"); // redirect to home after logout
               }}
-              className="px-4 py-1.5 bg-red-600 text-white rounded-2xl hover:bg-red-700 transition"
+              className="hidden md:block px-4 py-1.5 font-bold border border-red-600 opacity-90 text-red-600 rounded-xl hover:bg-red-500 hover:text-white transition"
             >
               Logout
             </button>
           ) : (
             <Link
               to="/signin"
-              className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition"
+              className="hidden md:block px-4 py-1.5 font-bold border border-[#008CFF] opacity-90 text-[#008CFF] rounded-xl hover:bg-[#008CFF] hover:text-white transition"
             >
               Sign In
             </Link>
@@ -253,7 +251,7 @@ const Navbar = () => {
         <nav className="flex flex-col space-y-4 ml-1 text-bold text-base">
           {/* <Link
             to="/categories"
-            className="flex items-center space-x-2 hover:text-blue-600"
+            className="flex items-center space-x-2 hover:text-[#008CFF]"
           >
             <TbCategory className="mr-2 h-5 w-5" /> Categories
           </Link> */}
@@ -261,7 +259,7 @@ const Navbar = () => {
           <div>
             <button
               onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-              className="flex items-center justify-between w-full pr-2 hover:text-blue-600"
+              className="flex items-center justify-between w-full pr-2 hover:text-[#008CFF]"
             >
               <span className="flex items-center">
                 <TbCategory className="mr-2 h-5 w-5" /> Categories
@@ -279,7 +277,7 @@ const Navbar = () => {
                   <li key={category.name}>
                     <Link
                       to={`/events/${category.key}`}
-                      className="flex items-center space-x-2 hover:text-blue-600"
+                      className="flex items-center space-x-2 hover:text-[#008CFF]"
                       onClick={() => setIsSidebarOpen(false)}
                     >
                       {category.icon}
@@ -295,7 +293,7 @@ const Navbar = () => {
             <>
               <Link
                 to="/account"
-                className="flex items-center space-x-2 hover:text-blue-600"
+                className="flex items-center space-x-2 hover:text-[#008CFF]"
               >
                 <CircleUser className="mr-2 h-5 w-5" /> Account
               </Link>
@@ -305,7 +303,7 @@ const Navbar = () => {
                 <div>
                   <button
                     onClick={() => setIsManageEventsOpen(!isManageEventsOpen)}
-                    className="flex items-center justify-between w-full pr-2 hover:text-blue-600"
+                    className="flex items-center justify-between w-full pr-2 hover:text-[#008CFF]"
                   >
                     <span className="flex items-center">
                       <MdEventNote className="mr-2 h-5 w-5" /> Manage Events
@@ -324,7 +322,7 @@ const Navbar = () => {
                       <li>
                         <Link
                           to="/create-event"
-                          className="flex items-center space-x-2 hover:text-blue-600"
+                          className="flex items-center space-x-2 hover:text-[#008CFF]"
                           onClick={() => setIsSidebarOpen(false)}
                         >
                           <Plus className="h-4 w-4" />
@@ -334,7 +332,7 @@ const Navbar = () => {
                       <li>
                         <Link
                           to="/your-events"
-                          className="flex items-center space-x-2 hover:text-blue-600"
+                          className="flex items-center space-x-2 hover:text-[#008CFF]"
                           onClick={() => setIsSidebarOpen(false)}
                         >
                           <Eye className="h-4 w-4" />
@@ -344,7 +342,7 @@ const Navbar = () => {
                       <li>
                         <Link
                           to="/event-history"
-                          className="flex items-center space-x-2 hover:text-blue-600"
+                          className="flex items-center space-x-2 hover:text-[#008CFF]"
                           onClick={() => setIsSidebarOpen(false)}
                         >
                           <Clock className="h-4 w-4" />
@@ -357,14 +355,14 @@ const Navbar = () => {
               )}
 
               {user?.role === "USER" && (
-                <Link to="/history" className="flex items-center space-x-2 hover:text-blue-600">
+                <Link to="/history" className="flex items-center space-x-2 hover:text-[#008CFF]">
                   <History className="mr-2 h-5 w-5" />
                   Booking History
                 </Link>
               )}
 
               {user?.role === "ORGANIZER" && (
-                <Link to="/history" className="flex items-center space-x-2 hover:text-blue-600">
+                <Link to="/history" className="flex items-center space-x-2 hover:text-[#008CFF]">
                   <History className="mr-2 h-5 w-5 mt-0" />
                   Your Booking History
                 </Link>
@@ -387,7 +385,8 @@ const Navbar = () => {
             </button>
           )} */}
         </nav>
-        {isAuthenticated && (
+        {isAuthenticated ? 
+        (
           <div className="mt-auto border-t pt-4">
 
             <button
@@ -401,6 +400,21 @@ const Navbar = () => {
               }}
               className="flex items-center space-x-2  hover:text-red-600 text-left w-full ml-1.5 text-bold text-bold">
               <RiLogoutCircleLine className="mr-2 h-5 w-5" /> Logout
+            </button>
+          </div>
+        )
+        :
+        
+        (
+          <div className="mt-auto border-t pt-4">
+
+            <button
+              onClick={() => {
+                setIsSidebarOpen(false);
+                navigate("/signin");
+              }}
+              className="flex items-center space-x-2  hover:text-[#008cff]  text-left w-full ml-1.5 text-bold text-bold">
+              <RiLogoutCircleLine className="mr-2 h-5 w-5" /> Sign in
             </button>
           </div>
         )}
@@ -473,7 +487,7 @@ export default Navbar;
 
 //           {/* City Selector */}
 //           <div className="relative flex items-center cursor-pointer ml-1">
-//             <MapPin size={18} className="text-blue-600 mr-1" />
+//             <MapPin size={18} className="text-[#008CFF] mr-1" />
 //             <span className="text-gray-800" onClick={() => setIsOpen(!isOpen)}>
 //               {selectedCity}
 //             </span>
@@ -525,7 +539,7 @@ export default Navbar;
 //           {/* Sign In Button */}
 //           <Link
 //             to="/signin"
-//             className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition"
+//             className="px-4 py-1.5 bg-[#008CFF] text-white rounded-2xl hover:bg-blue-800 transition"
 //           >
 //             Sign In
 //           </Link>
@@ -607,13 +621,13 @@ export default Navbar;
 
 //             {/* Sidebar Options */}
 //             <nav className="flex flex-col space-y-4 ml-4">
-//               <Link to="/categories" className="hover:text-blue-600">
+//               <Link to="/categories" className="hover:text-[#008CFF]">
 //                 Categories
 //               </Link>
-//               <Link to="/account" className="hover:text-blue-600">
+//               <Link to="/account" className="hover:text-[#008CFF]">
 //                 Account
 //               </Link>
-//               <Link to="/history" className="hover:text-blue-600">
+//               <Link to="/history" className="hover:text-[#008CFF]">
 //                 History
 //               </Link>
 //             </nav>
@@ -683,7 +697,7 @@ export default Navbar;
 
 //         {/* City Selector (text + arrow) */}
 //         <div className="relative flex items-center cursor-pointer ml-1">
-//           <MapPin size={18} className="text-blue-600 mr-1" />
+//           <MapPin size={18} className="text-[#008CFF] mr-1" />
 //           <span className="text-gray-800" onClick={() => setIsOpen(!isOpen)}>
 //             {selectedCity}
 //           </span>
@@ -731,7 +745,7 @@ export default Navbar;
 //         </div>
 
 //         {/* Events Button - only on md+ */}
-//         {/* <TbCategory size={20} className="text-blue-600 mr-2"/>
+//         {/* <TbCategory size={20} className="text-[#008CFF] mr-2"/>
 //         <button className="hidden md:block text-blue-700 hover:text-blue-800 font-medium">
 //           Events
 //         </button> */}
@@ -739,7 +753,7 @@ export default Navbar;
 //         {/* Sign In Button */}
 //         <Link
 //           to="/signin"
-//           className="px-4 py-1.5 bg-blue-700 text-white rounded-2xl hover:bg-blue-800 transition"
+//           className="px-4 py-1.5 bg-[#008CFF] text-white rounded-2xl hover:bg-blue-800 transition"
 //         >
 //           Sign In
 //         </Link>

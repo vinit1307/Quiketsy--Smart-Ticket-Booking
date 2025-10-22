@@ -39,7 +39,7 @@ export default function Carousel({
   autoplay = false,
   autoplayDelay = 3000,
   pauseOnHover = false,
-  loop = false,
+  loop = true,
   round = false,
 }) {
   const containerRef = useRef(null);

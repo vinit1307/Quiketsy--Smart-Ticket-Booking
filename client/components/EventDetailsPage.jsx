@@ -85,7 +85,7 @@ const EventDetailsPage = () => {
         </p>
         <button
           onClick={() => navigate("/")}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          className="px-6 py-2 bg-[#008CFF] text-white rounded-lg opacity-90 hover:opacity-100 transition"
         >
           Back to Home
         </button>
@@ -134,7 +134,7 @@ const EventDetailsPage = () => {
             event.status === "UPCOMING"
               ? "bg-green-100 text-green-800"
               : event.status === "ONGOING"
-              ? "bg-blue-100 text-blue-800"
+              ? "bg-blue-100 text-[#008CFF]"
               : "bg-gray-100 text-gray-800"
           }`}
         >
@@ -160,7 +160,7 @@ const EventDetailsPage = () => {
           {/* Tags */}
           {event.tags && (
             <div className="flex flex-wrap gap-2 mb-6">
-              <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full capitalize">
+              <span className="bg-blue-100 text-[#008CFF] text-sm font-medium px-3 py-1 rounded-full capitalize">
                 {event.category}
               </span>
               {event.tags
@@ -188,46 +188,46 @@ const EventDetailsPage = () => {
         <div className="lg:col-span-1">
           <div className="sticky top-10 bg-white shadow-lg rounded-xl p-5 border space-y-3">
             <div className="flex items-center space-x-3">
-              <CalendarDays className="text-blue-600 w-5 h-5" />
+              <CalendarDays className="text-[#008CFF] w-5 h-5" />
               <p className="font-medium text-black">
                 Date: {formatDate(event.date)}
               </p>
             </div>
 
             <div className="flex items-center space-x-3">
-              <MdTimelapse className="text-blue-600 w-5 h-5" />
+              <MdTimelapse className="text-[#008CFF] w-5 h-5" />
               <p className="font-medium text-black">
                 Time: {formatTime(event.startTime)}
               </p>
             </div>
 
             <div className="flex items-center space-x-3">
-              <GiDuration className="text-blue-600 w-5 h-5" />
+              <GiDuration className="text-[#008CFF] w-5 h-5" />
               <p className="font-medium text-black">
                 Duration: {event.duration}
               </p>
             </div>
 
             <div className="flex items-center space-x-3">
-              <HiOutlineLocationMarker className="text-blue-600 w-5 h-5" />
+              <HiOutlineLocationMarker className="text-[#008CFF] w-5 h-5" />
               <p className="font-medium text-black">Venue: {event.venue}</p>
             </div>
 
             {event.city && (
               <div className="flex items-center space-x-3">
-                <FaCity className="text-blue-600 w-5 h-5" />
+                <FaCity className="text-[#008CFF] w-5 h-5" />
                 <p className="font-medium text-black">City: {event.city}</p>
               </div>
             )}
 
             <div className="flex items-center space-x-3">
-              <IoTicket className="text-blue-600 w-5 h-5" />
+              <IoTicket className="text-[#008CFF] w-5 h-5" />
               <p className="font-medium text-black">Price: ₹{event.price}/-</p>
             </div>
 
             {event.language && (
               <div className="flex items-center space-x-3">
-                <FaLanguage className="text-blue-600 w-5 h-5" />
+                <FaLanguage className="text-[#008CFF] w-5 h-5" />
                 <p className="font-medium text-black">
                   Language: {event.language}
                 </p>
@@ -235,7 +235,7 @@ const EventDetailsPage = () => {
             )}
 
             <div className="flex items-center space-x-3">
-              <RiParentLine className="text-blue-600 w-5 h-5" />
+              <RiParentLine className="text-[#008CFF] w-5 h-5" />
               <p className="font-medium text-black">
                 Age Limit: {event.ageLimit}+
               </p>
@@ -247,7 +247,7 @@ const EventDetailsPage = () => {
                 <span className="text-sm font-medium text-gray-700">
                   Availability
                 </span>
-                <span className="text-sm font-bold text-blue-600">
+                <span className="text-sm font-bold text-[#008CFF]">
                   {event.availableSlots}/{event.totalSlots} slots
                 </span>
               </div>
@@ -274,7 +274,7 @@ const EventDetailsPage = () => {
               className={`w-full mt-3 font-semibold py-2 rounded-lg transition ${
                 isEventFull 
                   ? 'bg-gray-700 text-white cursor-not-allowed'
-                  : 'bg-blue-700 text-white hover:bg-blue-900'
+                  : 'bg-[#008CFF] text-white hover:bg-blue-900'
               }`}
               disabled={isEventFull}
               onClick={() => {
@@ -290,7 +290,7 @@ const EventDetailsPage = () => {
               className={`w-full mt-3 font-semibold py-2 rounded-lg transition ${
                 isEventFull
                   ? "bg-yellow-600 text-white hover:bg-yellow-800"
-                  : "bg-blue-700 text-white hover:bg-blue-900"
+                  : "bg-[#008CFF] text-white hover:bg-blue-900"
               }`}
               onClick={() => {
                 navigate(`/book-event/${event.id}`, {
@@ -433,7 +433,7 @@ export default EventDetailsPage;
 //   //       <p className="text-gray-600 mb-6">The event you're looking for doesn't exist or has been removed.</p>
 //   //       <button
 //   //         onClick={() => navigate('/')}
-//   //         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+//   //         className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-[#008CFF] transition"
 //   //       >
 //   //         Back to Home
 //   //       </button>
@@ -454,7 +454,7 @@ export default EventDetailsPage;
 //         </p>
 //         <button
 //           onClick={() => navigate('/')}
-//           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+//           className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-[#008CFF] transition"
 //         >
 //           Back to Home
 //         </button>
@@ -518,7 +518,7 @@ export default EventDetailsPage;
 //               <p className="font-medium text-black">Age Limit: {event.agelimit}</p>
 //             </div>
 
-//             <button className="w-full mt-3 bg-blue-700 text-white font-semibold py-2 rounded-lg hover:bg-blue-900">
+//             <button className="w-full mt-3 bg-[#008CFF] text-white font-semibold py-2 rounded-lg hover:bg-blue-900">
 //               Book Now
 //             </button>
 //           </div>
@@ -586,7 +586,7 @@ export default EventDetailsPage;
 //               <p className="font-medium text-black">Age Limit: {event.agelimit}</p>
 //             </div>
 
-//             <button className="w-full mt-3 bg-blue-700 text-white font-semibold py-2 rounded-lg hover:bg-blue-900">
+//             <button className="w-full mt-3 bg-[#008CFF] text-white font-semibold py-2 rounded-lg hover:bg-blue-900">
 //               Book Now
 //             </button>
 //           </div>

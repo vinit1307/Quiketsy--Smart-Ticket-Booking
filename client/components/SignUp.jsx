@@ -54,7 +54,7 @@ const SignUp = () => {
   return (
     <div className="flex justify-center items-center items-start min-h-screen pt-24 pb-10 bg-gray-100">
       <div className="w-full bg-white rounded-2xl shadow-lg p-10 max-w-sm md:max-w-[525px]">
-        <h2 className="text-2xl font-bold text-blue-700 text-center mb-10">
+        <h2 className="text-2xl font-bold text-[#008cff] text-center mb-10">
           Create Account
         </h2>
 
@@ -151,7 +151,7 @@ const SignUp = () => {
                   value="User"
                   checked={accountType === "User"}
                   onChange={() => setAccountType("User")}
-                  className="form-radio text-blue-700 h-5 w-5"
+                  className="form-radio text-[#008CFF] h-5 w-5"
                 />
                 <span>User</span>
               </label>
@@ -163,7 +163,7 @@ const SignUp = () => {
                   value="ORGANIZER"
                   checked={accountType === "ORGANIZER"}
                   onChange={() => setAccountType("ORGANIZER")}
-                  className="form-radio text-blue-700 h-5 w-5"
+                  className="form-radio text-[#008CFF] h-5 w-5"
                 />
                 <span>Event Organizer</span>
               </label>
@@ -174,7 +174,7 @@ const SignUp = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 transition mt-5"
+            className="w-full bg-[#008CFF] opacity-90 text-white py-2 rounded-lg hover:opacity-100 transition mt-5"
           >
             Sign Up
           </button>
@@ -182,7 +182,7 @@ const SignUp = () => {
 
         <p className="text-center mt-4">
           Already have an account?{" "}
-          <Link to="/signin" className="text-blue-600 font-semibold hover:underline">
+          <Link to="/signin" className="text-[#008CFF] font-semibold hover:underline">
             Sign In
           </Link>
         </p>

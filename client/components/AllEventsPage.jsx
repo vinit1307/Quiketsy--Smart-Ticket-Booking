@@ -35,14 +35,14 @@ const AllEventsPage = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
-          <IconComponent className="text-blue-600 w-6 h-6" />
+          <IconComponent className="text-[#008CFF] w-6 h-6" />
           <h2 className="text-2xl font-bold text-gray-800">
             All {title}
           </h2>
         </div>
         <Link 
           to="/" 
-          className="text-gray-600 hover:text-blue-600 transition-colors"
+          className="text-gray-600 hover:text-[#008CFF] transition-colors"
         >
           ← Back to Home
         </Link>
@@ -62,7 +62,7 @@ const AllEventsPage = () => {
                     e.target.src = 'https://via.placeholder.com/400x300?text=Event';
                   }}
                 />
-                <div className="absolute bottom-2 left-2 bg-blue-700 text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
+                <div className="absolute bottom-2 left-2 bg-[#008CFF] text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
                   {event.date || event.eventDate}
                 </div>
               </div>
@@ -72,7 +72,7 @@ const AllEventsPage = () => {
                 </h3>
                 <p className="text-sm text-gray-600 line-clamp-1">{event.venue}</p>
                 {(event.price || event.ticketPrice) && (
-                  <p className="text-sm font-semibold text-blue-600 mt-1">
+                  <p className="text-sm font-semibold text-[#008CFF] mt-1">
                     ₹{event.price || event.ticketPrice}
                   </p>
                 )}
@@ -86,7 +86,7 @@ const AllEventsPage = () => {
       {events.length === 0 && !loading && (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No events found in this category.</p>
-          <Link to="/" className="text-blue-600 hover:underline mt-2 inline-block">
+          <Link to="/" className="text-[#008CFF] hover:underline mt-2 inline-block">
             Browse all events
           </Link>
         </div>
@@ -160,7 +160,7 @@ export default AllEventsPage;
 //                     e.target.src = 'https://via.placeholder.com/400x300?text=Event';
 //                   }}
 //                 />
-//                 <div className="absolute bottom-2 left-2 bg-blue-700 text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
+//                 <div className="absolute bottom-2 left-2 bg-[#008CFF] text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
 //                   {event.date}
 //                 </div>
 //               </div>
@@ -249,7 +249,7 @@ export default AllEventsPage;
 //                   alt={event.name}
 //                   className="w-full h-48 object-cover"
 //                 />
-//                 <div className="absolute bottom-2 left-2 bg-blue-700 text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
+//                 <div className="absolute bottom-2 left-2 bg-[#008CFF] text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
 //                   {event.date}
 //                 </div>
 //               </div>
