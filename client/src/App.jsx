@@ -18,6 +18,7 @@ import EditEvent from "../components/EditEvent";
 import ForgotPassword from "../components/ForgotPassword";
 import BookEvent from "../components/BookEvent";
 import Footer from "../components/Footer";
+import PaymentSuccess from "../components/PaymentSuccess";
 
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
             <Route path="/edit-event/:id" element={<EditEvent />} />
             <Route path="/ForgotPassword" element={<ForgotPassword />} />
             <Route path="/book-event/:id" element={<BookEvent />} />
+            <Route path="/booking/success" element={<PaymentSuccess />} />
           </Routes>
           <Footer/>
         </Router>

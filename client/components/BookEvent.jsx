@@ -17,6 +17,7 @@ import {
 import EventsService from "../services/eventsService";
 import LoadingSpinner from "./LoadingSpinner";
 import { toast } from "react-toastify";
+import handlePayment from "../utils/handlePayment";
 
 const BookEvent = () => {
   const { id } = useParams();
@@ -181,14 +182,26 @@ const BookEvent = () => {
       return;
     }
 
+    // console.log(event);
+
+    handlePayment(
+      event.price, 
+      userDetails.name, 
+      userDetails.email, 
+      userDetails.phoneNumber, 
+      event.id,
+      event.name, 
+      event.description
+    );
+
     // Navigate to payment page with event details
-    navigate(`/payment/${event.id}`, {
-      state: {
-        eventDetails: event,
-        isWaitingList: isWaitingList,
-        userId: user?.id,
-      },
-    });
+    // navigate(`/payment/${event.id}`, {
+    //   state: {
+    //     eventDetails: event,
+    //     isWaitingList: isWaitingList,
+    //     userId: user?.id,
+    //   },
+    // });
   };
 
   // Show loading while auth is initializing
