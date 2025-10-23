@@ -19,6 +19,7 @@ import ForgotPassword from "../components/ForgotPassword";
 import BookEvent from "../components/BookEvent";
 import Footer from "../components/Footer";
 import PaymentSuccess from "../components/PaymentSuccess";
+import VerifyTicket from "../components/VerifyTicket";
 
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
             <Route path="/ForgotPassword" element={<ForgotPassword />} />
             <Route path="/book-event/:id" element={<BookEvent />} />
             <Route path="/booking/success" element={<PaymentSuccess />} />
+            <Route path="/verify-ticket/:id" element={<VerifyTicket />} />
           </Routes>
           <Footer/>
         </Router>

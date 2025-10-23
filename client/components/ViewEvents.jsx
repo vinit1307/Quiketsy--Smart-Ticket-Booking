@@ -339,6 +339,17 @@ if (authLoading || !isInitialized) {
 
                   <span className="text-gray-300">|</span>
 
+                  <button
+                    onClick={() =>
+                      navigate(`/verify-ticket/${event.id || event.eventId}`)
+                    }
+                    className="text-green-600 hover:text-green-800 font-bold text-sm transition-colors cursor-pointer"
+                  >
+                    Verify Ticket
+                  </button>
+
+                  <span className="text-gray-300">|</span>
+
                   {event.totalSlots && (
                       <div className="">
                         <div className="flex items-center justify-center space-x-2 flex-grow font-medium text-sm text-gray-500">
