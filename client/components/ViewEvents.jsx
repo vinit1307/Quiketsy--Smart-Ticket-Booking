@@ -203,7 +203,7 @@ if (authLoading || !isInitialized) {
             </div>
             <button
               onClick={() => navigate('/create-event')}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-6 py-2 bg-[#008CFF] opacity-90 text-white rounded-lg hover:opacity-100 transition-colors"
             >
               Create New Event
             </button>
@@ -219,7 +219,7 @@ if (authLoading || !isInitialized) {
             </p>
             <button
               onClick={() => navigate("/create-event")}
-              className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              className="mt-4 px-6 py-2 bg-[#008CFF] opacity-90 text-white rounded-lg hover:opacity-100"
             >
               Create New Event
             </button>
@@ -253,7 +253,7 @@ if (authLoading || !isInitialized) {
                 </div>
                 <div className="flex items-center mt-1 mb-5 gap-2">
                   {event.category && (
-                          <span className="flex items-center justify-center gap-1 text-sm font-bold text-blue-500 capitalize">
+                          <span className="flex items-center justify-center gap-1 text-sm font-bold text-[#008CFF]-500 capitalize">
                            <BiSolidCategory className=""/>{event.category}
                           </span>
                         )}
@@ -321,7 +321,7 @@ if (authLoading || !isInitialized) {
                       }
                       navigate(`/event/${idToUse}`);
                     }}
-                    className="font-bold text-blue-600 hover:text-blue-800 text-sm transition-colors cursor-pointer"
+                    className="font-bold text-[#008CFF] opacity-90 hover:opacity-100 text-sm transition-colors cursor-pointer"
                   >
                     View Event Details
                   </button>
@@ -342,20 +342,20 @@ if (authLoading || !isInitialized) {
                   {event.totalSlots && (
                       <div className="">
                         <div className="flex items-center justify-center space-x-2 flex-grow font-medium text-sm text-gray-500">
-                          <div className="text-blue-600 font-bold">Availability:</div>
+                          <div className="text-[#008CFF] font-bold">Availability:</div>
 
                           <div className="w-30 bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full transition-all ${
                               getBookedPercentage(event.totalSlots, event.availableSlots) > 80 ? 'bg-green-500' :
-                              getBookedPercentage(event.totalSlots, event.availableSlots) > 50 ? 'bg-blue-500' :
+                              getBookedPercentage(event.totalSlots, event.availableSlots) > 50 ? 'bg-[#008CFF]' :
                               'bg-gray-400'
                             }`}
                             style={{ width: `${getBookedPercentage(event.totalSlots, event.availableSlots)}%` }}
                           />
                         </div>
 
-                          <div className="text-blue-600">{getBookedPercentage(event.totalSlots, event.availableSlots)}% Slots Booked</div>
+                          <div className="text-[#008CFF]">{getBookedPercentage(event.totalSlots, event.availableSlots)}% Slots Booked</div>
                         </div>
                         
                       </div>
@@ -370,7 +370,7 @@ if (authLoading || !isInitialized) {
         {events.length > 0 && (
           <button
             onClick={() => navigate("/create-event")}
-            className="fixed bottom-8 right-8 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-110 flex items-center justify-center"
+            className="fixed bottom-8 right-8 w-14 h-14 bg-[#008CFF] text-white rounded-full shadow-lg opacity-90 hover:opacity-100100 transition-all hover:scale-110 flex items-center justify-center"
             title="Create New Event"
           >
             <span className="text-2xl">+</span>
@@ -560,7 +560,7 @@ export default ViewEvents;
 //             <p className="text-gray-500 text-lg">You don't have any active events</p>
 //             <button
 //               onClick={() => navigate('/create-event')}
-//               className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+//               className="mt-4 px-6 py-2 bg-[#008CFF] text-white rounded-lg hover:bg-[#008CFF]-700"
 //             >
 //               Create New Event
 //             </button>
@@ -626,7 +626,7 @@ export default ViewEvents;
 //                 <div className="pt-4 border-t flex items-center gap-2">
 //                   <button
 //                     onClick={() => navigate(`/event/${event}`)}
-//                     className="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors"
+//                     className="text-[#008CFF] hover:text-[#008CFF]-800 font-medium text-sm transition-colors"
 //                   >
 //                     View Event Details
 //                   </button>
@@ -649,7 +649,7 @@ export default ViewEvents;
 //         {events.length > 0 && (
 //           <button
 //             onClick={() => navigate('/create-event')}
-//             className="fixed bottom-8 right-8 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition-all hover:scale-110 flex items-center justify-center"
+//             className="fixed bottom-8 right-8 w-14 h-14 bg-[#008CFF] text-white rounded-full shadow-lg hover:bg-[#008CFF]-700 transition-all hover:scale-110 flex items-center justify-center"
 //             title="Create New Event"
 //           >
 //             <span className="text-2xl">+</span>

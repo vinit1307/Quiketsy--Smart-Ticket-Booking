@@ -163,9 +163,9 @@ const ForgotPassword = () => {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
-            {step === 1 && <FiMail className="w-8 h-8 text-blue-600" />}
-            {step === 2 && <FiKey className="w-8 h-8 text-blue-600" />}
-            {step === 3 && <FiLock className="w-8 h-8 text-blue-600" />}
+            {step === 1 && <FiMail className="w-8 h-8 text-[#008CFF]" />}
+            {step === 2 && <FiKey className="w-8 h-8 text-[#008CFF]" />}
+            {step === 3 && <FiLock className="w-8 h-8 text-[#008CFF]" />}
           </div>
           <h2 className="text-3xl font-bold text-gray-800">
             {step === 1 && 'Forgot Password'}
@@ -183,19 +183,19 @@ const ForgotPassword = () => {
         <div className="flex items-center justify-center mb-8">
           <div className="flex items-center">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              step >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
+              step >= 1 ? 'bg-[#008CFF] text-white' : 'bg-gray-300 text-gray-600'
             }`}>
               1
             </div>
-            <div className={`w-16 h-1 ${step >= 2 ? 'bg-blue-600' : 'bg-gray-300'}`} />
+            <div className={`w-16 h-1 ${step >= 2 ? 'bg-[#008CFF]' : 'bg-gray-300'}`} />
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              step >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
+              step >= 2 ? 'bg-[#008CFF] text-white' : 'bg-gray-300 text-gray-600'
             }`}>
               2
             </div>
-            <div className={`w-16 h-1 ${step >= 3 ? 'bg-blue-600' : 'bg-gray-300'}`} />
+            <div className={`w-16 h-1 ${step >= 3 ? 'bg-[#008CFF]' : 'bg-gray-300'}`} />
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              step >= 3 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'
+              step >= 3 ? 'bg-[#008CFF] text-white' : 'bg-gray-300 text-gray-600'
             }`}>
               3
             </div>
@@ -227,7 +227,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#008CFF] text-white py-3 rounded-lg font-medium opacity-90 hover:opacity-100 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Sending OTP...' : 'Send OTP'}
             </button>
@@ -235,7 +235,7 @@ const ForgotPassword = () => {
             <div className="mt-6 text-center">
               <Link
                 to="/signin"
-                className="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center"
+                className="text-sm text-[#008CFF] opacity-90 hover:opacity-100 inline-flex items-center"
               >
                 <FiArrowLeft className="mr-2" />
                 Back to Sign In
@@ -267,14 +267,14 @@ const ForgotPassword = () => {
               <div className="mt-4 text-center">
                 {otpTimer > 0 ? (
                   <p className="text-sm text-gray-600">
-                    OTP expires in <span className="font-bold text-blue-600">{formatTime(otpTimer)}</span>
+                    OTP expires in <span className="font-bold text-[#008CFF]">{formatTime(otpTimer)}</span>
                   </p>
                 ) : (
                   <button
                     type="button"
                     onClick={handleResendOtp}
                     disabled={!canResendOtp || loading}
-                    className="text-sm text-blue-600 hover:text-blue-800 font-medium disabled:text-gray-400"
+                    className="text-sm text-[#008CFF] opacity-90 hover:opacity-100 font-medium disabled:text-gray-400"
                   >
                     Resend OTP
                   </button>
@@ -285,7 +285,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#008CFF] text-white py-3 rounded-lg font-medium opacity-90 hover:opacity-100 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Validating...' : 'Verify OTP'}
             </button>
@@ -294,7 +294,7 @@ const ForgotPassword = () => {
               <button
                 type="button"
                 onClick={() => setStep(1)}
-                className="text-sm text-blue-600 hover:text-blue-800 inline-flex items-center"
+                className="text-sm text-[#008CFF] opacity-90 hover:opacity-100 inline-flex items-center"
               >
                 <FiArrowLeft className="mr-2" />
                 Change Email
@@ -383,7 +383,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#008CFF] text-white py-3 rounded-lg font-medium opacity-90 hover:opacity-100 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Resetting Password...' : 'Reset Password'}
             </button>

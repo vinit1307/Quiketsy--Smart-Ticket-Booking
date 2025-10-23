@@ -4,6 +4,7 @@ import EventsSection from "./EventsSection";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorMessage from "./ErrorMessage";
 import { useAllCategories } from "../hooks/useEvents";
+import Carousel2 from './Carousel2';
 
 const Home = () => {
   const { categories, loading, error } = useAllCategories();
@@ -11,13 +12,14 @@ const Home = () => {
   if (loading) {
     return (
       <div className="mt-9 w-full">
-        <Carousel
+        <Carousel2 />
+        {/* <Carousel
           autoplay={true}
           autoplayDelay={3000}
           pauseOnHover={true}
           loop={true}
           round={false}
-        />
+        /> */}
         <LoadingSpinner />
       </div>
     );
@@ -26,13 +28,14 @@ const Home = () => {
   if (error) {
     return (
       <div className="mt-9 w-full">
-        <Carousel
+        <Carousel2 />
+        {/* <Carousel
           autoplay={true}
           autoplayDelay={3000}
           pauseOnHover={true}
           loop={true}
           round={false}
-        />
+        /> */}
         <ErrorMessage message={error} />
       </div>
     );
@@ -40,13 +43,14 @@ const Home = () => {
 
   return (
     <div className="mt-9 w-full">
-      <Carousel
+      <Carousel2 />
+      {/* <Carousel
         autoplay={true}
         autoplayDelay={3000}
         pauseOnHover={true}
         loop={true}
         round={false}
-      />
+      /> */}
       
       {/* {categories.map((category) => (
         <EventsSection

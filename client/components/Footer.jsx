@@ -99,7 +99,7 @@ const Footer = () => {
       icon: Linkedin,
       href: "https://linkedin.com",
       label: "LinkedIn",
-      color: "hover:bg-blue-700",
+      color: "hover:bg-[#008CFF]",
     },
     {
       icon: Youtube,

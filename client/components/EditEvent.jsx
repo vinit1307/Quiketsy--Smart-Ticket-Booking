@@ -327,7 +327,7 @@ const EditEvent = () => {
                 className={`mt-4 p-3 rounded-lg border ${
                   eventStatus === "CANCELLED"
                     ? "bg-red-50 border-red-200 text-red-700"
-                    : "bg-blue-50 border-blue-200 text-blue-700"
+                    : "bg-blue-50 border-blue-200 text-[#008CFF]"
                 }`}
               >
                 <span className="font-medium">Status:</span> {eventStatus}
@@ -680,7 +680,7 @@ const EditEvent = () => {
                 className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
                   isSubmitting || eventStatus === "CANCELLED" 
                     ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
-                    : "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-blue-600 text-white hover:bg-[#008CFF]"
                 }`}
               >
                 <Save className="w-5 h-5" />
@@ -1307,7 +1307,7 @@ export default EditEvent;
 //                 className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2 ${
 //                   isSubmitting 
 //                     ? "bg-gray-400 text-gray-200 cursor-not-allowed" 
-//                     : "bg-blue-600 text-white hover:bg-blue-700"
+//                     : "bg-blue-600 text-white hover:bg-[#008CFF]"
 //                 }`}
 //               >
 //                 <Save className="w-5 h-5" />

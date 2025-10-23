@@ -353,7 +353,7 @@ const Account = () => {
               className={`w-full mt-2 mb-7 py-2 px-4 rounded-lg font-medium transition-colors ${
                 isChangingPassword
                   ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+                  : "bg-[#008CFF] text-white opacity-90 hover:opacity-100"
               }`}
             >
               {isChangingPassword ? "Changing Password..." : "Change Password"}
@@ -688,7 +688,7 @@ export default Account;
 //               className={`w-full mt-2 mb-7 py-2 px-4 rounded-lg font-medium transition-colors ${
 //                 isChangingPassword
 //                   ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-//                   : "bg-blue-600 text-white hover:bg-blue-700"
+//                   : "bg-blue-600 text-white hover:bg-[#008CFF]"
 //               }`}
 //             >
 //               {isChangingPassword ? "Changing Password..." : "Change Password"}

@@ -80,7 +80,7 @@ const SignIn = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-9">
-        <h2 className="text-2xl font-bold text-blue-700 text-center mb-10">
+        <h2 className="text-2xl font-bold text-[#008CFF] text-center mb-10">
           Sign In
         </h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
@@ -114,7 +114,7 @@ const SignIn = () => {
           {" "}
           <Link
             to="/ForgotPassword"
-            className="text-blue-600 font-semibold hover:text-red-500"
+            className="text-[#008CFF] font-semibold hover:text-red-500"
           >
             Forgot Password?
           </Link>
@@ -123,7 +123,7 @@ const SignIn = () => {
           {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800 transition mt-2"
+            className="w-full bg-[#008CFF] opacity-90 text-white py-2 rounded-lg hover:opacity-100 transition mt-2"
           >
             Sign In
           </button>
@@ -133,7 +133,7 @@ const SignIn = () => {
           Don't have an account?{" "}
           <Link
             to="/signup"
-            className="text-blue-600 font-semibold hover:underline"
+            className="text-[#008CFF] font-semibold hover:underline"
           >
             Sign Up
           </Link>

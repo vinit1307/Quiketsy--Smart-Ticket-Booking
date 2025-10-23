@@ -46,19 +46,19 @@ const Sidebar = ({ isOpen, setIsOpen, isLoggedIn, userName, setIsLoggedIn }) => 
               <nav>
                 <ul>
                   <li className="mb-4">
-                    <Link to="/categories" onClick={() => setIsOpen(false)} className="flex items-center text-gray-700 hover:text-blue-600">
+                    <Link to="/categories" onClick={() => setIsOpen(false)} className="flex items-center text-gray-700 hover:text-[#008CFF]-600">
                       <TbCategory size={20} className="mr-3" />
                       Categories
                     </Link>
                   </li>
                   <li className="mb-4">
-                    <Link to="/account" onClick={() => setIsOpen(false)} className="flex items-center text-gray-700 hover:text-blue-600">
+                    <Link to="/account" onClick={() => setIsOpen(false)} className="flex items-center text-gray-700 hover:text-[#008CFF]-600">
                       <User size={20} className="mr-3" />
                       Account
                     </Link>
                   </li>
                   <li className="mb-4">
-                    <Link to="/history" onClick={() => setIsOpen(false)} className="flex items-center text-gray-700 hover:text-blue-600">
+                    <Link to="/history" onClick={() => setIsOpen(false)} className="flex items-center text-gray-700 hover:text-[#008CFF]-600">
                       <ClockHistory size={20} className="mr-3" />
                       History
                     </Link>
@@ -79,7 +79,7 @@ const Sidebar = ({ isOpen, setIsOpen, isLoggedIn, userName, setIsLoggedIn }) => 
                 <Link
                   to="/signin"
                   onClick={() => setIsOpen(false)}
-                  className="block w-full text-center py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  className="block w-full text-center py-2 bg-[#008CFF] text-white rounded-md hover:bg-[#008CFF]"
                 >
                   Sign In
                 </Link>
