@@ -2,8 +2,10 @@ package com.ticketBooking.event.controller;
 
 import com.ticketBooking.event.model.Event;
 import com.ticketBooking.event.repository.EventRepository;
+import com.ticketBooking.event.services.EventService;
 import com.ticketBooking.user.model.User;
 import com.ticketBooking.user.repository.UserRepository;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,25 @@ public class EventController {
 
     @Autowired
     private UserRepository userRepository;
+
+
+    @Autowired
+    private EventService eventService;
+
+    // // 🆕 NEW: Get all unique cities
+    // @GetMapping("/cities")
+    // public ResponseEntity<List<String>> getAllCities() {
+    //     List<String> cities = eventService.getAllCities();
+    //     return ResponseEntity.ok(cities);
+    // }
+
+    // 🆕 NEW: Get events by city (exact match)
+    @GetMapping("/city/{cityName}")
+    public ResponseEntity<List<Event>> getEventsByCity(@PathVariable String cityName) {
+        List<Event> events = eventService.getEventsByCity(cityName);
+        return ResponseEntity.ok(events);
+    }
+
 
     // GET all events
     @GetMapping
