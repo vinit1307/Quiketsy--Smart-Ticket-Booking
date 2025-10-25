@@ -38,6 +38,7 @@ public class Booking {
     private String status; // PENDING, CONFIRMED, CANCELLED, QUEUED
 
     @Column(name = "queue_position")
+    @Builder.Default
     private Integer queuePosition = 0;
 
     @Column(name = "qr_code", columnDefinition = "text")
