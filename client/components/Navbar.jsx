@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Menu,
   ChevronDown,
@@ -27,12 +27,17 @@ import { MdEventNote } from "react-icons/md";
 import { FaLaptopCode } from "react-icons/fa";
 import { GrWorkshop } from "react-icons/gr";
 import { MdOutlineSportsMartialArts } from "react-icons/md";
+import EventsService from "../services/eventsService";
 
 const Navbar = () => {
   const [selectedCity, setSelectedCity] = useState("All Cities");
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [cities, setCities] = useState(["All Cities"]); // Initialize with "All Cities"
+  const [loadingCities, setLoadingCities] = useState(true);
+
+
 
   // Simulating logged in user (replace with real auth later)
   //const [user, setUser] = useState(null); // null = guest | {name: "Vivek"}
@@ -55,20 +60,54 @@ const Navbar = () => {
   { key: 'workshop', name: 'Workshops', icon: <GrWorkshop className="h-4 w-4" />},
   ];
 
-  const cities = [
-    "All Cities",
-    "Mumbai",
-    "Indore",
-    "Delhi",
-    "Bengaluru",
-    "Hyderabad",
-    "Chennai",
-    "Kolkata",
-    "Pune",
-    "Ahmedabad",
-    "Jaipur",
-    "Lucknow",
-  ];
+  // Add this useEffect after your state declarations
+useEffect(() => {
+  const fetchCities = async () => {
+    try {
+      setLoadingCities(true);
+      const data = await EventsService.getCities();
+      
+      if (data && data.length > 0) {
+        setCities(["All Cities", ...data]);
+      } else {
+        // Fallback cities
+        setCities(["All Cities", "Mumbai", "Delhi", "Bangalore"]);
+      }
+    } catch (error) {
+      console.error("Error fetching cities:", error);
+      // Fallback cities
+      setCities(["All Cities", "Mumbai", "Delhi", "Bangalore"]);
+    } finally {
+      setLoadingCities(false);
+    }
+  };
+
+  fetchCities();
+}, []);
+
+useEffect(() => {
+  const savedCity = localStorage.getItem('selectedCity') || 'All Cities';
+  setSelectedCity(savedCity);
+}, []);
+
+
+
+
+
+  // const cities = [
+  //   "All Cities",
+  //   "Mumbai",
+  //   "Indore",
+  //   "Delhi",
+  //   "Bengaluru",
+  //   "Hyderabad",
+  //   "Chennai",
+  //   "Kolkata",
+  //   "Pune",
+  //   "Ahmedabad",
+  //   "Jaipur",
+  //   "Lucknow",
+  // ];
 
 
   const filteredCities = cities.filter((city) =>
@@ -86,7 +125,7 @@ const Navbar = () => {
             alt="Quiketsy Logo"
             className="h-10"
           />
-          <div className="text-2xl font-black text-[#008cff]">Quiketsy</div>
+          <div className="text-2xl ml-2 font-black text-[#008cff]">Quiketsy</div>
         </div>
         </Link>
 
@@ -129,7 +168,7 @@ const Navbar = () => {
                 />
 
                 {/* City List */}
-                <ul className="max-h-60 overflow-y-auto">
+                {/* <ul className="max-h-60 overflow-y-auto">
                   {filteredCities.length > 0 ? (
                     filteredCities.map((city, index) => (
                       <li
@@ -149,7 +188,39 @@ const Navbar = () => {
                       No results found
                     </li>
                   )}
-                </ul>
+                </ul> */}
+
+                {/* City List */}
+<ul className="max-h-60 overflow-y-auto">
+  {loadingCities ? (
+    <li className="px-4 py-2 text-gray-500">Loading cities...</li>
+  ) : filteredCities.length > 0 ? (
+    filteredCities.map((city, index) => (
+      <li
+        key={index}
+        className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+        onClick={() =>  {
+    if (city === "All Cities") {
+      setSelectedCity(city);
+      navigate("/");
+    } else {
+      setSelectedCity(city);
+      navigate(`/events/city/${city}`);
+    }
+    setIsOpen(false);
+    setSearch("");
+  }}
+      >
+        {city}
+      </li>
+    ))
+  ) : (
+    <li className="px-4 py-2 text-gray-500">
+      No results found
+    </li>
+  )}
+</ul>
+
               </div>
             )}
           </div>

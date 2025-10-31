@@ -216,6 +216,15 @@ class EventsService {
       throw new Error("Failed to fetch trending events");
     }
     const data = await response.json();
+
+    // // Filter only UPCOMING events
+    const upcomingEvents = data.filter(event => 
+      event.status === 'UPCOMING' || event.status === 'upcoming'
+    );
+    return upcomingEvents.map(event => ({
+      ...event,
+      id: event.eventId || event.id
+    }));
     
     // Map eventId to id for each event
     return data.map(event => ({
@@ -264,6 +273,16 @@ class EventsService {
       throw new Error(`Failed to fetch ${category} events`);
     }
     const data = await response.json();
+
+     // Filter only UPCOMING events
+    const upcomingEvents = data.filter(event => 
+      event.status === 'UPCOMING' || event.status === 'upcoming'
+    );
+    
+    return upcomingEvents.map(event => ({
+      ...event,
+      id: event.eventId || event.id
+    }));
     
     // Map eventId to id for each event
     return data.map(event => ({
@@ -325,6 +344,53 @@ class EventsService {
   };
 }
 
+// Add this function in your EventsService class
+static async getCities() {
+  try {
+    const response = await fetch(`${API_BASE_URL}/cities`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch cities');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching cities:', error);
+    return []; // Return empty array on error
+  }
+}
+
+
+// Add this method to EventsService class
+static async getEventsByCity(city) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/city/${city}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch events for ${city}`);
+    }
+    const data = await response.json();
+
+        // Filter only UPCOMING events
+    const upcomingEvents = data.filter(event => 
+      event.status === 'UPCOMING' || event.status === 'upcoming'
+    );
+    
+    return upcomingEvents.map(event => ({
+      ...event,
+      id: event.eventId || event.id
+    }));
+    
+    // Map eventId to id for consistency
+    return data.map(event => ({
+      ...event,
+      id: event.eventId || event.id
+    }));
+  } catch (error) {
+    console.error(`Error fetching ${city} events:`, error);
+    throw error;
+  }
+}
+
+
   // // Get single event by ID-  comment it when we are fetching from backend
   // static async getEventById(id) {
   //   // In production: API call
@@ -367,12 +433,22 @@ class EventsService {
   }
 }
 
+
+
   // Get all events
   static async getAllEvents() {
     const response = await fetch(`${API_BASE_URL}`);
     if (!response.ok) {
       throw new Error("Failed to fetch events");
     }
+
+    const data = await response.json();
+  
+  // Filter only UPCOMING events
+  return data.filter(event => 
+    event.status === 'UPCOMING' || event.status === 'upcoming'
+  );
+
     return response.json();
   }
 
