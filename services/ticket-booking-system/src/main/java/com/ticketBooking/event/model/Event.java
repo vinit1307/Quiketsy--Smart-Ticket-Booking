@@ -24,7 +24,8 @@ public class Event {
     private Integer organizerId;
 
     @Column(name = "is_trending")
-    private Boolean isTrending = false;
+@Builder.Default 
+private Boolean isTrending = false;
 
     private String name;
     private String venue;

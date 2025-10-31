@@ -20,9 +20,9 @@ public class EventService {
     }
 
     // Get all unique cities
-   // public List<String> getAllCities() {
-    //    return eventRepository.findAllUniqueCities();
-    //}
+   public List<String> getAllCities() {
+        return eventRepository.findAllUniqueCities();
+    }
 
     // Get events by city
     public List<Event> getEventsByCity(String city) {
@@ -44,10 +44,14 @@ public class EventService {
         return eventRepository.findByCategory(category);
     }
 
-    // // Search events
-    // public List<Event> searchEvents(String keyword) {
-    //     return eventRepository.searchEvents(keyword);
-    // }
+     // ✅ NAVBAR SEARCH - Main search method
+    // Searches in: name, city, venue, category, tags
+    public List<Event> searchEvents(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllEvents(); // Return all if search is empty
+        }
+        return eventRepository.searchEvents(keyword.trim());
+    }
 
     // Get event by ID
     public Event getEventById(UUID eventId) {
@@ -57,5 +61,14 @@ public class EventService {
     // Get events by organizer
     public List<Event> getEventsByOrganizer(Integer organizerId) {
         return eventRepository.findByOrganizerId(organizerId);
+    }
+
+    // ✅ Additional helper methods (optional)
+    public List<Event> searchByName(String name) {
+        return eventRepository.findByNameContainingIgnoreCase(name);
+    }
+
+    public List<Event> searchByVenue(String venue) {
+        return eventRepository.findByVenueContainingIgnoreCase(venue);
     }
 }

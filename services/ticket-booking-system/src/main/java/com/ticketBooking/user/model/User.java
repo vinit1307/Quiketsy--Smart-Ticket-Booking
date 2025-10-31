@@ -38,10 +38,23 @@ public class User {
     @Column(nullable = false)
     private String role;   // USER or ORGANIZER
 
+   // @Column(name = "date_joined", nullable = false)
+    // private LocalDateTime dateJoined = LocalDateTime.now();
+
     @Column(name = "date_joined", nullable = false)
+    @Builder.Default  // ✅ For Builder pattern
     private LocalDateTime dateJoined = LocalDateTime.now();
 
-    
+    // ✅ Safety net - just in case
+    @PrePersist
+    public void prePersist() {
+        if (this.dateJoined == null) {
+            this.dateJoined = LocalDateTime.now();
+        }
+        if (this.role == null) {
+            this.role = "USER";
+        }
+    }
     // public User(String name, String email, String phoneNumber, LocalDate dob, String password, String role) {
     //     this.name = name;
     //     this.email = email;
