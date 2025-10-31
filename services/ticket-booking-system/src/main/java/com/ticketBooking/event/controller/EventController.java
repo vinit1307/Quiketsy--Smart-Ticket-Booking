@@ -30,42 +30,81 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
-    // // 🆕 NEW: Get all unique cities
-    // @GetMapping("/cities")
-    // public ResponseEntity<List<String>> getAllCities() {
-    //     List<String> cities = eventService.getAllCities();
-    //     return ResponseEntity.ok(cities);
-    // }
+     // ✅ Get all unique cities (for dropdown)
+    @GetMapping("/cities")
+    public ResponseEntity<List<String>> getAllCities() {
+        List<String> cities = eventService.getAllCities();
+        return ResponseEntity.ok(cities);
+    }
 
-    // 🆕 NEW: Get events by city (exact match)
+    // ✅ Get events by specific city
     @GetMapping("/city/{cityName}")
-    public ResponseEntity<List<Event>> getEventsByCity(@PathVariable String cityName) {
+    public ResponseEntity<List<Event>> getEventsByCity(
+            @PathVariable String cityName) {
         List<Event> events = eventService.getEventsByCity(cityName);
         return ResponseEntity.ok(events);
     }
 
 
-    // GET all events
+    // ✅ GET all events (with optional category filter)
     @GetMapping
-    public List<Event> getAllEvents(@RequestParam(required = false) String category) {
+    public ResponseEntity<List<Event>> getAllEvents(
+            @RequestParam(required = false) String category) {
         if (category != null && !category.isEmpty()) {
-            return eventRepository.findByCategory(category);
+            return ResponseEntity.ok(eventService.getEventsByCategory(category));
         }
-        return eventRepository.findAll();
+        return ResponseEntity.ok(eventService.getAllEvents());
     }
+
+    // ✅ NAVBAR SEARCH - Main search endpoint
+    // Searches in: event name, city, venue, category, tags
+    @GetMapping("/search")
+    public ResponseEntity<List<Event>> searchEvents(
+            @RequestParam(required = false) String keyword) {
+        
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return ResponseEntity.ok(eventService.getAllEvents());
+        }
+        
+        List<Event> events = eventService.searchEvents(keyword);
+        return ResponseEntity.ok(events);
+    }
+
+
+    // ✅ Get trending events
     @GetMapping("/trending")
     public ResponseEntity<List<Event>> getTrendingEvents() {
-        List<Event> trendingEvents = eventRepository.findByIsTrendingTrue();
+        List<Event> trendingEvents = eventService.getTrendingEvents();
         return ResponseEntity.ok(trendingEvents);
     }
 
 
-    // GET events by category (based on category column)
+    // ✅ Get events by category
     @GetMapping("/category/{category}")
-    public ResponseEntity<List<Event>> getEventsByCategory(@PathVariable String category) {
-        List<Event> events = eventRepository.findByCategory(category);
+    public ResponseEntity<List<Event>> getEventsByCategory(
+            @PathVariable String category) {
+        List<Event> events = eventService.getEventsByCategory(category);
         return ResponseEntity.ok(events);
     }
+
+
+        // ✅ Search by name only (optional - specific search)
+    @GetMapping("/search/name")
+    public ResponseEntity<List<Event>> searchByName(
+            @RequestParam String name) {
+        List<Event> events = eventService.searchByName(name);
+        return ResponseEntity.ok(events);
+    }
+
+    // ✅ Search by venue only (optional)
+    @GetMapping("/search/venue")
+    public ResponseEntity<List<Event>> searchByVenue(
+            @RequestParam String venue) {
+        List<Event> events = eventService.searchByVenue(venue);
+        return ResponseEntity.ok(events);
+    }
+
+
     @PostMapping("/create")
 public ResponseEntity<?> createEvent(@RequestBody Event event,
                                      @AuthenticationPrincipal String email) {
@@ -115,6 +154,8 @@ public ResponseEntity<?> createEvent(@RequestBody Event event,
     Event savedEvent = eventRepository.save(event);
     return ResponseEntity.ok(savedEvent);
 }
+
+
 
    // ✅ Edit existing event (only organizer who created it)
    @PutMapping("/edit/{id}")
