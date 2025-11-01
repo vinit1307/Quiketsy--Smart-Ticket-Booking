@@ -115,14 +115,14 @@ import { MdOutlineSportsMartialArts } from "react-icons/md";
 // ];
 
 const CATEGORY_CONFIG = [
-  { key: 'trending', title: 'Trending Events', icon: TrendingUp, displayCount: 9 },
-  { key: 'music', title: 'Music Events', icon: Music, displayCount: 9 },
-  { key: 'plays', title: 'Theater & Plays', icon: Theater, displayCount: 9 },
-  { key: 'standup', title: 'Stand-up Comedy', icon: Mic, displayCount: 9 },
-  { key: 'art', title: 'Arts & Culture', icon: Palette, displayCount: 9 },
-  { key: 'technology', title: 'Technology', icon: FaLaptopCode, displayCount: 9 },
-  { key: 'workshop', title: 'Workshops', icon: GrWorkshop, displayCount: 9 },
-  { key: 'sports', title: 'Sports', icon: MdOutlineSportsMartialArts, displayCount: 9 }
+  { key: 'trending', title: 'Trending Events', icon: TrendingUp, displayCount: 7 },
+  { key: 'music', title: 'Music Events', icon: Music, displayCount: 7 },
+  { key: 'plays', title: 'Theater & Plays', icon: Theater, displayCount: 7 },
+  { key: 'standup', title: 'Stand-up Comedy', icon: Mic, displayCount: 7 },
+  { key: 'art', title: 'Arts & Culture', icon: Palette, displayCount: 7 },
+  { key: 'technology', title: 'Technology', icon: FaLaptopCode, displayCount: 7 },
+  { key: 'workshop', title: 'Workshops', icon: GrWorkshop, displayCount: 7 },
+  { key: 'sports', title: 'Sports', icon: MdOutlineSportsMartialArts, displayCount: 7 }
 ];
 
 export const useAllCategories = () => {
@@ -197,6 +197,33 @@ export const useTrendingEvents = () => {
     };
     fetchEvents();
   }, []);
+
+  return { events, loading, error };
+};
+
+// In hooks/useEvents.js, add:
+export const useCityEvents = (city) => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const data = await EventsService.getEventsByCity(city);
+        setEvents(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (city) {
+      fetchEvents();
+    }
+  }, [city]);
 
   return { events, loading, error };
 };

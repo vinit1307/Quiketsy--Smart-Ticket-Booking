@@ -1,26 +1,50 @@
 import React from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { useCategoryEvents } from "../hooks/useEvents"; // Changed from useEvents to useCategoryEvents
+import { useCategoryEvents, useCityEvents } from "../hooks/useEvents"; // Changed from useEvents to useCategoryEvents
 import EventsService from "../services/eventsService";
 import LoadingSpinner from "./LoadingSpinner";
 import ErrorMessage from "./ErrorMessage";
+import { MapPin } from 'lucide-react';
+
+// console.log('Current path:', window.location.pathname);
+// console.log('Params:', params);
+// console.log('Is City Route:', isCity);
+// console.log('City:', city);
+// console.log('Category:', category);
 
 const AllEventsPage = () => {
-  const { category } = useParams();
+  const { category, city } = useParams();
   const navigate = useNavigate();
-  const { events, loading, error } = useCategoryEvents(category); // Using useCategoryEvents with the category param
+  // const { events, loading, error } = useCategoryEvents(category); // Using useCategoryEvents with the category param
+  const isCity = window.location.pathname.startsWith('/events/city/');
+
+  const { events, loading, error } = isCity
+  ? useCityEvents(city) // You'll need to create this hook
+  : useCategoryEvents(category);
+
+  
 
   // Get category metadata
   const { title, icon: IconComponent } = EventsService.getCategoryMeta(category);
 
   // Handle invalid category
-  React.useEffect(() => {
-    // Check if category exists in the database
+  // React.useEffect(() => {
+  //   // Check if category exists in the database
+  //   const validCategories = ['trending', 'music', 'recommended', 'plays', 'standup', 'art', 'technology', 'workshop', 'sports'];
+  //   if (!validCategories.includes(category)) {
+  //     navigate('/');
+  //   }
+  // }, [category, navigate]);
+
+  // Update the validCategories check to exclude city routes:
+React.useEffect(() => {
+  if (!isCity) {  // Only validate if it's a category route
     const validCategories = ['trending', 'music', 'recommended', 'plays', 'standup', 'art', 'technology', 'workshop', 'sports'];
     if (!validCategories.includes(category)) {
       navigate('/');
     }
-  }, [category, navigate]);
+  }
+}, [category, navigate, isCity]);
 
   if (loading) {
     return <LoadingSpinner fullPage />;
@@ -33,7 +57,7 @@ const AllEventsPage = () => {
   return (
     <div className="px-6 md:px-11 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      {/* <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <IconComponent className="text-[#008CFF] w-6 h-6" />
           <h2 className="text-2xl font-bold text-gray-800">
@@ -46,7 +70,33 @@ const AllEventsPage = () => {
         >
           ← Back to Home
         </Link>
-      </div>
+      </div> */}
+
+      <div className="flex items-center justify-between mb-6">
+  <div className="flex items-center space-x-2">
+    {isCity ? (
+      <>
+        <MapPin className="text-[#008CFF] w-6 h-6" />
+        <h2 className="text-2xl font-bold text-gray-800">
+          Events happening in {city}
+        </h2>
+      </>
+    ) : (
+      <>
+        <IconComponent className="text-[#008CFF] w-6 h-6" />
+        <h2 className="text-2xl font-bold text-gray-800">
+          All {title}
+        </h2>
+      </>
+    )}
+  </div>
+  <Link 
+    to="/" 
+    className="text-gray-600 hover:text-[#008CFF] transition-colors"
+  >
+    ← Back to Home
+  </Link>
+</div>
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
