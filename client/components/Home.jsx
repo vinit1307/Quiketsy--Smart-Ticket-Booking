@@ -5,9 +5,21 @@ import LoadingSpinner from "./LoadingSpinner";
 import ErrorMessage from "./ErrorMessage";
 import { useAllCategories } from "../hooks/useEvents";
 import Carousel2 from './Carousel2';
+import { useAuth } from '../contexts/AuthContext';
+
+import { useRecommendations } from "../hooks/useRecommendations";
+import { FaStar } from 'react-icons/fa';
 
 const Home = () => {
   const { categories, loading, error } = useAllCategories();
+  
+  const { user } = useAuth();
+  const userId = user?.id || null;
+  const {
+    recommendations, 
+    loading: recommendationsLoading, 
+    error: recommendationsError 
+  } = useRecommendations(userId);
 
   if (loading) {
     return (
@@ -72,6 +84,34 @@ const Home = () => {
           displayCount={category.displayCount || 4} // Pass displayCount from config
         />
       ))}
+
+      {/* NEW: Recommended Events Section - Place it at the top for better visibility */}
+      {userId && !recommendationsLoading && !recommendationsError && recommendations.length > 0 && (
+        <EventsSection
+          categoryKey="recommended"
+          title="Recommended for You"
+          icon={FaStar}
+          events={recommendations}
+          displayCount={5} // Show all 5 recommendations
+        />
+      )}
+      
+      {/* NEW: Loading state for recommendations (optional - shows skeleton) */}
+      {userId && recommendationsLoading && (
+        <div className="mt-10 px-6 md:px-11">
+          <div className="animate-pulse">
+            <div className="flex items-center space-x-2 mb-4">
+              <div className="w-6 h-6 bg-gray-200 rounded"></div>
+              <div className="h-8 bg-gray-200 rounded w-48"></div>
+            </div>
+            <div className="flex space-x-6 overflow-x-auto">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="min-w-[250px] h-60 bg-gray-200 rounded-xl"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

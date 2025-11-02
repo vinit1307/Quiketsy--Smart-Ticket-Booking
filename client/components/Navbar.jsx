@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback  } from "react";
 import {
   Menu,
   ChevronDown,
@@ -36,6 +36,13 @@ const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [cities, setCities] = useState(["All Cities"]); // Initialize with "All Cities"
   const [loadingCities, setLoadingCities] = useState(true);
+
+// Replace the search-related states and functions:
+const [searchQuery, setSearchQuery] = useState("");
+const [searchResults, setSearchResults] = useState([]);
+const [showSearchResults, setShowSearchResults] = useState(false);
+const [searchLoading, setSearchLoading] = useState(false);
+const [searchTimeout, setSearchTimeout] = useState(null);
 
 
 
@@ -90,7 +97,94 @@ useEffect(() => {
   setSelectedCity(savedCity);
 }, []);
 
+// Add this function before the return statement
+// In handleSearch function, update the mapping:
+const handleSearch = async (query) => {
+  console.log("Search query:", query); // Debug
+  setSearchQuery(query);
+  
+  if (query.trim().length > 1) {
+    setSearchLoading(true);
+    try {
+      const results = await EventsService.searchEvents(query);
+      console.log("Search API returned:", results); // Debug
+      console.log("Results length:", results?.length); // Debug
+      setSearchResults(results || []);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error("Search error details:", error);
+      setSearchResults([]);
+      setShowSearchResults(true); // Show even if error
+    } finally {
+      setSearchLoading(false);
+    }
+  } else {
+    setSearchResults([]);
+    setShowSearchResults(false);
+  }
+};
 
+const performSearch = useCallback(async (query) => {
+  if (query.trim().length > 1) {
+    setSearchLoading(true);
+    try {
+      console.log("Performing search for:", query);
+      const results = await EventsService.searchEvents(query.trim());
+      console.log("Search results received:", results);
+      setSearchResults(results || []);
+      setShowSearchResults(true);
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+      setShowSearchResults(true);
+    } finally {
+      setSearchLoading(false);
+    }
+  } else {
+    setSearchResults([]);
+    setShowSearchResults(false);
+  }
+}, []);
+
+
+// Add debounced search
+// Replace the debounced useEffect with direct call:
+const handleSearchInput = (e) => {
+  const query = e.target.value;
+  setSearchQuery(query);
+  
+  // Clear existing timeout
+  if (searchTimeout) {
+    clearTimeout(searchTimeout);
+  }
+
+  const newTimeout = setTimeout(() => {
+    performSearch(query);
+  }, 300); // 300ms delay
+  
+  setSearchTimeout(newTimeout);
+}
+
+
+useEffect(() => {
+  return () => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+  };
+}, [searchTimeout]);
+
+// Add this useEffect
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (!event.target.closest('.search-container')) {
+      setShowSearchResults(false);
+    }
+  };
+  
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => document.removeEventListener('mousedown', handleClickOutside);
+}, []);
 
 
 
@@ -114,6 +208,8 @@ useEffect(() => {
     city.toLowerCase().includes(search.toLowerCase())
   );
 
+
+
   return (
     <>
       <nav className="flex items-center justify-between px-6 py-3 bg-white shadow-md md:px-11">
@@ -132,7 +228,7 @@ useEffect(() => {
         {/* Right side - Search + City Selector + Links + Buttons */}
         <div className="flex items-center space-x-4">
           {/* Search Bar */}
-          <div className="relative hidden md:block">
+          {/* <div className="relative hidden md:block">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <Search size={20} className="text-gray-500" />
             </div>
@@ -141,7 +237,90 @@ useEffect(() => {
               placeholder="Search events, concerts..."
               className="w-64 pl-10 pr-4 py-1.5 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+          </div> */}
+          {/* Search Bar */}
+<div className="relative hidden md:block search-container">
+  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+    <Search size={20} className="text-gray-500" />
+  </div>
+  <input
+  type="text"
+  value={searchQuery}
+  onChange={handleSearchInput}
+  onFocus={() => searchQuery && setShowSearchResults(true)}
+  placeholder="Search events, concerts..."
+  className="w-64 pl-10 pr-4 py-1.5 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+/>
+  
+  {/* Search Results Dropdown */}
+  {/* Search Results Dropdown */}
+{showSearchResults && (
+  <div className="absolute top-full left-0 right-0 mt-1 bg-white border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
+    {searchLoading ? (
+      <div className="p-4 text-center text-gray-500">Searching...</div>
+    ) : searchResults.length > 0 ? (
+      <div>
+        {searchResults.slice(0, 8).map((event) => {
+  // Use the UUID eventId, not organizerId or any numeric ID
+  const eventId = event.eventId; // Use only eventId, which is the UUID
+  
+  return (
+    <div
+      key={eventId}
+      onClick={() => {
+        console.log("Event object:", event);
+        console.log("Using eventId:", eventId);
+        
+        if (!eventId) {
+          console.error("No eventId found in event:", event);
+          return;
+        }
+        
+        navigate(`/event/${eventId}`);
+        setShowSearchResults(false);
+        setSearchQuery("");
+      }}
+      className="p-3 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
+    >
+      <div className="font-semibold text-sm">{event.name}</div>
+      <div className="text-xs text-gray-600 mt-1">
+        {event.venue} • {event.city} • {event.eventDate}
+      </div>
+      {event.category && (
+        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded mt-1 inline-block">
+          {event.category}
+        </span>
+      )}
+    </div>
+  );
+})}
+        {searchResults.length > 8 && (
+          <div 
+            // In the search result click handler:
+onClick={() => {
+  const eventId = event.eventId || event.id;
+  console.log("Event object:", event); // Debug - see full event
+  console.log("Navigating to eventId:", eventId); // Debug
+  console.log("Navigation URL:", `/event/${eventId}`); // Debug
+  
+  navigate(`/event/${eventId}`);
+  setShowSearchResults(false);
+  setSearchQuery("");
+}}
+            className="p-3 text-center text-blue-600 hover:bg-gray-100 cursor-pointer"
+          >
+            View all {searchResults.length} results →
           </div>
+        )}
+      </div>
+    ) : searchQuery.trim().length > 1 ? (
+      <div className="p-4 text-center text-gray-500">
+        No events found for "{searchQuery}"
+      </div>
+    ) : null}
+  </div>
+)}
+</div>
 
           {/* City Selector */}
           <div className="relative flex items-center cursor-pointer ml-1">
@@ -316,7 +495,7 @@ useEffect(() => {
           )}
         </div>
 
-        <hr className="mt-5 mb-5 border-black" />
+        <hr className="mt-3 mb-5 border-black" />
 
         {/* Sidebar Options */}
         <nav className="flex flex-col space-y-4 ml-1 text-bold text-base">
