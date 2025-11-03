@@ -238,47 +238,110 @@ class EventsService {
   }
 }
 
+// Add this method inside your EventsService class
+static async searchEvents(keyword) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/search?keyword=${encodeURIComponent(keyword)}`);
+    if (!response.ok) {
+      throw new Error('Failed to search events');
+    }
+    const data = await response.json();
+    
+    // Filter only UPCOMING events
+    const upcomingEvents = data.filter(event => 
+      event.status === 'UPCOMING' || event.status === 'upcoming'
+    );
+    
+    return upcomingEvents;
+  } catch (error) {
+    console.error('Error searching events:', error);
+    throw error;
+  }
+}
+
 
 // Add this method to EventsService
 // In EventsService.js, update searchEvents method:
-static async searchEvents(keyword) {
-  try {
-    // Trim and handle the keyword properly
-    const trimmedKeyword = keyword.trim();
-    console.log("Searching for:", trimmedKeyword);
+// In eventsService.js, update the searchEvents method:
+// static async searchEvents(keyword) {
+//   try {
+//     const trimmedKeyword = keyword.trim();
+//     console.log("=== SEARCH DEBUG START ===");
+//     console.log("1. Keyword:", trimmedKeyword);
+//     console.log("2. API_BASE_URL:", API_BASE_URL);
     
-    const url = `http://localhost:9192/api/events/search?keyword=${encodeURIComponent(trimmedKeyword)}`;
-    console.log("Fetch URL:", url);
+//     const url = `${API_BASE_URL}/search?keyword=${encodeURIComponent(trimmedKeyword)}`;
+//     console.log("3. Full URL:", url);
     
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Add authorization header if needed
-        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
+//     const response = await fetch(url);
+//     console.log("4. Response status:", response.status);
+//     console.log("5. Response headers:", response.headers);
     
-    console.log("Response status:", response.status);
+//     if (!response.ok) {
+//       console.error("6. Response not OK");
+//       return [];
+//     }
     
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Search error response:", errorText);
-      throw new Error(`Search failed: ${response.status}`);
-    }
+//     const text = await response.text(); // Get as text first
+//     console.log("7. Raw response text:", text);
     
-    const data = await response.json();
-    console.log("Search API data:", data);
+//     try {
+//       const data = JSON.parse(text); // Parse manually
+//       console.log("8. Parsed data:", data);
+//       console.log("=== SEARCH DEBUG END ===");
+//       return data || [];
+//     } catch (parseError) {
+//       console.error("9. JSON parse error:", parseError);
+//       return [];
+//     }
     
-    // Ensure each event has the correct ID field
-    const processedData = Array.isArray(data) ? data : [data];
-    return processedData.filter(event => event && event.eventId);
+//   } catch (error) {
+//     console.error('Search service error:', error);
+//     return [];
+//   }
+// }
+
+
+// static async searchEvents(keyword) {
+//   try {
+//     // Trim and handle the keyword properly
+//     const trimmedKeyword = keyword.trim();
+//     console.log("Searching for:", trimmedKeyword);
     
-  } catch (error) {
-    console.error('Search service error:', error);
-    return []; // Return empty array instead of throwing
-  }
-}
+//     const url = `http://localhost:9192/api/events/search?keyword=${encodeURIComponent(trimmedKeyword)}`;
+//     console.log("Fetch URL:", url);
+    
+//     const response = await fetch(url, {
+//       method: 'GET',
+//       headers: {
+//         'Content-Type': 'application/json',
+//         // Add authorization header if needed
+//         // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+//       }
+//     });
+    
+//     console.log("Response status:", response.status);
+    
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error("Search error response:", errorText);
+//       throw new Error(`Search failed: ${response.status}`);
+//     }
+    
+//     const data = await response.json();
+//     console.log("Search API data:", data);
+    
+//     // Ensure each event has the correct ID field
+//     const processedData = Array.isArray(data) ? data : [data];
+//     return processedData.filter(event => event && event.eventId);
+    
+//   } catch (error) {
+//     console.error('Search service error:', error);
+//     return []; // Return empty array instead of throwing
+//   }
+// }
+
+
   // Get events by category - comment it when we are fetching from backend
   // static async getEventsByCategory(category) {
   //   // Simulate API delay
@@ -499,17 +562,17 @@ static async getEventsByCity(city) {
   }
 
   // Search events
-  static async searchEvents(query) {
-    // In production: API call
-    const allEvents = Object.values(eventsDatabase).flatMap(
-      (category) => category.events
-    );
-    return allEvents.filter(
-      (event) =>
-        event.name.toLowerCase().includes(query.toLowerCase()) ||
-        event.venue.toLowerCase().includes(query.toLowerCase())
-    );
-  }
+  // static async searchEvents(query) {
+  //   // In production: API call
+  //   const allEvents = Object.values(eventsDatabase).flatMap(
+  //     (category) => category.events
+  //   );
+  //   return allEvents.filter(
+  //     (event) =>
+  //       event.name.toLowerCase().includes(query.toLowerCase()) ||
+  //       event.venue.toLowerCase().includes(query.toLowerCase())
+  //   );
+  // }
 }
 
 export default EventsService;
