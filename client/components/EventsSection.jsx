@@ -86,6 +86,12 @@ const EventsSection = ({
                 <div className="absolute bottom-2 left-2 bg-[#008CFF] text-white text-sm font-semibold px-2 py-1 rounded-md shadow">
                   {event.date}
                 </div>
+                
+{categoryKey === 'recommended' && (
+  <div className="absolute top-2 right-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">
+    ⭐ For You
+  </div>
+)}
                 {/* {categoryKey === 'trending' && (
                   <div className="absolute top-2 right-2  text-white text-xm font-bold px-2 py-1 rounded-md shadow">
                     🔥

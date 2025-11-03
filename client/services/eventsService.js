@@ -1,4 +1,5 @@
 import { TrendingUp, Music, Heart, Theater, Mic, Palette} from "lucide-react";
+import { FaStar } from 'react-icons/fa'; 
 
 // Temporary data - will be replaced with API calls
 const eventsDatabase = {
@@ -237,6 +238,47 @@ class EventsService {
   }
 }
 
+
+// Add this method to EventsService
+// In EventsService.js, update searchEvents method:
+static async searchEvents(keyword) {
+  try {
+    // Trim and handle the keyword properly
+    const trimmedKeyword = keyword.trim();
+    console.log("Searching for:", trimmedKeyword);
+    
+    const url = `http://localhost:9192/api/events/search?keyword=${encodeURIComponent(trimmedKeyword)}`;
+    console.log("Fetch URL:", url);
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add authorization header if needed
+        // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    
+    console.log("Response status:", response.status);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Search error response:", errorText);
+      throw new Error(`Search failed: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log("Search API data:", data);
+    
+    // Ensure each event has the correct ID field
+    const processedData = Array.isArray(data) ? data : [data];
+    return processedData.filter(event => event && event.eventId);
+    
+  } catch (error) {
+    console.error('Search service error:', error);
+    return []; // Return empty array instead of throwing
+  }
+}
   // Get events by category - comment it when we are fetching from backend
   // static async getEventsByCategory(category) {
   //   // Simulate API delay
@@ -336,6 +378,10 @@ class EventsService {
     art: { title: "Arts & Culture", icon: Palette },
     technology: { title: "Technology", icon: Palette },
     workshop: { title: "Workshops", icon: Palette },
+    recommended: {  // Add this
+      title: 'Recommended Events',
+      icon: FaStar
+    }
   };
 
   return categoryMetadata[category] || {

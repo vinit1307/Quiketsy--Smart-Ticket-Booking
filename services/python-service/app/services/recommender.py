@@ -40,7 +40,7 @@ def get_all_events():
     return pd.read_sql(query, engine)
 
 # ---- Step 4: Recommend events ----
-def recommend_events(user_id, top_n=5):
+def recommend_events(user_id, top_n=12):
     user_events = get_user_booked_events(user_id)
     all_events = get_all_events()
 

@@ -182,12 +182,12 @@ const Footer = () => {
           {/* Description Section - Right Side */}
           <div className="text-center lg:text-left">
             <p className="text-gray-400 leading-relaxed">
+              Our motive is to make an intelligent and smart system to book tickets,
+              so you will not miss your favourite shows.
               Your ultimate destination for seamless event discovery and
               booking. We connect passionate event-goers with unforgettable
               experiences across concerts, comedy shows, sports events, and
-              cultural festivities. With secure payments, instant confirmations,
-              and exclusive deals, Quiketsy makes every booking a breeze. Join
-              millions who trust us to turn their moments into memories.
+              cultural festivities. With secure payments and instant confirmations, Quiketsy makes every booking a breeze.
             </p>
             <div className="flex flex-wrap gap-4 mt-4 justify-center lg:justify-start">
               <div className="flex items-center gap-2 text-sm text-gray-400">
