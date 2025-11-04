@@ -1,4 +1,5 @@
 package com.ticketBooking.security;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,19 +26,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> {}) // use our CorsConfig
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
-                .requestMatchers("/api/auth/**").permitAll()           // allow register + login
-                .requestMatchers("/api/events/**").permitAll()
-                .requestMatchers("/api/booking/**").authenticated()
-                // .requestMatchers("/api/events/trending").permitAll()
-                // .requestMatchers("/api/events/category/**").permitAll() 
-                //.requestMatchers("/api/events/organizer/**").permitAll()
-                .anyRequest().authenticated()
-            )   
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {
+                }) // use our CorsConfig
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
+                        .requestMatchers("/api/auth/**").permitAll() // allow register + login
+                        .requestMatchers("/api/events/**").permitAll()
+                        .requestMatchers("/api/booking/getKey").authenticated()
+                        .requestMatchers("/api/booking/order").authenticated()
+                        .requestMatchers("/api/booking/verify").permitAll()
+                        // .requestMatchers("/api/booking/**").authenticated()
+                        // .requestMatchers("/api/events/trending").permitAll()
+                        // .requestMatchers("/api/events/category/**").permitAll()
+                        // .requestMatchers("/api/events/organizer/**").permitAll()
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

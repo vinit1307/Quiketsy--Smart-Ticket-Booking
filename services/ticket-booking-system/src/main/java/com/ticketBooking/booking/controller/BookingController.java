@@ -144,22 +144,21 @@ public class BookingController {
             @RequestParam String paymentId) {
         Booking booking = bookingRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
-
+    
         booking.setPaymentId(paymentId);
         booking.setStatus("CONFIRMED");
-
-        // Generate QR code
+    
         String qrText = "Booking ID: " + booking.getBookingId() +
                 "\nEvent ID: " + booking.getEventId() +
                 "\nUser ID: " + booking.getUserId();
         String qrBase64 = QRCodeGenerator.generateQRCodeBase64(qrText);
         booking.setQrCodeUrl(qrBase64);
-
+    
         bookingRepository.save(booking);
-
+    
         return ResponseEntity.ok(Map.of(
                 "message", "Payment verified and booking confirmed",
                 "bookingId", booking.getBookingId(),
                 "qrCodeUrl", qrBase64));
-    }
+    }    
 }
