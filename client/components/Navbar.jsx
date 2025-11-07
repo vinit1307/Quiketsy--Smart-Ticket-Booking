@@ -243,7 +243,7 @@ const Navbar = () => {
 
             {/* Search Results Dropdown */}
             {showSearchDropdown && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-white border rounded-lg shadow-xl z-50 max-h-96 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border-[#008cff] border-1 rounded-lg shadow-2xl z-50 max-h-96 overflow-y-auto">
                 {isSearching ? (
                   <div className="p-4 text-center">
                     <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#008cff] mx-auto"></div>

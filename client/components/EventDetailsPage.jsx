@@ -186,7 +186,7 @@ const EventDetailsPage = () => {
 
         {/* Info Card (Sticky) */}
         <div className="lg:col-span-1">
-          <div className="sticky top-10 bg-white shadow-lg rounded-xl p-5 border space-y-3">
+          <div className="sticky top-10 bg-white shadow-2xl rounded-2xl border-[#008CFF] p-5 border-2 space-y-3">
             <div className="flex items-center space-x-3">
               <CalendarDays className="text-[#008CFF] w-5 h-5" />
               <p className="font-medium text-black">

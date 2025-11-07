@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   FaHistory, 
   FaCalendarAlt, 
@@ -113,6 +113,33 @@ const History = () => {
   useEffect(() => {
     // Later: Fetch from backend
   }, []);
+
+  const navigate = useNavigate();
+
+  const handleViewTicket = (event) => {
+  navigate('/view-ticket', { 
+    state: { 
+      ticketData: {
+        eventImage: event.image || 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=500',
+        status: event.status,
+        eventName: event.name || event.title,
+        ticketPrice: event.price || 1500,
+        eventTime: event.time || '18:00',
+        eventDate: event.date,
+        eventDuration: event.duration || '3 hours',
+        eventVenue: event.venue || 'Phoenix Arena',
+        eventCity: event.location || 'Mumbai',
+        ageLimit: event.ageLimit || '18+',
+        language: event.language || 'English',
+        bookedDate: event.bookingDate || '2024-01-20',
+        bookedTime: event.bookingTime || '14:30',
+        orderId: event.orderId || 'ORD123456789',
+        paymentId: event.paymentId || 'PAY987654321',
+        qrCodeData: `TICKET-${event.id}-${Date.now()}`
+      }
+    }
+  });
+};
 
   return (
     <div className="min-h-screen bg-transparent p-10 mt-5 md:px-60 md:mt-10">
@@ -234,13 +261,20 @@ const History = () => {
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-200 gap-3">
                       <div className="flex gap-2 md:gap-3 w-full sm:w-auto">
-                        <Link
+                        {/* <Link
                           to={`/booking/${event.id}`}
                           className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-semibold hover:from-blue-700 hover:to-blue-800 transition shadow-md"
                         >
                           <FaQrcode />
                           View Ticket
-                        </Link>
+                        </Link> */}
+
+                        <button
+    onClick={() => handleViewTicket(event)}
+    className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 md:gap-2 bg-white text-blue-600 border-2 border-blue-600 px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-semibold hover:bg-blue-50 transition"
+  >
+    View Ticket →
+  </button>
                         
                         {/* Only show Event Details for upcoming events */}
                         {event.status === "upcoming" && (
