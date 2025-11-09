@@ -47,12 +47,21 @@ public class Booking {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    // Booking.java
+    private String qrPayload; // <-- the exact text you encoded
+    private Boolean verified = false; // gate-scan flag
+    private LocalDateTime verifiedAt; // when the ticket is scanned
+
     @PrePersist
     public void prePersist() {
-        if (bookingId == null) bookingId = UUID.randomUUID();
-        if (createdAt == null) createdAt = LocalDateTime.now();
-        if (status == null) status = "PENDING";
-        if (queuePosition == null) queuePosition = 0;
+        if (bookingId == null)
+            bookingId = UUID.randomUUID();
+        if (createdAt == null)
+            createdAt = LocalDateTime.now();
+        if (status == null)
+            status = "PENDING";
+        if (queuePosition == null)
+            queuePosition = 0;
     }
 
     // getters and setters...
