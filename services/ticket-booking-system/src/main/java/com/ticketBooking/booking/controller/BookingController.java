@@ -2,6 +2,7 @@ package com.ticketBooking.booking.controller;
 
 import com.ticketBooking.booking.model.Booking;
 import com.ticketBooking.booking.repository.BookingRepository;
+import com.ticketBooking.booking.service.BookingCancelService;
 import com.ticketBooking.booking.service.QRCodeGenerator;
 import com.ticketBooking.event.model.Event;
 import com.ticketBooking.event.repository.EventRepository;
@@ -275,83 +276,101 @@ public class BookingController {
     }
 
     @PostMapping("/verify-ticket")
-@Transactional
-public ResponseEntity<?> verifyTicket(@RequestBody Map<String, String> req, Authentication auth) {
-    try {
-        UUID eventId = UUID.fromString(req.get("eventId"));
-        String scanned = req.get("ticketHash"); // raw text from scanner
+    @Transactional
+    public ResponseEntity<?> verifyTicket(@RequestBody Map<String, String> req, Authentication auth) {
+        try {
+            UUID eventId = UUID.fromString(req.get("eventId"));
+            String scanned = req.get("ticketHash"); // raw text from scanner
 
-        if (scanned == null || scanned.isBlank()) {
-            return ResponseEntity.ok(Map.of("status", "INVALID", "message", "Empty QR"));
-        }
+            if (scanned == null || scanned.isBlank()) {
+                return ResponseEntity.ok(Map.of("status", "INVALID", "message", "Empty QR"));
+            }
 
-        // Extract bookingId & eventId from scanned text
-        UUID bookingId = null, scannedEventId = null;
-        for (String line : scanned.split("\\r?\\n")) {
-            String t = line.trim();
-            if (t.startsWith("Booking ID:"))
-                bookingId = UUID.fromString(t.substring(11).trim());
-            else if (t.startsWith("Event ID:"))
-                scannedEventId = UUID.fromString(t.substring(9).trim());
-        }
+            // Extract bookingId & eventId from scanned text
+            UUID bookingId = null, scannedEventId = null;
+            for (String line : scanned.split("\\r?\\n")) {
+                String t = line.trim();
+                if (t.startsWith("Booking ID:"))
+                    bookingId = UUID.fromString(t.substring(11).trim());
+                else if (t.startsWith("Event ID:"))
+                    scannedEventId = UUID.fromString(t.substring(9).trim());
+            }
 
-        if (bookingId == null || scannedEventId == null) {
-            return ResponseEntity.ok(Map.of("status", "INVALID", "message", "QR parse failed"));
-        }
+            if (bookingId == null || scannedEventId == null) {
+                return ResponseEntity.ok(Map.of("status", "INVALID", "message", "QR parse failed"));
+            }
 
-        if (!eventId.equals(scannedEventId)) {
-            return ResponseEntity.ok(Map.of("status", "INVALID", "message", "QR belongs to another event"));
-        }
+            if (!eventId.equals(scannedEventId)) {
+                return ResponseEntity.ok(Map.of("status", "INVALID", "message", "QR belongs to another event"));
+            }
 
-        Booking b = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found"));
+            Booking b = bookingRepository.findById(bookingId)
+                    .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        if (!b.getEventId().equals(eventId)) {
-            return ResponseEntity.ok(Map.of("status", "INVALID", "message", "Booking/event mismatch"));
-        }
+            if (!b.getEventId().equals(eventId)) {
+                return ResponseEntity.ok(Map.of("status", "INVALID", "message", "Booking/event mismatch"));
+            }
 
-        if (!"CONFIRMED".equalsIgnoreCase(b.getStatus())) {
-            return ResponseEntity.ok(Map.of("status", "NOT_CONFIRMED", "message", "Booking not confirmed"));
-        }
+            if (!"CONFIRMED".equalsIgnoreCase(b.getStatus())) {
+                return ResponseEntity.ok(Map.of("status", "NOT_CONFIRMED", "message", "Booking not confirmed"));
+            }
 
-        // ✅ Handle null qrPayload for old bookings
-        String expectedPayload = b.getQrPayload();
-        if (expectedPayload == null || expectedPayload.isBlank()) {
-            expectedPayload = "Booking ID: " + b.getBookingId() +
-                              "\nEvent ID: " + b.getEventId() +
-                              "\nUser ID: " + b.getUserId();
+            // ✅ Handle null qrPayload for old bookings
+            String expectedPayload = b.getQrPayload();
+            if (expectedPayload == null || expectedPayload.isBlank()) {
+                expectedPayload = "Booking ID: " + b.getBookingId() +
+                        "\nEvent ID: " + b.getEventId() +
+                        "\nUser ID: " + b.getUserId();
 
-            // Optional: store it so it's filled for future scans
-            b.setQrPayload(expectedPayload);
+                // Optional: store it so it's filled for future scans
+                b.setQrPayload(expectedPayload);
+                bookingRepository.save(b);
+            }
+
+            // Compare scanned text with stored/reconstructed payload
+            if (!scanned.trim().equals(expectedPayload.trim())) {
+                return ResponseEntity.ok(Map.of("status", "INVALID", "message", "QR content mismatch"));
+            }
+
+            if (Boolean.TRUE.equals(b.getVerified())) {
+                return ResponseEntity.ok(Map.of(
+                        "status", "ALREADY_VERIFIED",
+                        "message", "Ticket already scanned",
+                        "verifiedAt", b.getVerifiedAt()));
+            }
+
+            b.setVerified(true);
+            b.setVerifiedAt(LocalDateTime.now());
             bookingRepository.save(b);
-        }
 
-        // Compare scanned text with stored/reconstructed payload
-        if (!scanned.trim().equals(expectedPayload.trim())) {
-            return ResponseEntity.ok(Map.of("status", "INVALID", "message", "QR content mismatch"));
-        }
-
-        if (Boolean.TRUE.equals(b.getVerified())) {
             return ResponseEntity.ok(Map.of(
-                "status", "ALREADY_VERIFIED",
-                "message", "Ticket already scanned",
-                "verifiedAt", b.getVerifiedAt()
-            ));
+                    "status", "VERIFIED_OK",
+                    "message", "Ticket verified successfully",
+                    "data", Map.of("bookingId", b.getBookingId(), "verifiedAt", b.getVerifiedAt())));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(Map.of("status", "INVALID", "message", e.getMessage()));
         }
-
-        b.setVerified(true);
-        b.setVerifiedAt(LocalDateTime.now());
-        bookingRepository.save(b);
-
-        return ResponseEntity.ok(Map.of(
-            "status", "VERIFIED_OK",
-            "message", "Ticket verified successfully",
-            "data", Map.of("bookingId", b.getBookingId(), "verifiedAt", b.getVerifiedAt())
-        ));
-
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.ok(Map.of("status", "INVALID", "message", e.getMessage()));
     }
-}
+
+    private final BookingCancelService cancelService;
+
+    @PostMapping("/{bookingId}/cancel")
+    public ResponseEntity<?> cancel(@PathVariable UUID bookingId, Authentication auth) {
+        try {
+            String email = (auth.getPrincipal() instanceof UserDetails ud)
+                    ? ud.getUsername()
+                    : auth.getName();
+
+            Map<String, Object> result = cancelService.cancelBooking(bookingId, email);
+            return ResponseEntity.ok(result);
+
+        } catch (RuntimeException re) {
+            return ResponseEntity.badRequest().body(Map.of("status", "ERROR", "message", re.getMessage()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body(Map.of("status", "ERROR", "message", e.getMessage()));
+        }
+    }
 }
