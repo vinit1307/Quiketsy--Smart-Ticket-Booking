@@ -26,6 +26,7 @@ public class BookingCancelService {
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
     private final JavaMailSender mailSender; // if you don't want email now, you can remove this and the method below
+    private final QueueService queueService;
 
     @Transactional
     public Map<String, Object> cancelBooking(UUID bookingId, String email) {
@@ -58,6 +59,9 @@ public class BookingCancelService {
         // 4) mark cancelled
         booking.setStatus("CANCELLED");   // <- plain string
         bookingRepository.save(booking);
+        
+        queueService.autoBookNextUser(booking.getEventId());
+
 
         // 5) increment available slots (avoid going over total)
         Integer slots = event.getAvailableSlots() == null ? 0 : event.getAvailableSlots();
