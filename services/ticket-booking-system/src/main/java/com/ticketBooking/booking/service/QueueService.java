@@ -30,11 +30,11 @@ public class QueueService {
     private final JavaMailSender mailSender;
 
     public QueueService(EventRepository eventRepository,
-                        BookingRepository bookingRepository,
-                        EventQueueRepository queueRepository,
-                        PaymentService paymentService,
-                        UserRepository userRepository,
-                        JavaMailSender mailSender) {
+            BookingRepository bookingRepository,
+            EventQueueRepository queueRepository,
+            PaymentService paymentService,
+            UserRepository userRepository,
+            JavaMailSender mailSender) {
         this.eventRepository = eventRepository;
         this.bookingRepository = bookingRepository;
         this.queueRepository = queueRepository;
@@ -49,15 +49,18 @@ public class QueueService {
      */
     @Transactional
     public EventQueue joinQueue(UUID eventId, String email, int amount) throws Exception {
+
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found: " + eventId));
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+                .orElseThrow(() -> new RuntimeException("User not found: " + email));
 
+        // Create Razorpay order
         Order order = paymentService.createOrder(amount);
         String orderId = order.get("id");
 
+        // Create booking (initially pending)
         Booking booking = Booking.builder()
                 .bookingId(UUID.randomUUID())
                 .eventId(eventId)
@@ -69,39 +72,42 @@ public class QueueService {
                 .build();
         bookingRepository.save(booking);
 
+        // Prepare queue entry
         EventQueue queueEntry = new EventQueue();
         queueEntry.setQueueId(UUID.randomUUID());
         queueEntry.setBookingId(booking.getBookingId());
         queueEntry.setEventId(eventId);
         queueEntry.setUserId(user.getId());
-        queueEntry.setUserEmail(email);              // <-- store email here
+        queueEntry.setUserEmail(email);
         queueEntry.setOrderId(orderId);
-        queueEntry.setPaymentId(null);
         queueEntry.setCreatedAt(Instant.now());
 
-        if (event.getAvailableSlots() != null && event.getAvailableSlots() > 0) {
+        // ATOMIC check for direct booking
+        int dec = eventRepository.decrementAvailableSlotsIfPresent(eventId);
+        System.out.println("[joinQueue] decrementAvailableSlotsIfPresent returned " + dec);
+
+        if (dec == 1) {
+            // Slot was successfully reserved
             booking.setStatus("CONFIRMED");
             bookingRepository.save(booking);
-
-            event.setAvailableSlots(event.getAvailableSlots() - 1);
-            eventRepository.save(event);
 
             queueEntry.setStatus("BOOKED");
             queueEntry.setPosition(0);
             queueRepository.save(queueEntry);
 
             sendEmail(email, "Booking Confirmed - " + event.getName(),
-                    "✅ Your booking is confirmed.\nBooking ID: " + booking.getBookingId());
+                    "Your booking is confirmed.\nBooking ID: " + booking.getBookingId());
         } else {
-            long waitingCount = queueRepository.countByEventIdAndStatus(eventId, "WAITING");
-            int position = (int) waitingCount + 1;
+            // No slot available → add to queue
+            long waiting = queueRepository.countByEventIdAndStatus(eventId, "WAITING");
+            int pos = (int) waiting + 1;
 
             queueEntry.setStatus("WAITING");
-            queueEntry.setPosition(position);
+            queueEntry.setPosition(pos);
             queueRepository.save(queueEntry);
 
             sendEmail(email, "Added to Queue - " + event.getName(),
-                    "⏳ You’ve been added to the waiting list. Position: #" + position);
+                    "You were added to the waiting list.\nPosition #" + pos);
         }
 
         return queueEntry;
@@ -116,7 +122,8 @@ public class QueueService {
                 .orElseThrow(() -> new RuntimeException("User not found: " + email));
 
         Optional<EventQueue> qOpt = queueRepository.findByEventIdAndUserEmail(eventId, email);
-        if (qOpt.isEmpty()) throw new RuntimeException("No queue entry found for user");
+        if (qOpt.isEmpty())
+            throw new RuntimeException("No queue entry found for user");
 
         EventQueue queue = qOpt.get();
         if (!"WAITING".equalsIgnoreCase(queue.getStatus())) {
@@ -134,50 +141,53 @@ public class QueueService {
     }
 
     /**
-     * Auto-book next waiting user (called from BookingCancelService after confirmed cancellation).
+     * Auto-book next waiting user (called from BookingCancelService after confirmed
+     * cancellation).
      * Uses email stored in EventQueue and findByEmail.
      */
     @Transactional
     public void autoBookNextUser(UUID eventId) {
-        Optional<EventQueue> nextOpt =
-                queueRepository.findFirstByEventIdAndStatusOrderByPositionAsc(eventId, "WAITING");
-        if (nextOpt.isEmpty()) return;
+        Optional<EventQueue> nextOpt = queueRepository.findFirstByEventIdAndStatusOrderByPositionAsc(eventId,
+                "WAITING");
+        if (nextOpt.isEmpty()) {
+            System.out.println("[autoBookNextUser] no waiting user for " + eventId);
+            return;
+        }
 
         EventQueue next = nextOpt.get();
+        System.out.println("[autoBookNextUser] attempting to auto-book queueId=" + next.getQueueId() + " bookingId="
+                + next.getBookingId());
 
+        // Try to atomically decrement the available slot that the cancel incremented
+        int dec = eventRepository.decrementAvailableSlotsIfPresent(eventId);
+        System.out.println(
+                "[autoBookNextUser] decrementAvailableSlotsIfPresent returned " + dec + " for event " + eventId);
+
+        if (dec != 1) {
+            // Could not reserve slot — leave user WAITING (log and return)
+            System.out.println("[autoBookNextUser] could not reserve slot for queueId=" + next.getQueueId()
+                    + " — leaving WAITING");
+            return;
+        }
+
+        // Now slot is reserved for this queued user — confirm booking
         Booking pendingBooking = bookingRepository.findById(next.getBookingId())
                 .orElseThrow(() -> new RuntimeException("Linked booking not found: " + next.getBookingId()));
 
-        // 1) Confirm booking
         pendingBooking.setStatus("CONFIRMED");
         bookingRepository.save(pendingBooking);
 
-        // 2) Update queue entry
         next.setStatus("BOOKED");
         next.setPosition(0);
         queueRepository.save(next);
 
-        // 3) Update event slots (we assume the caller incremented slots already during cancel)
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found: " + eventId));
-
-        // Decrease slot because we assigned it to this user
-        event.setAvailableSlots(Math.max(0, (event.getAvailableSlots() == null ? 0 : event.getAvailableSlots()) - 1));
-        eventRepository.save(event);
-
-        // 4) Use stored email (no findById)
+        // notify
         String userEmail = next.getUserEmail();
-        if (userEmail == null || userEmail.isBlank()) {
-            // fallback: try to find user by userId using findByEmail not available — but we assume email stored
-            throw new RuntimeException("No userEmail stored in queue entry; joinQueue must store it");
-        }
+        sendEmail(userEmail, "Auto-booked for " + pendingBooking.getEventId(),
+                "You have been auto-booked. Booking ID: " + pendingBooking.getBookingId());
 
-        // send notification
-        sendEmail(userEmail, "Auto-booked for " + event.getName(),
-                "🎉 A slot opened up and you have been auto-booked! Booking ID: " + pendingBooking.getBookingId());
-
-        // 5) Reindex remaining queue
         reindexQueuePositions(eventId);
+        System.out.println("[autoBookNextUser] auto-book successful for queueId=" + next.getQueueId());
     }
 
     @Transactional
@@ -196,7 +206,8 @@ public class QueueService {
     }
 
     private void sendEmail(String to, String subject, String body) {
-        if (to == null || to.isBlank()) return;
+        if (to == null || to.isBlank())
+            return;
         try {
             SimpleMailMessage m = new SimpleMailMessage();
             m.setTo(to);

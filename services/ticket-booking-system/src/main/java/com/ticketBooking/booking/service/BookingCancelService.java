@@ -30,55 +30,53 @@ public class BookingCancelService {
 
     @Transactional
     public Map<String, Object> cancelBooking(UUID bookingId, String email) {
-        // 1) who is cancelling
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found: " + email));
 
-        // 2) load booking
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
 
-        if (!booking.getUserId().equals(user.getId())) {
+        if (!booking.getUserId().equals(user.getId()))
             throw new RuntimeException("Not your booking");
-        }
+        if ("CANCELLED".equalsIgnoreCase(booking.getStatus()))
+            return Map.of("status", "ALREADY_CANCELLED");
 
-        // already cancelled → idempotent
-        if ("CANCELLED".equalsIgnoreCase(booking.getStatus())) {
-            return Map.of("status", "ALREADY_CANCELLED", "message", "Booking already cancelled");
-        }
+        if (Boolean.TRUE.equals(booking.getVerified()))
+            throw new RuntimeException("Ticket verified - cannot cancel");
 
-        // optional: disallow cancel if verified at gate
-        if (Boolean.TRUE.equals(booking.getVerified())) {
-            throw new RuntimeException("Ticket already verified at gate — cannot cancel");
-        }
-
-        // 3) load event
-        Event event = eventRepository.findById(booking.getEventId())
-                .orElseThrow(() -> new RuntimeException("Event not found"));
-
-        // 4) mark cancelled
-        booking.setStatus("CANCELLED");   // <- plain string
+        // mark cancelled
+        booking.setStatus("CANCELLED");
         bookingRepository.save(booking);
-        
-        queueService.autoBookNextUser(booking.getEventId());
+        System.out.println("[cancelBooking] booking " + bookingId + " -> CANCELLED");
 
+        UUID eventId = booking.getEventId();
 
-        // 5) increment available slots (avoid going over total)
-        Integer slots = event.getAvailableSlots() == null ? 0 : event.getAvailableSlots();
-        Integer total  = event.getTotalSlots() == null ? Integer.MAX_VALUE : event.getTotalSlots();
-        int newSlots = Math.min(slots + 1, total);
-        event.setAvailableSlots(newSlots);
-        eventRepository.save(event);
+        // ATOMIC increment: use repository method
+        int inc = eventRepository.incrementAvailableSlots(eventId);
+        System.out.println("[cancelBooking] incrementAvailableSlots returned " + inc + " for event " + eventId);
 
-        // 6) notify via email (optional)
-        sendCancellationEmailSafe(user, event, booking);
+        // If increment didn't update (inc==0) it's still OK — we proceed to try
+        // auto-book,
+        // but log it so we can debug.
+        try {
+            // Call auto-book AFTER increment. autoBookNextUser will attempt atomic
+            // decrement.
+            queueService.autoBookNextUser(eventId);
+        } catch (Exception ex) {
+            System.err.println("[cancelBooking] autoBookNextUser threw: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        // send email
+        sendCancellationEmailSafe(user, eventRepository.findById(eventId).orElse(null), booking);
 
         return Map.of("status", "CANCELLED", "message", "Booking cancelled successfully");
     }
 
     private void sendCancellationEmailSafe(User user, Event event, Booking booking) {
         try {
-            if (mailSender == null || user.getEmail() == null) return;
+            if (mailSender == null || user.getEmail() == null)
+                return;
 
             MimeMessage mime = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mime, true);
@@ -87,30 +85,29 @@ public class BookingCancelService {
             helper.setSubject("Ticket Cancelled: " + event.getName());
 
             String body = """
-                Hi %s,
+                    Hi %s,
 
-                Your ticket has been CANCELLED for the event:
-                Event: %s
-                Date: %s   Time: %s
-                Venue: %s, %s
+                    Your ticket has been CANCELLED for the event:
+                    Event: %s
+                    Date: %s   Time: %s
+                    Venue: %s, %s
 
-                Booking ID: %s
-                Status: CANCELLED
+                    Booking ID: %s
+                    Status: CANCELLED
 
-                Refund (if applicable) will be processed as per policy.
+                    Refund (if applicable) will be processed as per policy.
 
-                Thank you.
-                """.formatted(
+                    Thank you.
+                    """.formatted(
                     user.getName() != null ? user.getName() : "there",
                     event.getName(),
                     event.getEventDate(), event.getStartTime(),
                     event.getVenue(), event.getCity(),
-                    booking.getBookingId()
-                );
+                    booking.getBookingId());
 
             helper.setText(body);
             mailSender.send(mime);
-        } catch (Exception ignored) { /* don’t fail cancellation on email issue */ }
+        } catch (Exception ignored) {
+            /* don’t fail cancellation on email issue */ }
     }
 }
-

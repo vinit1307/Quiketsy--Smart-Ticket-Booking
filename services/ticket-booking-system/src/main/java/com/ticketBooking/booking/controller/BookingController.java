@@ -83,11 +83,11 @@ public class BookingController {
                     .orElseThrow(() -> new RuntimeException("Event not found"));
 
             // Check available slots
-            if (event.getAvailableSlots() == null || event.getAvailableSlots() <= 0) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("error", "No slots available for this event"));
-            }
-
+            // if (event.getAvailableSlots() == null || event.getAvailableSlots() <= 0) {
+            //     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            //             .body(Map.of("error", "No slots available for this event"));
+            // }
+            
             // Parse amount safely
             // Parse amount safely
             // Parse amount safely from JSON
