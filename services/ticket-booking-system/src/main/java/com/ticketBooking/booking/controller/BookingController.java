@@ -425,6 +425,8 @@ public ResponseEntity<?> verifyTicket(@RequestBody Map<String, String> req, Auth
         e.printStackTrace();
         return ResponseEntity.ok(Map.of("status", "INVALID", "message", e.getMessage()));
     }
+    
+}
 
 
     private final BookingCancelService cancelService;
