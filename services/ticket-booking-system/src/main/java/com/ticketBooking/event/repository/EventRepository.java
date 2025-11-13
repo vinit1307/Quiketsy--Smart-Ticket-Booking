@@ -22,8 +22,6 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
        List<Event> findByCategory(String category);
 
-       // existing locked method (you had Lock here previously)
-       @Lock(LockModeType.PESSIMISTIC_WRITE)
        List<Event> findByOrganizerId(Integer organizerId);
 
        List<Event> findByCityIgnoreCase(String city);
