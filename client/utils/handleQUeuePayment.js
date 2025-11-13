@@ -1,17 +1,15 @@
 import axios from "axios";
 
-const handlePayment = async (amount, name, email, contact, eventId, eventName) => {
+const handleQUeuePayments = async (amount, name, email, contact, eventId, eventName) => {
   try {
-    // Step 1: Get Razorpay Key
     const keyRes = await axios.get("http://localhost:9192/api/booking/getKey", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     });
     const key = keyRes.data;
 
-    // Step 2: Create Order
     const orderRes = await axios.post(
-      "http://localhost:9192/api/booking/order",
-      { eventId, amount },
+      "http://localhost:9192/api/events/join/" + eventId,
+      { amount },
       {
         headers: {
           "Content-Type": "application/json",
@@ -54,7 +52,7 @@ const handlePayment = async (amount, name, email, contact, eventId, eventName) =
           setTimeout(() => {
             window.location.href = `/booking/success?bookingid=${verifyRes.data.bookingId}`;
           }, 2500);
-          alert("✅ Payment Verified and Booking Confirmed!");
+          //alert("✅ Payment Verified and Booking Confirmed!");
           console.log("Verification Response", verifyRes.data);
         } catch (err) {
           console.error("Verification Failed ❌", err);
@@ -78,4 +76,4 @@ const handlePayment = async (amount, name, email, contact, eventId, eventName) =
   }
 };
 
-export default handlePayment;
+export default handleQUeuePayments;
