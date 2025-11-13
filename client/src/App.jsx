@@ -46,7 +46,8 @@ function App() {
             <Route path="/book-event/:id" element={<BookEvent />} />
             <Route path="/booking/success" element={<PaymentSuccess />} />
             <Route path="/verify-ticket/:id" element={<VerifyTicket />} />
-            <Route path="/view-ticket" element={<ViewTicket />} />
+            {/* <Route path="/view-ticket" element={<ViewTicket />} /> */}
+            <Route path="/view-ticket/:bookingId" element={<ViewTicket />} />
           </Routes>
           <Footer/>
         </Router>

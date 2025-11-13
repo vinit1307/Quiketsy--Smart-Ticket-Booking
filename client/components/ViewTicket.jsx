@@ -1,106 +1,409 @@
 // ViewTicket.jsx
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  ArrowLeft, Calendar, Clock, MapPin, Users, Globe, 
-  Ticket, X, AlertCircle, CheckCircle, Building2, 
-  User, CreditCard, Receipt
-} from 'lucide-react';
-import QRCode from 'react-qr-code';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Globe,
+  Ticket,
+  X,
+  AlertCircle,
+  CheckCircle,
+  Building2,
+  User,
+  CreditCard,
+  Receipt,
+  ListEnd,
+} from "lucide-react";
+import QRCode from "react-qr-code";
 
 const ViewTicket = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showCancelDialog, setShowCancelDialog] = useState(false);
-  const [showCancelledConfirmation, setShowCancelledConfirmation] = useState(false);
+  const [showCancelledConfirmation, setShowCancelledConfirmation] =
+    useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [queuePosition, setQueuePosition] = useState(null);
 
   // Hardcoded ticket data
-  const [ticketData, setTicketData] = useState({
-    eventImage: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=500',
-    status: 'confirmed', // 'confirmed', 'waitlist', 'cancelled'
-    eventName: 'Summer Music Festival 2024',
-    ticketPrice: 1500,
-    eventTime: '18:00',
-    eventDate: '2024-02-15',
-    eventDuration: '3 hours',
-    eventVenue: 'Phoenix Arena',
-    eventCity: 'Mumbai',
-    ageLimit: '18+',
-    language: 'English',
-    bookedDate: '2024-01-20',
-    bookedTime: '14:30',
-    orderId: 'ORD123456789',
-    paymentId: 'PAY987654321',
-    qrCodeData: 'TICKET-2024-SUMMER-FEST-123456',
-    userName: 'John Doe',
-    userEmail: 'john.doe@example.com'
-  });
+  // const [ticketData, setTicketData] = useState({
+  //   eventImage: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=500',
+  //   status: 'confirmed', // 'confirmed', 'waitlist', 'cancelled'
+  //   eventName: 'Summer Music Festival 2024',
+  //   ticketPrice: 1500,
+  //   eventTime: '18:00',
+  //   eventDate: '2024-02-15',
+  //   eventDuration: '3 hours',
+  //   eventVenue: 'Phoenix Arena',
+  //   eventCity: 'Mumbai',
+  //   ageLimit: '18+',
+  //   language: 'English',
+  //   bookedDate: '2024-01-20',
+  //   bookedTime: '14:30',
+  //   orderId: 'ORD123456789',
+  //   paymentId: 'PAY987654321',
+  //   qrCodeData: 'TICKET-2024-SUMMER-FEST-123456',
+  //   userName: 'John Doe',
+  //   userEmail: 'john.doe@example.com'
+  // });
+
+  const [ticketData, setTicketData] = useState(null);
+  const { bookingId } = useParams();
 
   useEffect(() => {
-    if (location.state?.eventData) {
-      const event = location.state.eventData;
-      setTicketData({
-        eventImage: event.image || 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=500',
-        status: event.status || 'waitlist',
-        eventName: event.name,
-        ticketPrice: event.price,
-        eventTime: event.time,
-        eventDate: event.date,
-        eventDuration: '3 hours',
-        eventVenue: event.venue,
-        eventCity: event.location,
-        ageLimit: '18+',
-        language: 'English',
-        bookedDate: event.bookingDate || '2024-01-20',
-        bookedTime: '14:30',
-        orderId: 'ORD123456789',
-        paymentId: 'PAY987654321',
-        qrCodeData: `TICKET-${event.id}-${Date.now()}`,
-        userName: 'John Doe',
-        userEmail: 'john.doe@example.com'
-      });
+    const fetchTicketData = async () => {
+      try {
+        setIsLoading(true);
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          `http://localhost:9192/api/booking/ticket/${bookingId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        // Map API response to component format
+        const data = response.data;
+        const mappedTicket = {
+          eventImage: data.photo,
+          status: data.status.toLowerCase(),
+          eventName: data.eventName,
+          ticketPrice: data.price,
+          eventTime: data.time,
+          eventId: data.eventId,
+          eventDate: data.eventDate,
+          eventDuration: data.duration || "3 hours",
+          eventVenue: data.venue,
+          eventCity: data.city,
+          ageLimit: `${data.age}+`,
+          language: data.language,
+          bookedDate: data.bookedOn.split("T")[0],
+          bookedTime: data.bookedOn.split("T")[1].substring(0, 5),
+          orderId: data.orderId,
+          paymentId: data.paymentId,
+          qrCodeUrl: data.qrCodeUrl,
+          qrCodeData: data.bookingId,
+          userName: data.bookedByName,
+          userEmail: data.bookedByEmail,
+        };
+
+        setTicketData(mappedTicket);
+
+        // Set queue position directly from response if status is waitlist
+        if (
+          (mappedTicket.status === "pending" ||
+            mappedTicket.status === "queued" ||
+            mappedTicket.status === "waitlist") &&
+          data.queue_position !== undefined &&
+          data.queue_position !== null
+        ) {
+          setQueuePosition(data.queue_position);
+        }
+      } catch (error) {
+        console.error("Error fetching ticket:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (bookingId) {
+      fetchTicketData();
     }
-  }, [location]);
+  }, [bookingId]);
+
+  // useEffect(() => {
+  //   const fetchTicketData = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const token = localStorage.getItem('token');
+  //       const response = await axios.get(
+  //         `http://localhost:9192/api/booking/ticket/${bookingId}`,
+  //         {
+  //           headers: {
+  //             'Authorization': `Bearer ${token}`,
+  //             'Content-Type': 'application/json'
+  //           }
+  //         }
+  //       );
+
+  //       // Map API response to component format
+  //       const data = response.data;
+  //       const mappedTicket = {
+  //         eventImage: data.photo,
+  //         status: data.status.toLowerCase(), // 'CONFIRMED' -> 'confirmed'
+  //         eventName: data.eventName,
+  //         ticketPrice: data.price,
+  //         eventTime: data.time,
+  //         eventId: data.eventId,
+  //         eventDate: data.eventDate,
+  //         eventDuration: data.duration,
+  //         eventVenue: data.venue,
+  //         eventCity: data.city,
+  //         ageLimit: `${data.age}+`,
+  //         language: data.language,
+  //         bookedDate: data.bookedOn.split('T')[0],
+  //         bookedTime: data.bookedOn.split('T')[1].substring(0, 5),
+  //         orderId: data.orderId,
+  //         paymentId: data.paymentId,
+  //         qrCodeUrl: data.qrCodeUrl,
+  //         qrCodeData: data.bookingId,
+  //         userName: data.bookedByName,
+  //         userEmail: data.bookedByEmail
+  //       };
+
+  //       setTicketData(mappedTicket);
+
+  //       // Fetch queue position if waitlisted
+  //       // if (mappedTicket.status === 'pending' ||
+  //       //     mappedTicket.status === 'queued' ||
+  //       //     mappedTicket.status === 'waitlist') {
+  //       //   fetchQueuePosition(mappedTicket.eventId);
+  //       // }
+
+  //     } catch (error) {
+  //       console.error('Error fetching ticket:', error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   const fetchQueuePosition = async (eventId) => {
+  //     try {
+  //       const token = localStorage.getItem('token');
+  //       const response = await axios.get(
+  //         `http://localhost:9192/api/events/position/${eventId}`,
+  //         {
+  //           headers: {
+  //             'Authorization': `Bearer ${token}`,
+  //             'Content-Type': 'application/json'
+  //           }
+  //         }
+  //       );
+  //       console.log('Queue position fetched:', response.data.position);
+  //       setQueuePosition(response.data.position);
+  //     } catch (error) {
+  //       console.error('Error fetching queue position:', error);
+  //     }
+  //   };
+
+  //   if (bookingId) {
+  //     fetchTicketData();
+  //   }
+  // }, [bookingId]);
+
+  //   useEffect(() => {
+  //   const fetchTicketData = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const token = localStorage.getItem('token');
+  //       const response = await axios.get(
+  //         `http://localhost:9192/api/booking/ticket/${bookingId}`,
+  //         {
+  //           headers: {
+  //             'Authorization': `Bearer ${token}`,
+  //             'Content-Type': 'application/json'
+  //           }
+  //         }
+  //       );
+
+  //       // Map API response to component format
+  //       const data = response.data;
+  //       setTicketData({
+  //         eventImage: data.photo,
+  //         status: data.status.toLowerCase(), // 'CONFIRMED' -> 'confirmed'
+  //         eventName: data.eventName,
+  //         ticketPrice: data.price,
+  //         eventTime: data.time,
+  //         eventId: data.eventId,
+  //         eventDate: data.eventDate,
+  //         eventDuration: data.duration,
+  //         eventVenue: data.venue,
+  //         eventCity: data.city,
+  //         ageLimit: `${data.age}+`,
+  //         language: data.language,
+  //         bookedDate: data.bookedOn.split('T')[0],
+  //         bookedTime: data.bookedOn.split('T')[1].substring(0, 5),
+  //         orderId: data.orderId,
+  //         paymentId: data.paymentId,
+  //         qrCodeUrl: data.qrCodeUrl, // base64 image
+  //         qrCodeData: data.bookingId, // for fallback
+  //         userName: data.bookedByName,
+  //         userEmail: data.bookedByEmail
+  //       });
+  //     } catch (error) {
+  //       console.error('Error fetching ticket:', error);
+  //       // Handle error - maybe navigate back or show error message
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   const fetchQueuePosition = async (eventId) => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const response = await axios.get(
+  //       `http://localhost:9192/api/events/position/${eventId}`,
+  //       {
+  //         headers: {
+  //           'Authorization': `Bearer ${token}`,
+  //           'Content-Type': 'application/json'
+  //         }
+  //       }
+  //     );
+  //     setQueuePosition(response.data.position);
+  //   } catch (error) {
+  //     console.error('Error fetching queue position:', error);
+  //   }
+  // };
+
+  //   if (bookingId) {
+  //     fetchTicketData();
+  //   }
+  // }, [bookingId]);
 
   const handleCancelTicket = async () => {
     setIsLoading(true);
-    setTimeout(() => {
-      setTicketData(prev => ({ ...prev, status: 'cancelled' }));
-      setIsLoading(false);
+
+    try {
+      const token = localStorage.getItem("token");
+      let response;
+
+      // Choose API endpoint based on ticket status
+      if (ticketData.status === "confirmed") {
+        // Cancel confirmed booking
+        response = await axios.post(
+          `http://localhost:9192/api/booking/${bookingId}/cancel`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      } else if (
+        ticketData.status === "queued" ||
+        ticketData.status === "pending" ||
+        ticketData.status === "waitlist"
+      ) {
+        // Cancel queued/waitlist booking
+        response = await axios.post(
+          `http://localhost:9192/api/events/cancel/${ticketData.eventId}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+      }
+
+      // Update UI on success
+      if (response?.data) {
+        setTicketData((prev) => ({ ...prev, status: "cancelled" }));
+        setShowCancelDialog(false);
+        setShowCancelledConfirmation(true);
+      }
+    } catch (error) {
+      console.error("Error cancelling ticket:", error);
+      alert(error.response?.data?.message || "Failed to cancel ticket");
       setShowCancelDialog(false);
-      setShowCancelledConfirmation(true);
-    }, 1500);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // const handleCancelTicket = async () => {
+  //   setIsLoading(true);
+  //   setTimeout(() => {
+  //     setTicketData(prev => ({ ...prev, status: 'cancelled' }));
+  //     setIsLoading(false);
+  //     setShowCancelDialog(false);
+  //     setShowCancelledConfirmation(true);
+  //   }, 1500);
+  // };
+
+  //   useEffect(() => {
+  //   if (data?.eventId &&
+  //       (data.status === 'pending' ||
+  //        data.status === 'queued' ||
+  //        data.status === 'waitlist')) {
+  //     fetchQueuePosition(data.eventId);
+  //   }
+  // }, [data]); // Triggers when data changes
+
+  // const fetchQueuePosition = async (eventId) => {
+  //   try {
+  //     const token = localStorage.getItem('token');
+  //     const response = await axios.get(
+  //       `http://localhost:9192/api/events/position/${eventId}`,
+  //       {
+  //         headers: {
+  //           'Authorization': `Bearer ${token}`,
+  //           'Content-Type': 'application/json'
+  //         }
+  //       }
+  //     );
+  //     setQueuePosition(response.data.position);
+  //   } catch (err) {
+  //     console.error('Error fetching queue position:', err);
+  //   }
+  // };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', { 
-      day: '2-digit', 
-      month: 'long', 
-      year: 'numeric' 
+    return date.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
     });
   };
 
   const formatTime = (time) => {
-    return time || '18:00';
+    if (!time) return "TBA";
+    const [hours, minutes] = time.split(":");
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    return `${displayHour}:${minutes} ${ampm}`;
   };
 
   const getStatusBadge = () => {
     switch (ticketData.status) {
-      case 'confirmed':
+      case "confirmed":
         return (
           <div className="absolute top-4 right-4 bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold border border-green-300">
             ✓ CONFIRMED
           </div>
         );
-      case 'waitlist':
+      case "waitlist":
         return (
           <div className="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold border border-yellow-300">
             ⏳ WAITLIST
           </div>
         );
-      case 'cancelled':
+      case "queued":
+        return (
+          <div className="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold border border-yellow-300">
+            ⏳ WAITLIST
+          </div>
+        );
+      case "pending":
+        return (
+          <div className="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold border border-yellow-300">
+            ⏳ WAITLIST
+          </div>
+        );
+      case "cancelled":
         return (
           <div className="absolute top-4 right-4 bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold border border-red-300">
             ✕ CANCELLED
@@ -111,13 +414,24 @@ const ViewTicket = () => {
     }
   };
 
+  if (isLoading || !ticketData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading ticket...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Back Button */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors"
+          className="flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors hover:cursor-pointer"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to History
@@ -145,10 +459,10 @@ const ViewTicket = () => {
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              
+
               {/* Status Badge */}
               {getStatusBadge()}
-              
+
               <div className="absolute bottom-4 left-6 right-6">
                 <h2 className="text-2xl font-bold text-white mb-1">
                   {ticketData.eventName}
@@ -254,11 +568,10 @@ const ViewTicket = () => {
                   <div>
                     <p className="text-xs text-gray-500">Booked On</p>
                     <p className="text-sm font-semibold text-gray-900">
-                      {formatDate(ticketData.bookedDate)} at {ticketData.bookedTime}
+                      {formatDate(ticketData.bookedDate)} at{" "}
+                      {ticketData.bookedTime}
                     </p>
-                    <p className="text-xs text-gray-600">
-                      
-                    </p>
+                    <p className="text-xs text-gray-600"></p>
                   </div>
                 </div>
               </div>
@@ -309,7 +622,7 @@ const ViewTicket = () => {
               {/* QR Code Section */}
               <div className="flex justify-center pt-4 mb-5 border-t">
                 <div className="bg-gray-100 p-3 rounded-lg border-5 border-dotted border-white">
-                  {ticketData.status === 'confirmed' ? (
+                  {/* {ticketData.status === 'confirmed' ? (
                     <div className="flex flex-col items-center">
                       <div className="bg-white p-3 rounded-lg mb-2">
                         <QRCode value={ticketData.qrCodeData} size={120} />
@@ -325,11 +638,55 @@ const ViewTicket = () => {
                       <p className="text-xs text-gray-500 mt-1 text-center">
                         QR code will be visible here just after ticket confirmation
                       </p>
+                    </div> */}
+                  {ticketData.status === "confirmed" ? (
+                    <div className="flex flex-col items-center">
+                      <div className="bg-white p-3 rounded-lg mb-2">
+                        {ticketData.qrCodeUrl ? (
+                          <img
+                            src={ticketData.qrCodeUrl}
+                            alt="QR Code"
+                            className="w-[120px] h-[120px]"
+                          />
+                        ) : (
+                          <QRCode value={ticketData.qrCodeData} size={120} />
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-600 text-center">
+                        Show this QR code at the venue for entry
+                      </p>
+                    </div>
+                  ) : // ... rest of the code
+                  ticketData.status === "queued" ||
+                    ticketData.status === "pending" ||
+                    ticketData.status === "waitlist" ? (
+                    <div className="flex flex-col items-center p-4">
+                      <ListEnd className="w-10 h-10 text-yellow-600 mb-2" />
+                      <p className="text-sm font-semibold text-gray-700">
+                        Waiting Queue
+                      </p>
+                      <p className="text-xs text-gray-500 mt-1 text-center">
+                        You are in Waiting Queue. QR will generate soon after
+                        confirmation.
+                      </p>
+                      {queuePosition !== null && (
+                        <div className="mt-3 bg-amber-100 border border-amber-300 rounded-lg px-4 py-2">
+                          <p className="text-xs text-amber-700 font-semibold">
+                            Queue Position:{" "}
+                            {queuePosition === 0
+                              ? "Next in line! 🎉"
+                              : `#${queuePosition}`}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   ) : (
+                    // ... rest of the code
                     <div className="flex flex-col items-center p-4">
                       <X className="w-10 h-10 text-red-600 mb-2" />
-                      <p className="text-sm font-semibold text-gray-700">Ticket Cancelled</p>
+                      <p className="text-sm font-semibold text-gray-700">
+                        Ticket Cancelled
+                      </p>
                       <p className="text-xs text-gray-500 mt-1 text-center">
                         Your payment will be refunded in 2-3 business days
                       </p>
@@ -345,7 +702,7 @@ const ViewTicket = () => {
         </div>
 
         {/* Cancel Button - Only show for non-cancelled tickets */}
-        {ticketData.status !== 'cancelled' && (
+        {ticketData.status !== "cancelled" && (
           <button
             onClick={() => setShowCancelDialog(true)}
             className="w-full mt-6 py-4 px-6 rounded-lg font-semibold text-white transition-all transform hover:scale-[1.02] bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700"
@@ -355,7 +712,7 @@ const ViewTicket = () => {
         )}
 
         {/* Refund Message for Cancelled Tickets */}
-        {ticketData.status === 'cancelled' && (
+        {ticketData.status === "cancelled" && (
           <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex items-start space-x-3">
               <CheckCircle className="w-5 h-5 text-blue-600 mt-0.5" />
@@ -364,7 +721,8 @@ const ViewTicket = () => {
                   Refund Processing
                 </p>
                 <p className="text-sm text-blue-700 mt-1">
-                  Your payment will be refunded to your original payment method within 2-3 business days.
+                  Your payment will be refunded to your original payment method
+                  within 2-3 business days.
                 </p>
               </div>
             </div>
@@ -378,10 +736,13 @@ const ViewTicket = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center space-x-3 mb-4">
               <AlertCircle className="w-8 h-8 text-red-600" />
-              <h3 className="text-lg font-semibold text-gray-800">Cancel Ticket?</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                Cancel Ticket?
+              </h3>
             </div>
             <p className="text-gray-600 mb-6">
-              Are you sure you want to cancel this ticket? This action cannot be undone.
+              Are you sure you want to cancel this ticket? This action cannot be
+              undone.
             </p>
             <div className="flex space-x-3">
               <button
@@ -396,7 +757,7 @@ const ViewTicket = () => {
                 className="flex-1 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                 disabled={isLoading}
               >
-                {isLoading ? 'Cancelling...' : 'Yes, Cancel'}
+                {isLoading ? "Cancelling..." : "Yes, Cancel"}
               </button>
             </div>
           </div>
@@ -409,7 +770,9 @@ const ViewTicket = () => {
           <div className="bg-white rounded-lg p-6 max-w-md w-full. shadow-2xl">
             <div className="flex items-center space-x-3 mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
-              <h3 className="text-lg font-semibold text-gray-800">Ticket Cancelled Successfully</h3>
+              <h3 className="text-lg font-semibold text-gray-800">
+                Ticket Cancelled Successfully
+              </h3>
             </div>
             <p className="text-gray-600 mb-6">
               Your ticket is cancelled and you will be refunded in 2-3 days.
