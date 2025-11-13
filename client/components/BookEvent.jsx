@@ -18,6 +18,7 @@ import EventsService from "../services/eventsService";
 import LoadingSpinner from "./LoadingSpinner";
 import { toast } from "react-toastify";
 import handlePayment from "../utils/handlePayment";
+import handleQUeuePayments from "../utils/handleQUeuePayment";
 
 const BookEvent = () => {
   const { id } = useParams();
@@ -183,16 +184,26 @@ const BookEvent = () => {
     }
 
     // console.log(event);
-
-    handlePayment(
-      event.price, 
-      userDetails.name, 
-      userDetails.email, 
-      userDetails.phoneNumber, 
-      event.id,
-      event.name, 
-      event.description
-    );
+    // if(isWaitingList)
+      handleQUeuePayments(
+        event.price, 
+        userDetails.name, 
+        userDetails.email, 
+        userDetails.phoneNumber, 
+        event.id,
+        event.name, 
+        event.description
+      );
+    // else
+    //   handlePayment(
+    //     event.price, 
+    //     userDetails.name, 
+    //     userDetails.email, 
+    //     userDetails.phoneNumber, 
+    //     event.id,
+    //     event.name, 
+    //     event.description
+    //   );
 
     // Navigate to payment page with event details
     // navigate(`/payment/${event.id}`, {

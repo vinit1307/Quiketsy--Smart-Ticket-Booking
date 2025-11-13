@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Scanner } from "@yudiel/react-qr-scanner";
 import { ChevronLeft } from "lucide-react";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function VerifyTicket() {
   const { id } = useParams();
@@ -12,10 +13,10 @@ function VerifyTicket() {
 
   async function handleScan(result) {
     const ticketHash = result[0]?.rawValue;
-    console.log(result[0]?.rawValue);
+    // console.log(result[0]?.rawValue);
     setScanning(false);
 
-    const response = await axios.post("http://localhost:9192/api/verify-ticket", {
+    const response = await axios.post("http://localhost:9192/api/booking/verify-ticket", {
       eventId: id,
       ticketHash
     },{
@@ -24,6 +25,16 @@ function VerifyTicket() {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
       }
     });
+
+    // console.log(response);
+
+    if(response.data.status === "VERIFIED_OK"){
+      setTicketDetails({name: response.data.data.verifiedAt , ticketId: response.data.data.bookingId})
+      toast.success(response.data.message);
+    } else {
+      setScanning(true);
+      toast.error(response.data.message)
+    }
   }
 
   return (
@@ -83,15 +94,15 @@ function VerifyTicket() {
             {/* Ticket body */}
             <div className="p-6 flex flex-col gap-3">
               <p className="text-gray-500 text-sm uppercase tracking-wide">
-                Ticket Booked By
+                Ticket Id
               </p>
               <h3 className="text-2xl font-semibold text-[#008cff]">
-                {ticketDetails?.name}
+                {ticketDetails?.ticketId}
               </h3>
 
               <div className="mt-4 border-t border-dashed border-gray-300 pt-4">
-                <p className="text-gray-500 text-sm">Ticket ID</p>
-                <p className="text-lg font-medium">{ticketDetails?.ticketId}</p>
+                <p className="text-gray-500 text-sm">Verified At</p>
+                <p className="text-lg font-medium">{ticketDetails?.name}</p>
               </div>
             </div>
 
