@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -35,31 +36,49 @@ public class QueueController {
      * { "amount": 500 }
      */
     @PostMapping("/join/{eventId}")
-    public ResponseEntity<?> joinQueue(
-            @PathVariable UUID eventId,
-            @RequestBody JoinQueueRequest request,
-            Authentication auth
-    ) {
-        try {
-            String email = getEmailFromAuth(auth);
-            EventQueue queueEntry = queueService.joinQueue(eventId, email, request.getAmount());
+public ResponseEntity<?> joinQueue(
+        @PathVariable UUID eventId,
+        @RequestBody JoinQueueRequest request,
+        Authentication auth
+) {
+    try {
+        String email = getEmailFromAuth(auth);
+        int amount = request.getAmount();
 
-            return ResponseEntity.ok(Map.of(
-                    "message", "Queue joined successfully",
-                    "queueStatus", queueEntry.getStatus(),
-                    "position", queueEntry.getPosition(),
-                    "orderId", queueEntry.getOrderId(),
-                    "queueId", queueEntry.getQueueId()
-            ));
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("status", "ERROR", "message", re.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("status", "ERROR", "message", e.getMessage()));
-        }
+        EventQueue queueEntry = queueService.joinQueue(eventId, email, amount);
+
+        // Build response with both "order-style" fields and existing queue fields
+        Map<String, Object> resp = new HashMap<>();
+        // order-style fields (same as createOrder response)
+        resp.put("orderId", queueEntry.getOrderId());
+        resp.put("amount", amount);
+        resp.put("currency", "INR");
+        resp.put("bookingId", queueEntry.getBookingId());
+
+        // existing queue response fields (keep for backward compatibility)
+        resp.put("message", "Queue joined successfully");
+        resp.put("queueStatus", queueEntry.getStatus());
+        resp.put("position", queueEntry.getPosition());
+        resp.put("queueId", queueEntry.getQueueId());
+
+        // (optional) include a nested queue object for convenience (frontend can ignore)
+        Map<String, Object> queueMeta = new HashMap<>();
+        queueMeta.put("queueId", queueEntry.getQueueId());
+        queueMeta.put("position", queueEntry.getPosition());
+        queueMeta.put("status", queueEntry.getStatus());
+        resp.put("queue", queueMeta);
+
+        return ResponseEntity.ok(resp);
+    } catch (RuntimeException re) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("status", "ERROR", "message", re.getMessage()));
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("status", "ERROR", "message", e.getMessage()));
     }
+}
+
 
     /**
      * Cancel queue booking for the authenticated user (only queued/waiting entries).

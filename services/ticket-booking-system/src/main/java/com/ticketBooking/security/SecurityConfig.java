@@ -31,11 +31,13 @@ public class SecurityConfig {
                 }) // use our CorsConfig
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // allow CORS preflight
-                        .requestMatchers("/api/auth/**").permitAll() // allow register + login
+                        .requestMatchers("/api/auth/**").permitAll()// allow register + login
                         .requestMatchers("/api/events/**").permitAll()
+                        // .requestMatchers("/api/events/organizer/**").authenticated()
                         .requestMatchers("/api/booking/getKey").authenticated()
                         .requestMatchers("/api/booking/order").authenticated()
                         .requestMatchers("/api/booking/verify").permitAll()
+                        .requestMatchers("/api/booking/verify-ticket").permitAll()
                         // .requestMatchers("/api/booking/**").authenticated()
                         // .requestMatchers("/api/events/trending").permitAll()
                         // .requestMatchers("/api/events/category/**").permitAll()

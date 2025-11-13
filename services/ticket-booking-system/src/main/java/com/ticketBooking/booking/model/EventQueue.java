@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -43,7 +44,13 @@ public class EventQueue {
     @Column(name = "payment_id", length = 200)
     private String paymentId;
 
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt = Instant.now();
+   @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    void prePersist(){
+        if (createdAt == null)
+            createdAt = LocalDateTime.now();
+    }
 
 }

@@ -17,4 +17,6 @@ public interface EventQueueRepository extends JpaRepository<EventQueue, UUID> {
     Optional<EventQueue> findByEventIdAndUserEmail(UUID eventId, String email);
     void deleteByEventIdAndUserId(UUID eventId, Integer userId);
     void deleteByEventIdAndUserEmail(UUID eventId, String email);
+
+    Optional<EventQueue> findByBookingId(UUID bookingId);
 }

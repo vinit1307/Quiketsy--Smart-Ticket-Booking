@@ -6,6 +6,7 @@ import com.ticketBooking.event.services.EventService;
 import com.ticketBooking.user.model.User;
 import com.ticketBooking.user.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
