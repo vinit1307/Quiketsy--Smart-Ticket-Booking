@@ -195,8 +195,9 @@ public class BookingController {
                     Map<String, Object> entry = new HashMap<>();
                     entry.put("bookingId", b.getBookingId());
                     entry.put("status", b.getStatus());
+                    entry.put("queue_position", b.getQueuePosition());
                     entry.put("bookedOn", b.getCreatedAt());
-
+                    entry.put("eventId", e.getEventId());
                     entry.put("eventName", e.getName());
                     entry.put("photo", e.getImageUrl());
                     entry.put("category", e.getCategory());
@@ -248,8 +249,9 @@ public class BookingController {
             response.put("qrCodeUrl", b.getQrCodeUrl());
             response.put("status", b.getStatus());
             response.put("bookedOn", b.getCreatedAt());
+            response.put("queue_position", b.getQueuePosition());
             response.put("price", e.getTicketPrice());
-
+            response.put("eventId", e.getEventId());
             // event details
             response.put("eventName", e.getName());
             response.put("photo", e.getImageUrl());
