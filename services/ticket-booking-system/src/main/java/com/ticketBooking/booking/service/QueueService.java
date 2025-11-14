@@ -9,6 +9,9 @@ import com.ticketBooking.event.model.Event;
 import com.ticketBooking.event.repository.EventRepository;
 import com.ticketBooking.user.model.User;
 import com.ticketBooking.user.repository.UserRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -128,26 +131,57 @@ public class QueueService {
      * This method atomically decrements available slots and confirms the queued booking,
      * generates QR and notifies the user.
      */
-    @Transactional
-    public void autoBookNextUser(UUID eventId) {
-        Optional<EventQueue> nextOpt = queueRepository.findFirstByEventIdAndStatusOrderByPositionAsc(eventId,
-                "WAITING");
-        if (nextOpt.isEmpty()) {
+   @Transactional
+public void autoBookNextUser(UUID eventId) {
+    Logger log = LoggerFactory.getLogger(getClass());
+
+    Optional<EventQueue> nextOpt = queueRepository.findFirstByEventIdAndStatusOrderByPositionAsc(eventId, "WAITING");
+    if (nextOpt.isEmpty()) {
+        log.debug("autoBookNextUser: no waiting queue for event {}", eventId);
+        return;
+    }
+
+    EventQueue next = nextOpt.get();
+
+    // Try to atomically decrement the available slot that the cancel incremented
+    int dec;
+    try {
+        dec = eventRepository.decrementAvailableSlotsIfPresent(eventId);
+    } catch (Exception e) {
+        log.error("autoBookNextUser: failed decrementAvailableSlots for event {}", eventId, e);
+        return;
+    }
+
+    if (dec != 1) {
+        // Could not reserve slot — leave user WAITING
+        log.info("autoBookNextUser: couldn't reserve slot for event {} (decrement returned {})", eventId, dec);
+        return;
+    }
+
+    // We reserved a slot. If anything goes wrong from this point, we must try to restore slot.
+    boolean slotReserved = true;
+    try {
+        // Avoid throwing for missing linked booking
+        Booking pendingBooking = bookingRepository.findById(next.getBookingId()).orElse(null);
+        if (pendingBooking == null) {
+            log.warn("autoBookNextUser: linked booking not found: {} — deleting queue entry and restoring slot",
+                    next.getBookingId());
+            // remove or mark as invalid so it won't block queue
+            try {
+                queueRepository.delete(next);
+            } catch (Exception delEx) {
+                log.error("autoBookNextUser: failed to delete invalid queue entry {}", next.getEventId(), delEx);
+            }
+            // restore reserved slot
+            try {
+                eventRepository.incrementAvailableSlots(eventId);
+                slotReserved = false;
+            } catch (Exception incEx) {
+                log.warn("autoBookNextUser: failed to restore slot for event {}", eventId, incEx);
+            }
+            reindexQueuePositions(eventId);
             return;
         }
-
-        EventQueue next = nextOpt.get();
-
-        // Try to atomically decrement the available slot that the cancel incremented
-        int dec = eventRepository.decrementAvailableSlotsIfPresent(eventId);
-        if (dec != 1) {
-            // Could not reserve slot — leave user WAITING
-            return;
-        }
-
-        // Now slot is reserved for this queued user — confirm booking
-        Booking pendingBooking = bookingRepository.findById(next.getBookingId())
-                .orElseThrow(() -> new RuntimeException("Linked booking not found: " + next.getBookingId()));
 
         // Idempotent: if already confirmed, just update queue info
         if ("CONFIRMED".equalsIgnoreCase(pendingBooking.getStatus())) {
@@ -158,20 +192,24 @@ public class QueueService {
             return;
         }
 
+        // Confirm booking
         pendingBooking.setStatus("CONFIRMED");
-        // If queue stored paymentId, set it to booking (optional)
         if (next.getPaymentId() != null) {
             pendingBooking.setPaymentId(next.getPaymentId());
         }
 
-        // Generate QR payload & PNG (base64)
-        String qrText = "Booking ID: " + pendingBooking.getBookingId()
-                + "\nEvent ID: " + pendingBooking.getEventId()
-                + "\nUser ID: " + pendingBooking.getUserId();
-        String qrBase64 = QRCodeGenerator.generateQRCodeBase64(qrText);
-
-        pendingBooking.setQrPayload(qrText);
-        pendingBooking.setQrCodeUrl(qrBase64);
+        // Generate QR payload & PNG (base64) — this can fail; catch but don't abort
+        try {
+            String qrText = "Booking ID: " + pendingBooking.getBookingId()
+                    + "\nEvent ID: " + pendingBooking.getEventId()
+                    + "\nUser ID: " + pendingBooking.getUserId();
+            String qrBase64 = QRCodeGenerator.generateQRCodeBase64(qrText);
+            pendingBooking.setQrPayload(qrText);
+            pendingBooking.setQrCodeUrl(qrBase64);
+        } catch (Exception qrEx) {
+            log.warn("autoBookNextUser: QR generation failed for booking {} — continuing without QR",
+                    pendingBooking.getBookingId(), qrEx);
+        }
 
         bookingRepository.save(pendingBooking);
 
@@ -179,13 +217,32 @@ public class QueueService {
         next.setPosition(0);
         queueRepository.save(next);
 
-        // notify
-        String userEmail = next.getUserEmail();
-        sendEmail(userEmail, "Auto-booked for " + pendingBooking.getEventId(),
-                "You have been auto-booked. Booking ID: " + pendingBooking.getBookingId());
+        // notify (catch mail exceptions so they don't abort TX)
+        try {
+            sendEmail(next.getUserEmail(), "Auto-booked for " + pendingBooking.getEventId(),
+                    "You have been auto-booked. Booking ID: " + pendingBooking.getBookingId());
+        } catch (Exception mailEx) {
+            log.error("autoBookNextUser: failed to send auto-book email for booking {}", pendingBooking.getBookingId(),
+                    mailEx);
+            // don't rethrow
+        }
 
         reindexQueuePositions(eventId);
+
+    } catch (Exception e) {
+        // Defensive: if any unexpected exception happens after we reserved slot,
+        // try best-effort to restore the slot and keep queue consistent.
+        log.error("autoBookNextUser: unexpected error for event {}, performing cleanup", eventId, e);
+        if (slotReserved) {
+            try {
+                eventRepository.incrementAvailableSlots(eventId);
+            } catch (Exception incEx) {
+                log.warn("autoBookNextUser: failed to restore available slot for event {}", eventId, incEx);
+            }
+        }
+        // do not rethrow — method should be resilient
     }
+}
 
     @Transactional
     public void reindexQueuePositions(UUID eventId) {
