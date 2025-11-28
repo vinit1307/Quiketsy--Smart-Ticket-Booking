@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -73,88 +74,102 @@ public class BookingController {
     }
 
     @PostMapping("/order")
-    public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, Object> data) {
-        try {
-            // Get logged-in user email from JWT
-            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            String email;
+@Transactional
+public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, Object> data) {
+    try {
+        // 1. Get logged-in user email
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email;
 
-            if (principal instanceof String) {
-                email = (String) principal;
-            } else if (principal instanceof UserDetails) {
-                email = ((UserDetails) principal).getUsername();
-            } else {
-                throw new RuntimeException("Cannot get email from SecurityContext");
-            }
+        if (principal instanceof UserDetails userDetails) {
+            email = userDetails.getUsername();
+        } else if (principal instanceof String) {
+            email = (String) principal;
+        } else {
+            throw new RuntimeException("Cannot get email from SecurityContext");
+        }
 
-            // Fetch User
-            User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        // 2. Fetch User
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-            // Fetch Event
-            UUID eventId = UUID.fromString(data.get("eventId").toString());
-            Event event = eventRepository.findById(eventId)
-                    .orElseThrow(() -> new RuntimeException("Event not found"));
+        // 3. Fetch Event
+        UUID eventId = UUID.fromString(data.get("eventId").toString());
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
 
-            // Check available slots
-            // if (event.getAvailableSlots() == null || event.getAvailableSlots() <= 0) {
-            // return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            // .body(Map.of("error", "No slots available for this event"));
-            // }
+        // 4. Parse amount
+        int amount = Integer.parseInt(data.get("amount").toString());
 
-            // Parse amount safely
-            // Parse amount safely
-            // Parse amount safely from JSON
-            Object amtObj = data.get("amount");
-            int amount;
+        // 5. Create Razorpay order
+        JSONObject options = new JSONObject();
+        options.put("amount", amount * 100);
+        options.put("currency", "INR");
+        options.put("receipt", "txn_" + UUID.randomUUID());
 
-            if (amtObj instanceof Number) {
-                // Works if JSON sends number (Integer, Double, etc.)
-                amount = ((Number) amtObj).intValue();
-            } else if (amtObj instanceof String) {
-                // Works if JSON sends number as String
-                amount = Integer.parseInt((String) amtObj);
-            } else {
-                throw new RuntimeException("Invalid amount format: " + amtObj);
-            }
+        Order order = client.orders.create(options);
+        String razorpayOrderId = order.get("id");
 
-            // Create Razorpay Order
-            JSONObject options = new JSONObject();
-            options.put("amount", amount * 100);
-            options.put("currency", "INR");
-            options.put("receipt", "txn_" + UUID.randomUUID());
+        // 6. Find existing booking for (eventId, userId)
+        Optional<Booking> existingOpt =
+                bookingRepository.findByEventAndUser(event.getEventId(), user.getId());
 
-            Order order = client.orders.create(options);
+        Booking booking;
 
-            // Save booking
-            Booking booking = new Booking();
+        if (existingOpt.isPresent()) {
+            // reuse same row
+            booking = existingOpt.get();
+        } else {
+            // create new
+            booking = new Booking();
             booking.setUserId(user.getId());
             booking.setEventId(event.getEventId());
-            booking.setAmount(amount);
-            booking.setOrderId(order.get("id"));
-            booking.setStatus("PENDING");
-
-            bookingRepository.save(booking);
-
-            // Return response
-            Map<String, Object> response = new HashMap<>();
-            response.put("orderId", order.get("id"));
-            response.put("amount", amount);
-            response.put("currency", "INR");
-            response.put("bookingId", booking.getBookingId());
-
-            return ResponseEntity.ok(response);
-
-        } catch (RazorpayException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", e.getMessage()));
         }
+
+        booking.setAmount(amount);
+        booking.setOrderId(razorpayOrderId);
+        booking.setStatus("PENDING");
+
+        bookingRepository.save(booking);
+
+        // 7. Response
+        Map<String, Object> response = new HashMap<>();
+        response.put("orderId", razorpayOrderId);
+        response.put("amount", amount);
+        response.put("currency", "INR");
+        response.put("bookingId", booking.getBookingId());
+
+        return ResponseEntity.ok(response);
+
+    } catch (DataIntegrityViolationException ex) {
+        // DB blocked duplicate insert → Fetch existing row and return it
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = principal instanceof String ? (String) principal
+                : ((UserDetails) principal).getUsername();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        UUID eventId = UUID.fromString(data.get("eventId").toString());
+
+        Booking booking = bookingRepository.findByEventAndUser(eventId, user.getId())
+                .orElseThrow(() -> new RuntimeException("Booking exists but cannot fetch it."));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("orderId", booking.getOrderId());
+        response.put("amount", booking.getAmount());
+        response.put("currency", "INR");
+        response.put("bookingId", booking.getBookingId());
+
+        return ResponseEntity.ok(response);
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", e.getMessage()));
     }
+}
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyPayment(@RequestParam String orderId,

@@ -63,27 +63,6 @@ const Home = () => {
         loop={true}
         round={false}
       /> */}
-      
-      {/* {categories.map((category) => (
-        <EventsSection
-          key={category.key}
-          categoryKey={category.key}
-          title={category.title}
-          icon={category.icon}
-          events={category.events}
-        />
-      ))} */}
-
-        {categories.map((category) => (
-        <EventsSection
-          key={category.key}
-          categoryKey={category.key}
-          title={category.title}
-          icon={category.icon}
-          events={category.events}
-          displayCount={category.displayCount || 4} // Pass displayCount from config
-        />
-      ))}
 
       {/* NEW: Recommended Events Section - Place it at the top for better visibility */}
       {userId && !recommendationsLoading && !recommendationsError && recommendations.length > 0 && (
@@ -113,6 +92,29 @@ const Home = () => {
         </div>
       )}
 
+      
+      {/* {categories.map((category) => (
+        <EventsSection
+          key={category.key}
+          categoryKey={category.key}
+          title={category.title}
+          icon={category.icon}
+          events={category.events}
+        />
+      ))} */}
+
+        {categories.map((category) => (
+        <EventsSection
+          key={category.key}
+          categoryKey={category.key}
+          title={category.title}
+          icon={category.icon}
+          events={category.events}
+          displayCount={category.displayCount || 4} // Pass displayCount from config
+        />
+      ))}
+
+      
     </div>
   );
 };

@@ -109,23 +109,24 @@ public ResponseEntity<?> joinQueue(
      * Example: GET /api/queue/position/{eventId}
      */
     @GetMapping("/position/{eventId}")
-    public ResponseEntity<?> getQueuePosition(
-            @PathVariable UUID eventId,
-            Authentication auth
-    ) {
-        try {
-            String email = getEmailFromAuth(auth);
-            int position = queueService.getQueuePosition(eventId, email);
-            return ResponseEntity.ok(Map.of("position", position));
-        } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("status", "ERROR", "message", re.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("status", "ERROR", "message", e.getMessage()));
-        }
+public ResponseEntity<?> getQueuePosition(
+        @PathVariable UUID eventId,
+        Authentication auth
+) {
+    try {
+        String email = getEmailFromAuth(auth);
+        int position = queueService.getQueuePosition(eventId, email);
+        return ResponseEntity.ok(Map.of("position", position));
+    } catch (RuntimeException re) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("status", "ERROR", "message", re.getMessage()));
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("status", "ERROR", "message", e.getMessage()));
     }
+}
+
 
     /* -------------------- Helpers & DTOs -------------------- */
 
