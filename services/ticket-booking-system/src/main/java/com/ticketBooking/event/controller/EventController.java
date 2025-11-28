@@ -1,5 +1,7 @@
 package com.ticketBooking.event.controller;
 
+import com.ticketBooking.booking.model.Booking;
+import com.ticketBooking.booking.repository.BookingRepository;
 import com.ticketBooking.event.model.Event;
 import com.ticketBooking.event.repository.EventRepository;
 import com.ticketBooking.event.services.EventService;
@@ -10,6 +12,8 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +27,13 @@ public class EventController {
 
     @Autowired
     private EventRepository eventRepository;
+
+    @Autowired
+    private BookingRepository bookingRepository;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
 
     @Autowired
     private UserRepository userRepository;
@@ -232,33 +243,69 @@ public ResponseEntity<?> editEvent(
 }
 
 @PatchMapping("/cancel/{id}")
-public ResponseEntity<?> cancelEvent(
-        @PathVariable UUID id,
-        @AuthenticationPrincipal String email) {
+    @Transactional
+    public ResponseEntity<?> cancelEvent(
+            @PathVariable("id") UUID eventId,
+            @AuthenticationPrincipal String email) {
 
-    User organizer = userRepository.findByEmail(email)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        // 1. Organizer from email
+        User organizer = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-    if (!"ORGANIZER".equalsIgnoreCase(organizer.getRole())) {
-        return ResponseEntity.status(403).body("Access denied: Only organizers can cancel events");
+        if (!"ORGANIZER".equalsIgnoreCase(organizer.getRole())) {
+            return ResponseEntity.status(403)
+                    .body("Access denied: Only organizers can cancel events");
+        }
+
+        // 2. Event by ID
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        // 3. Check ownership
+        if (!organizer.getId().equals(event.getOrganizerId())) {
+            return ResponseEntity.status(403)
+                    .body("You can only cancel your own events");
+        }
+
+        // 4. If already cancelled
+        if ("CANCELLED".equalsIgnoreCase(event.getStatus())) {
+            return ResponseEntity.ok("Event already cancelled");
+        }
+
+        // 5. Cancel event
+        event.setStatus("CANCELLED");
+        eventRepository.save(event);
+
+        // 6. Cancel bookings
+        List<Booking> bookings = bookingRepository.findByEventId(event.getEventId());
+        for (Booking booking : bookings) {
+            booking.setStatus("CANCELLED");
+        }
+        bookingRepository.saveAll(bookings);
+
+        // 7. Send email to each user
+        for (Booking booking : bookings) {
+            User user = userRepository
+            .findById(booking.getUserId().longValue())
+            .orElse(null);
+    
+            if (user == null) continue;
+        
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setTo(user.getEmail());
+            msg.setSubject("Event Cancelled: " + event.getName());
+            msg.setText(
+                    "Dear " + user.getName() + ",\n\n" +
+                    "We regret to inform you that the event \"" + event.getName() +
+                    "\" has been cancelled by the organizer.\n\n" +
+                    "Your ticket has been cancelled and the refund will be processed within 3-5 business days.\n\n" +
+                    "Regards,\nQuiketsy-Ticket Booking"
+            );
+            mailSender.send(msg);
+        }
+        
+        return ResponseEntity.ok("Event and all related bookings cancelled. Users notified by email.");
     }
-
-    Optional<Event> optionalEvent = eventRepository.findById(id);
-    if (optionalEvent.isEmpty()) {
-        return ResponseEntity.notFound().build();
-    }
-
-    Event event = optionalEvent.get();
-
-    if (!event.getOrganizerId().equals(organizer.getId())) {
-        return ResponseEntity.status(403).body("You can only cancel your own events");
-    }
-
-    event.setStatus("CANCELLED");
-    Event saved = eventRepository.save(event);
-
-    return ResponseEntity.ok(saved);
-}
 
 
 @GetMapping("/organizer/{organizerId}")
