@@ -1,5 +1,8 @@
 import { TrendingUp, Music, Heart, Theater, Mic, Palette} from "lucide-react";
 import { FaStar } from 'react-icons/fa'; 
+import { SiSparkfun } from "react-icons/si";
+import { UsersRound } from 'lucide-react';
+
 
 // Temporary data - will be replaced with API calls
 const eventsDatabase = {
@@ -438,8 +441,8 @@ static async searchEvents(keyword) {
     recommended: { title: "You May Also Like", icon: Heart },
     plays: { title: "Theater & Plays", icon: Theater },
     standup: { title: "Stand-up Comedy", icon: Mic },
-    art: { title: "Arts & Culture", icon: Palette },
-    technology: { title: "Technology", icon: Palette },
+    art: { title: "Fun Activities", icon: SiSparkfun },
+    technology: { title: "Conferences", icon: UsersRound },
     workshop: { title: "Workshops", icon: Palette },
     recommended: {  // Add this
       title: 'Recommended Events',

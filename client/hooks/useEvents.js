@@ -64,6 +64,8 @@ import { TrendingUp, Music, Theater, Mic, Palette, Heart } from 'lucide-react';
 import { FaLaptopCode } from "react-icons/fa";
 import { GrWorkshop } from "react-icons/gr";
 import { MdOutlineSportsMartialArts } from "react-icons/md";
+import { SiSparkfun } from "react-icons/si";
+import { UsersRound } from 'lucide-react';
 
 // Define your category configuration
 // const CATEGORY_CONFIG = [
@@ -119,8 +121,8 @@ const CATEGORY_CONFIG = [
   { key: 'music', title: 'Music Events', icon: Music, displayCount: 7 },
   { key: 'plays', title: 'Theater & Plays', icon: Theater, displayCount: 7 },
   { key: 'standup', title: 'Stand-up Comedy', icon: Mic, displayCount: 7 },
-  { key: 'art', title: 'Arts & Culture', icon: Palette, displayCount: 7 },
-  { key: 'technology', title: 'Technology', icon: FaLaptopCode, displayCount: 7 },
+  { key: 'activity', title: 'Fun Activities', icon: SiSparkfun, displayCount: 7 },
+  { key: 'conference', title: 'Conferences', icon: UsersRound, displayCount: 7 },
   { key: 'workshop', title: 'Workshops', icon: GrWorkshop, displayCount: 7 },
   { key: 'sports', title: 'Sports', icon: MdOutlineSportsMartialArts, displayCount: 7 }
 ];

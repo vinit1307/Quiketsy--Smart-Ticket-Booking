@@ -48,7 +48,8 @@ const Footer = () => {
       { name: "Theater & Plays", path: "/events/plays" },
       { name: "Sports Events", path: "/events/sports" },
       { name: "Workshops", path: "/events/workshop" },
-      { name: "Art & Culture", path: "/events/art" },
+      { name: "Fun Activities", path: "/events/activity" },
+      { name: "Conference", path: "/events/conference" },
     ],
     company: [
       { name: "About Us", path: "/about" },

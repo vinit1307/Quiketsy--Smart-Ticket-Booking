@@ -397,6 +397,12 @@ const ViewTicket = () => {
             ⏳ WAITLIST
           </div>
         );
+         case "waiting":
+        return (
+          <div className="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold border border-yellow-300">
+            ⏳ WAITLIST
+          </div>
+        );
       case "pending":
         return (
           <div className="absolute top-4 right-4 bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold border border-yellow-300">

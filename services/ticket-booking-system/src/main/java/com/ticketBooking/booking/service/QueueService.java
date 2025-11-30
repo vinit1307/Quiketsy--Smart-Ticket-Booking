@@ -56,12 +56,12 @@ public class QueueService {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found: " + eventId));
 
-        Integer available = event.getAvailableSlots();
-        if (available != null && available > 0) {
-            // Either throw error OR just return without inserting into queue
-            throw new IllegalStateException("Queue is only allowed when event is full (no slots left).");
-            // or: return null;
-        }
+        // Integer available = event.getAvailableSlots();
+        // if (available != null && available > 0) {
+        //     // Either throw error OR just return without inserting into queue
+        //     throw new IllegalStateException("Queue is only allowed when event is full (no slots left).");
+        //     // or: return null;
+        // }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found: " + email));
