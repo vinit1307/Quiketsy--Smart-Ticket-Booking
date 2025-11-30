@@ -135,8 +135,7 @@ cd Quiketsy--Smart-Ticket-Booking
 
 4. Build and run the Spring Boot services:  
 ```bash
-cd Quiketsy--Smart-Ticket-Booking/services
-/ticket-booking-system/
+cd Quiketsy--Smart-Ticket-Booking/services/ticket-booking-system/
 mvn clean install
 mvn spring-boot:run
 ```
