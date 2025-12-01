@@ -269,6 +269,37 @@ const ViewTicket = () => {
   //   }
   // }, [bookingId]);
 
+  // Fetch queue position for waitlist tickets
+const fetchQueuePosition = async (eventId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `http://localhost:9192/api/events/${eventId}/queue-position`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    setQueuePosition(response.data.position);
+  } catch (error) {
+    console.error('Error fetching queue position:', error);
+  }
+};
+
+
+// Fetch queue position when ticket data is loaded and status is waitlist
+useEffect(() => {
+  if (ticketData && 
+      (ticketData.status === 'pending' || 
+       ticketData.status === 'queued' || 
+       ticketData.status === 'waitlist' ||
+       ticketData.status === 'waiting')) {
+    fetchQueuePosition(ticketData.eventId);
+  }
+}, [ticketData]);
+
   const handleCancelTicket = async () => {
     setIsLoading(true);
 

@@ -76,9 +76,9 @@ const [loadingPosition, setLoadingPosition] = useState(false);
     if (event && event.availableSlots === 0) {
       setLoadingPosition(true);
       try {
-        const response = await fetch(`http://localhost:9192/api/events/position/${event.id}`);
+        const response = await fetch(`http://localhost:9192/api/events/${event.id}/queue-count`);
         const data = await response.json();
-        setQueuePosition(data.position);
+        setQueuePosition(data.count);  // Changed from data.position to data.count
       } catch (error) {
         console.error("Error fetching queue position:", error);
       } finally {
@@ -326,7 +326,7 @@ const [loadingPosition, setLoadingPosition] = useState(false);
     <p>
     <span className="text-sm font-medium text-orange-700">
       Waitlist Queue position:
-      <span className="font-bold"> #{queuePosition} people ahead of you</span>
+      <span className="font-bold"> {queuePosition} people ahead of you</span>
     </span>
     </p>
   </div>

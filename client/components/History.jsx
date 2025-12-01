@@ -22,6 +22,8 @@ const History = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const [queuePositions, setQueuePositions] = useState({});
+
   // Map API status to display status and event status
   const mapStatus = (apiStatus) => {
     const statusMap = {
@@ -155,6 +157,26 @@ const History = () => {
     }
   };
 
+  // Fetch queue position for a specific event
+const fetchQueuePosition = async (eventId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(
+      `http://localhost:9192/api/events/${eventId}/queue-position`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    return response.data.position;
+  } catch (err) {
+    console.error(`Error fetching queue position for event ${eventId}:`, err);
+    return null;
+  }
+};
+
   // Fetch queue position for waitlist events
   // Fetch queue position for waitlist events
   // const fetchQueuePosition = async (eventId) => {
@@ -182,6 +204,29 @@ const History = () => {
     // const interval = setInterval(fetchBookingHistory, 30000);
     // return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+  const fetchAllQueuePositions = async () => {
+    const waitlistEvents = history.filter(
+      (event) => event.displayStatus === "Waitlist"
+    );
+
+    if (waitlistEvents.length === 0) return;
+
+    const positions = {};
+    for (const event of waitlistEvents) {
+      const position = await fetchQueuePosition(event.eventId);
+      if (position !== null) {
+        positions[event.id] = position;
+      }
+    }
+    setQueuePositions(positions);
+  };
+
+  if (history.length > 0) {
+    fetchAllQueuePositions();
+  }
+}, [history]);
 
   const formatDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -464,7 +509,7 @@ const History = () => {
                     )} */}
 
                     {/* {(event.displayStatus === "Waitlist") && event.waitlistPosition !== undefined && event.waitlistPosition !== null && ( */}
-                    {event.displayStatus === "Waitlist" &&
+                    {/* {event.displayStatus === "Waitlist" &&
                       event.waitlistPosition !== undefined &&
                       event.waitlistPosition !== null &&
                       event.waitlistPosition >= 0 && (
@@ -474,7 +519,23 @@ const History = () => {
                             ? "Next in line!"
                             : `#${event.waitlistPosition}`}
                         </div>
-                      )}
+                      )} */}
+
+                      {event.displayStatus === "Waitlist" && (
+  queuePositions[event.id] !== undefined ? (
+    <div className="bg-amber-100 text-amber-800 px-3 py-2 rounded-lg text-xs md:text-sm mb-4">
+      <strong>Queue Position:</strong>{" "}
+      {queuePositions[event.id] === 0
+        ? "Next in line! 🎉"
+        : `#${queuePositions[event.id]} in queue`}
+    </div>
+  ) : (
+    <div className="bg-amber-50 text-amber-600 px-3 py-2 rounded-lg text-xs md:text-sm mb-4">
+      <FaSpinner className="inline animate-spin mr-2" />
+      Loading queue position...
+    </div>
+  )
+)}
 
                     {/* Action Buttons */}
                     <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-200 gap-3">
