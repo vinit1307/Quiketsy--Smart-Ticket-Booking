@@ -11,6 +11,7 @@ import { AiOutlineTags } from "react-icons/ai";
 import { MdEventAvailable } from "react-icons/md";
 import EventsService from "../services/eventsService";
 import LoadingSpinner from "./LoadingSpinner";
+import { ListEnd } from "lucide-react";
 
 const EventDetailsPage = () => {
   const { id } = useParams();
@@ -18,6 +19,8 @@ const EventDetailsPage = () => {
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [queuePosition, setQueuePosition] = useState(null);
+const [loadingPosition, setLoadingPosition] = useState(false);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -67,6 +70,25 @@ const EventDetailsPage = () => {
       fetchEvent();
     }
   }, [id]);
+
+  useEffect(() => {
+  const fetchQueuePosition = async () => {
+    if (event && event.availableSlots === 0) {
+      setLoadingPosition(true);
+      try {
+        const response = await fetch(`http://localhost:9192/api/events/position/${event.id}`);
+        const data = await response.json();
+        setQueuePosition(data.position);
+      } catch (error) {
+        console.error("Error fetching queue position:", error);
+      } finally {
+        setLoadingPosition(false);
+      }
+    }
+  };
+
+  fetchQueuePosition();
+}, [event]);
 
   if (loading) {
     return <LoadingSpinner fullPage />;
@@ -269,6 +291,53 @@ const EventDetailsPage = () => {
                 </p>
               )}
             </div>
+
+            {/* Queue Position - Only shown when slots are 0 */}
+{event.availableSlots === 0 && (
+  <div className="mt-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+    <div className="flex items-center space-x-2">
+      {/* <MdOutlineQueue className="text-orange-500 w-5 h-5" />
+      <span className="text-sm font-medium text-orange-700">
+        Waitlist
+      </span> */}
+    </div>
+    {loadingPosition ? (
+      <p className="text-sm text-gray-500 mt-2">Loading position...</p>
+    ) : queuePosition !== null ? (
+      <div className="mt-0">
+        {queuePosition === 0 ? (
+
+          <div className="flex items-center space-x-2">
+  <ListEnd className="text-orange-500 w-5 h-5" />
+  <div className="flex flex-col leading-tight">
+  <p>
+    <span className="text-sm font-medium text-orange-700">
+      Waitlist Queue position:
+      <span className="font-bold text-green-700"> 🎉 You will be first in the queue. Join the waitlist fast!!!</span>
+    </span>
+    </p>
+  </div>
+</div>
+
+        ) : (
+    <div className="flex items-center space-x-2">
+  <ListEnd className="text-orange-500 w-5 h-5" />
+  <div className="flex flex-col leading-tight">
+    <p>
+    <span className="text-sm font-medium text-orange-700">
+      Waitlist Queue position:
+      <span className="font-bold"> #{queuePosition} people ahead of you</span>
+    </span>
+    </p>
+  </div>
+</div>
+        )}
+      </div>
+    ) : null}
+  </div>
+)}
+
+            
 
             {/* <button 
               className={`w-full mt-3 font-semibold py-2 rounded-lg transition ${

@@ -47,7 +47,7 @@ const AllEventsPage = () => {
   // Update validation to include 'recommended'
   React.useEffect(() => {
     if (!isCity) {
-      const validCategories = ['trending', 'music', 'recommended', 'plays', 'standup', 'art', 'technology', 'workshop', 'sports'];
+      const validCategories = ['trending', 'music', 'recommended', 'plays', 'standup', 'activity', 'conference', 'workshop', 'sports'];
       if (!validCategories.includes(category)) {
         navigate('/');
       }

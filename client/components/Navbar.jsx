@@ -13,6 +13,8 @@ import {
   Clock,
   Palette,
 } from "lucide-react";
+import { SiSparkfun } from "react-icons/si";
+import { UsersRound } from 'lucide-react';
 import { TbCategory } from "react-icons/tb";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -69,14 +71,14 @@ const Navbar = () => {
       icon: <FaFaceLaughSquint className="h-4 w-4" />,
     },
     {
-      key: "art",
-      name: "Arts & Culture",
-      icon: <Palette className="h-4 w-4" />,
+      key: "activity",
+      name: "Fun Activities",
+      icon: <SiSparkfun className="h-4 w-4" />,
     },
     {
-      key: "technology",
-      name: "Technology",
-      icon: <FaLaptopCode className="h-4 w-4" />,
+      key: "conference",
+      name: "Conferences",
+      icon: <UsersRound className="h-4 w-4" />,
     },
     {
       key: "workshop",

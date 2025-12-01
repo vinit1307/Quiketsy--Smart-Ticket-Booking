@@ -64,16 +64,7 @@ const Home = () => {
         round={false}
       /> */}
 
-      {/* NEW: Recommended Events Section - Place it at the top for better visibility */}
-      {userId && !recommendationsLoading && !recommendationsError && recommendations.length > 0 && (
-        <EventsSection
-          categoryKey="recommended"
-          title="Recommended for You"
-          icon={FaStar}
-          events={recommendations}
-          displayCount={5} // Show all 5 recommendations
-        />
-      )}
+      
       
       {/* NEW: Loading state for recommendations (optional - shows skeleton) */}
       {userId && recommendationsLoading && (

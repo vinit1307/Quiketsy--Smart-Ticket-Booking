@@ -77,9 +77,7 @@ React.useEffect(() => {
     "standup",
     "conference",
     "workshop",
-    "art",
-    "food",
-    "technology",
+    "fun activity"
   ];
 
   // Language options
