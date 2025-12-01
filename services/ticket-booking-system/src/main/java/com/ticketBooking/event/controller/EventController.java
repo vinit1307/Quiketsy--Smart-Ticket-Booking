@@ -29,15 +29,13 @@ public class EventController {
     private EventRepository eventRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private BookingRepository bookingRepository;
 
     @Autowired
     private JavaMailSender mailSender;
-
-
-    @Autowired
-    private UserRepository userRepository;
-
 
     @Autowired
     private EventService eventService;
@@ -306,7 +304,6 @@ public ResponseEntity<?> editEvent(
         
         return ResponseEntity.ok("Event and all related bookings cancelled. Users notified by email.");
     }
-
 
 @GetMapping("/organizer/{organizerId}")
 public ResponseEntity<List<Event>> getEventsByOrganizer(@PathVariable Integer organizerId) {
