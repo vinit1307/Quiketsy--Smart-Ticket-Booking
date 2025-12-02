@@ -184,7 +184,7 @@ const BookEvent = () => {
     }
 
     // console.log(event);
-    // if(isWaitingList)
+    if(isWaitingList)
       handleQUeuePayments(
         event.price, 
         userDetails.name, 
@@ -194,16 +194,16 @@ const BookEvent = () => {
         event.name, 
         event.description
       );
-    // else
-    //   handlePayment(
-    //     event.price, 
-    //     userDetails.name, 
-    //     userDetails.email, 
-    //     userDetails.phoneNumber, 
-    //     event.id,
-    //     event.name, 
-    //     event.description
-    //   );
+    else
+      handlePayment(
+        event.price, 
+        userDetails.name, 
+        userDetails.email, 
+        userDetails.phoneNumber, 
+        event.id,
+        event.name, 
+        event.description
+      );
 
     // Navigate to payment page with event details
     // navigate(`/payment/${event.id}`, {
