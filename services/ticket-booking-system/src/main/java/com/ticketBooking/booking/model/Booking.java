@@ -12,12 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(
-    name = "bookings",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"event_id", "user_id"})
-    }
-)
+@Table(name = "bookings")
 public class Booking {
 
     @Id

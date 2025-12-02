@@ -83,10 +83,8 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
 
         if (principal instanceof UserDetails userDetails) {
             email = userDetails.getUsername();
-        } else if (principal instanceof String) {
-            email = (String) principal;
         } else {
-            throw new RuntimeException("Cannot get email from SecurityContext");
+            email = principal.toString();
         }
 
         // 2. Fetch User
@@ -98,34 +96,23 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        // 4. Parse amount
+        // 4. Parse amount (in rupees)
         int amount = Integer.parseInt(data.get("amount").toString());
 
         // 5. Create Razorpay order
         JSONObject options = new JSONObject();
-        options.put("amount", amount * 100);
+        options.put("amount", amount * 100);     // convert to paise
         options.put("currency", "INR");
         options.put("receipt", "txn_" + UUID.randomUUID());
 
         Order order = client.orders.create(options);
         String razorpayOrderId = order.get("id");
 
-        // 6. Find existing booking for (eventId, userId)
-        Optional<Booking> existingOpt =
-                bookingRepository.findByEventAndUser(event.getEventId(), user.getId());
-
-        Booking booking;
-
-        if (existingOpt.isPresent()) {
-            // reuse same row
-            booking = existingOpt.get();
-        } else {
-            // create new
-            booking = new Booking();
-            booking.setUserId(user.getId());
-            booking.setEventId(event.getEventId());
-        }
-
+        // 6. ALWAYS create a new booking (no reuse)
+        Booking booking = new Booking();
+        booking.setBookingId(UUID.randomUUID());
+        booking.setUserId(user.getId());
+        booking.setEventId(event.getEventId());
         booking.setAmount(amount);
         booking.setOrderId(razorpayOrderId);
         booking.setStatus("PENDING");
@@ -141,35 +128,13 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
 
         return ResponseEntity.ok(response);
 
-    } catch (DataIntegrityViolationException ex) {
-        // DB blocked duplicate insert → Fetch existing row and return it
-
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String email = principal instanceof String ? (String) principal
-                : ((UserDetails) principal).getUsername();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        UUID eventId = UUID.fromString(data.get("eventId").toString());
-
-        Booking booking = bookingRepository.findByEventAndUser(eventId, user.getId())
-                .orElseThrow(() -> new RuntimeException("Booking exists but cannot fetch it."));
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("orderId", booking.getOrderId());
-        response.put("amount", booking.getAmount());
-        response.put("currency", "INR");
-        response.put("bookingId", booking.getBookingId());
-
-        return ResponseEntity.ok(response);
-
     } catch (Exception e) {
         e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", e.getMessage()));
     }
 }
+
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyPayment(@RequestParam String orderId,
