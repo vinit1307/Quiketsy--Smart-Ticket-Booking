@@ -7,7 +7,6 @@ import com.ticketBooking.booking.repository.EventQueueRepository;
 import com.ticketBooking.booking.service.BookingCancelService;
 import com.ticketBooking.booking.service.BookingService;
 import com.ticketBooking.booking.service.PaymentService;
-import com.ticketBooking.booking.service.QRCodeGenerator;
 import com.ticketBooking.event.model.Event;
 import com.ticketBooking.event.repository.EventRepository;
 import com.ticketBooking.user.model.User;
@@ -20,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -77,7 +75,7 @@ public class BookingController {
 @Transactional
 public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, Object> data) {
     try {
-        // 1. Get logged-in user email
+        // 1. Getting logged-in user email
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email;
 
@@ -87,19 +85,19 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
             email = principal.toString();
         }
 
-        // 2. Fetch User
+        // 2. Fetching the User
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // 3. Fetch Event
+        // 3. Fetching the Event
         UUID eventId = UUID.fromString(data.get("eventId").toString());
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
-        // 4. Parse amount (in rupees)
+        // 4. Parsing the amount (in rupees)
         int amount = Integer.parseInt(data.get("amount").toString());
 
-        // 5. Create Razorpay order
+        // 5. Creating Razorpay order
         JSONObject options = new JSONObject();
         options.put("amount", amount * 100);     // convert to paise
         options.put("currency", "INR");
@@ -108,7 +106,7 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
         Order order = client.orders.create(options);
         String razorpayOrderId = order.get("id");
 
-        // 6. ALWAYS create a new booking (no reuse)
+        // 6. we have to ALWAYS create a new booking (no reuse)
         Booking booking = new Booking();
         booking.setBookingId(UUID.randomUUID());
         booking.setUserId(user.getId());
@@ -119,7 +117,7 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
 
         bookingRepository.save(booking);
 
-        // 7. Response
+        // 7. Response 
         Map<String, Object> response = new HashMap<>();
         response.put("orderId", razorpayOrderId);
         response.put("amount", amount);
@@ -157,7 +155,7 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
             booking.setStatus("PAID");
             bookingRepository.save(booking);
 
-            // Attempt to confirm booking by atomically decrementing slots
+            // Attempting to confirm booking by atomically decrementing slots
             boolean assigned = bookingService.confirmBookingIfSlotAvailable(booking.getBookingId());
 
             if (assigned) {

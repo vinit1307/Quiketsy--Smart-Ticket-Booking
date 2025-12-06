@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -116,23 +114,32 @@ public class QueueController {
     @Autowired
     private EventQueueRepository eventQueueRepository;
 
-    @GetMapping("/{eventId}/queue-position")
+    @GetMapping("/{queueId}/queue/{eventId}/position")
     public ResponseEntity<?> getQueuePosition(
-            @PathVariable UUID eventId,
+            @PathVariable("queueId") UUID queueId,
+            @PathVariable("eventId") UUID eventId,
             Authentication authentication) {
 
-        // Email/username that came from the Bearer token
-        String email = authentication.getName(); // this is your email from JWT
+        // Email/username from JWT
+        String email = authentication.getName();
+        System.out.println("Authenticated email: " + email);
 
-        // Fetch queue position for this event + email
-        Integer position = eventQueueRepository.getQueuePositionByEmail(eventId, email);
+        // Fetch queue position for this event + this queue entry + this user
+        Integer position = eventQueueRepository.getQueuePositionByEmail(
+                queueId,
+                eventId,
+                email);
 
-        // If no row found, treat as 0 (not in queue)
+        // If no row found, treat as 0 (not in this queue)
         if (position == null) {
             position = 0;
         }
 
-        return ResponseEntity.ok(Map.of("position", position));
+        // You can also return queueId so frontend knows which entry is being shown
+        return ResponseEntity.ok(
+                Map.of(
+                        "queueId", queueId,
+                        "position", position));
     }
 
     @GetMapping("/{eventId}/queue-count")
@@ -144,7 +151,7 @@ public class QueueController {
             count = 0;
         }
 
-        // You wanted just “how many users are in queue”
+        // we just wanted “how many users are in queue”
         return ResponseEntity.ok(Map.of("count", count));
     }
 
