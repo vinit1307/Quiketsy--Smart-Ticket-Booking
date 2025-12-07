@@ -270,11 +270,12 @@ const ViewTicket = () => {
   // }, [bookingId]);
 
   // Fetch queue position for waitlist tickets
-const fetchQueuePosition = async (eventId) => {
+// Fetch queue position for waitlist tickets
+const fetchQueuePosition = async (orderId, eventId) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(
-      `http://localhost:9192/api/events/${eventId}/queue-position`,
+      `http://localhost:9192/api/events/${orderId}/queue/${eventId}/position`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -290,14 +291,48 @@ const fetchQueuePosition = async (eventId) => {
 
 
 // Fetch queue position when ticket data is loaded and status is waitlist
+// Fetch queue position when ticket data is loaded and status is waitlist
+// useEffect(() => {
+//   if (ticketData && 
+//       ticketData.orderId &&
+//       (ticketData.status === 'pending' || 
+//        ticketData.status === 'queued' || 
+//        ticketData.status === 'waitlist' ||
+//        ticketData.status === 'paid' ||
+//        ticketData.status === 'waiting')) {
+//     fetchQueuePosition(ticketData.orderId, ticketData.eventId);
+//   }
+// }, [ticketData]);
+
+// Fetch queue position when ticket data is loaded and status is waitlist
+// Auto-refresh every 10 seconds
 useEffect(() => {
-  if (ticketData && 
+  let intervalId;
+
+  const isWaitlistStatus = ticketData && 
+      ticketData.orderId &&
       (ticketData.status === 'pending' || 
        ticketData.status === 'queued' || 
        ticketData.status === 'waitlist' ||
-       ticketData.status === 'waiting')) {
-    fetchQueuePosition(ticketData.eventId);
+       ticketData.status === 'paid' ||
+       ticketData.status === 'waiting');
+
+  if (isWaitlistStatus) {
+    // Fetch immediately
+    fetchQueuePosition(ticketData.orderId, ticketData.eventId);
+
+    // Then fetch every 10 seconds
+    intervalId = setInterval(() => {
+      fetchQueuePosition(ticketData.orderId, ticketData.eventId);
+    }, 10000); // 10 seconds
   }
+
+  // Cleanup interval on unmount or when ticketData changes
+  return () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  };
 }, [ticketData]);
 
   const handleCancelTicket = async () => {
@@ -308,7 +343,7 @@ useEffect(() => {
       let response;
 
       // Choose API endpoint based on ticket status
-      if (ticketData.status === "confirmed") {
+      if (ticketData.status === "confirmed" || ticketData.status === "paid") {
         // Cancel confirmed booking
         response = await axios.post(
           `http://localhost:9192/api/booking/${bookingId}/cancel`,
@@ -696,6 +731,8 @@ useEffect(() => {
                   ) : // ... rest of the code
                   ticketData.status === "queued" ||
                     ticketData.status === "pending" ||
+                    ticketData.status === "waiting" ||
+                    ticketData.status === "paid" ||
                     ticketData.status === "waitlist" ? (
                     <div className="flex flex-col items-center p-4">
                       <ListEnd className="w-10 h-10 text-yellow-600 mb-2" />
