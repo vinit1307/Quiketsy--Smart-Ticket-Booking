@@ -1,30 +1,27 @@
 # ---- Build stage ----
     FROM maven:3.9-eclipse-temurin-17 AS build
 
-    # Work inside /app
     WORKDIR /app
     
-    # Copy ONLY backend pom + src so build is faster
-    COPY services/ticket-booking-system/pom.xml services/ticket-booking-system/pom.xml
-    COPY services/ticket-booking-system/src services/ticket-booking-system/src
+    # Copy the entire repo into the container
+    COPY . .
     
-    # Move into backend folder
+    # Go into the backend module folder
     WORKDIR /app/services/ticket-booking-system
     
-    # Build the JAR (tests skipped to speed up)
-    RUN mvn clean package -DskipTests
+    # Build the Spring Boot jar
+    RUN mvn -B clean package -DskipTests
     
     # ---- Run stage ----
     FROM eclipse-temurin:17-jre
     
     WORKDIR /app
     
-    # Copy built jar from previous stage
+    # Copy the built jar from the build stage
     COPY --from=build /app/services/ticket-booking-system/target/*.jar app.jar
     
-    # Expose default port
     EXPOSE 8080
     
-    # Use Render's $PORT env, fallback to 8080 if missing
+    # Use Render's $PORT env, default to 8080 if missing
     CMD ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
     
