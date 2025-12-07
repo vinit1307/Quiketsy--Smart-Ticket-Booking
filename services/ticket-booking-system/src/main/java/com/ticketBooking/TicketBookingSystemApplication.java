@@ -19,4 +19,4 @@ public class TicketBookingSystemApplication {
 		// System.setProperty("JWT_EXPIRATION", dotenv.get("JWT_EXPIRATION"));
 		SpringApplication.run(TicketBookingSystemApplication.class, args);
 	}
-}
+}	

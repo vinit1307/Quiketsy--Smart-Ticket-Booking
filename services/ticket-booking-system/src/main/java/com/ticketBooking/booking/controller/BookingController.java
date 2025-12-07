@@ -237,6 +237,7 @@ public ResponseEntity<Map<String, Object>> createOrder(@RequestBody Map<String, 
                     entry.put("time", e.getStartTime());
                     entry.put("venue", e.getVenue());
                     entry.put("city", e.getCity());
+                    entry.put("orderId", b.getOrderId());
                     response.add(entry);
                 }
             }

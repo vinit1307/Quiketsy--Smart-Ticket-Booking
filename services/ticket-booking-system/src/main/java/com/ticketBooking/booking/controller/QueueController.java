@@ -114,9 +114,9 @@ public class QueueController {
     @Autowired
     private EventQueueRepository eventQueueRepository;
 
-    @GetMapping("/{queueId}/queue/{eventId}/position")
+    @GetMapping("/{orderId}/queue/{eventId}/position")
     public ResponseEntity<?> getQueuePosition(
-            @PathVariable("queueId") UUID queueId,
+            @PathVariable("orderId") String orderId,
             @PathVariable("eventId") UUID eventId,
             Authentication authentication) {
 
@@ -126,7 +126,7 @@ public class QueueController {
 
         // Fetch queue position for this event + this queue entry + this user
         Integer position = eventQueueRepository.getQueuePositionByEmail(
-                queueId,
+                orderId,
                 eventId,
                 email);
 
@@ -138,7 +138,7 @@ public class QueueController {
         // You can also return queueId so frontend knows which entry is being shown
         return ResponseEntity.ok(
                 Map.of(
-                        "queueId", queueId,
+                        "orderId", orderId,
                         "position", position));
     }
 

@@ -30,12 +30,12 @@ public interface EventQueueRepository extends JpaRepository<EventQueue, UUID> {
     @Query(value = """
         SELECT position
         FROM event_queue
-        WHERE queue_id = :queueId
+        WHERE order_id = :orderId
           AND event_id = :eventId
           AND user_email = :email
         LIMIT 1
         """, nativeQuery = true)
-    Integer getQueuePositionByEmail(UUID queueId, UUID eventId, String email);
+    Integer getQueuePositionByEmail(String orderId, UUID eventId, String email);
 
     @Query(value = """
         SELECT COUNT(*)
