@@ -10,7 +10,7 @@ dist/
 .env
 
 #Application properties
-services/ticket-booking-system/src/main/resources/application.properties
+#services/ticket-booking-system/src/main/resources/application.properties
 
 .vscode/
 schema.sql
