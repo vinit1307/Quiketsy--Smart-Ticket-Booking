@@ -115,6 +115,7 @@ const History = () => {
           eventId: booking.eventId,
           name: booking.eventName,
           status: status,
+          orderId: booking.orderId,
           displayStatus: displayStatus,
           price: `₹${booking.price}`,
           date: booking.eventDate,
@@ -158,11 +159,11 @@ const History = () => {
   };
 
   // Fetch queue position for a specific event
-const fetchQueuePosition = async (eventId) => {
+const fetchQueuePosition = async (orderId, eventId) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(
-      `http://localhost:9192/api/events/${eventId}/queue-position`,
+      `http://localhost:9192/api/events/${orderId}/queue/${eventId}/position`,
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -215,7 +216,7 @@ const fetchQueuePosition = async (eventId) => {
 
     const positions = {};
     for (const event of waitlistEvents) {
-      const position = await fetchQueuePosition(event.eventId);
+      const position = await fetchQueuePosition(event.orderId, event.eventId);
       if (position !== null) {
         positions[event.id] = position;
       }

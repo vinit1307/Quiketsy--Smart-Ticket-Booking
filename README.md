@@ -266,7 +266,12 @@ You may adapt and reuse it for learning and personal use.
 
 ## 📬 Contact
 
-- Author:  **Group-G6**
+- Author:
+  Vivek Patel @vivekkkpatel
+  Vinit Malwe @vinit1307
+  Yashraj Tilwani @yashrajtilwani
+  Vidhan Tayade @Vidhan-Tayade
+  
 - Email: quiketsyticketbooking@gmail.com
 
 Feel free to open an issue or reach out for queries, suggestions, or collaboration.
